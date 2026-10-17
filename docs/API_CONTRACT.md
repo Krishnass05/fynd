@@ -30,6 +30,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `listSaved` | `GET /api/saved` | client | `Freelancer[]` (the client's saved freelancers) |
 | `setSaved` | `PUT /api/saved/:id` `{saved: true or false}` | client | `{ saved }` (404 if the id is not a freelancer). Freelancers in search results and profiles carry `saved` for the viewing client |
 | `getSiteStats` | `GET /api/stats` | anyone, no sign-in | `SiteStats`: real counts for the landing page (job profiles, sample freelancers, case checks passing) |
+| `login` | `POST /api/login` `{email, password, role}` | anyone, no sign-in | `User`. 400 for a missing or malformed field, 403 for a wrong password or the wrong account type. Demo accounts only: client@demo.test, freelancer@demo.test, freelancer2@demo.test, shared password in the login page |
 | `getMe` | `GET /api/me` | any user | `User` |
 | `updateMe` | `PUT /api/me` `{name?, skills?, headline?, overview?, location?, ratePerHour?}` | any user (the profile fields are for freelancers) | `User`. `ratePerHour` is whole rupees above 0 |
 | `listJobs` | `GET /api/jobs?mine=1&status=open` | client (mine) or freelancer (open jobs) | `Job[]` |

@@ -150,8 +150,9 @@ Profiles are sample data. A freelancer edits their own profile on the Profile pa
 
 ```mermaid
 flowchart LR
-  L[Landing page: pick a demo user] --> C[Client: sidebar]
-  L --> F[Freelancer: sidebar]
+  L[Landing page] --> G[Login: Client or Freelancer, email and password]
+  G --> C[Client: sidebar]
+  G --> F[Freelancer: sidebar]
   C --> C1[Dashboard: tiles, activity, attention]
   C --> C2[Find freelancers: chips, cards, profile]
   C --> C3[My jobs: applicants, compare, accept with milestones]

@@ -302,3 +302,17 @@ input, select { min-height: 44px; }
 .collage .float strong { display: block; color: var(--ink-strong); }
 @media (max-width: 860px) { .hero2 { grid-template-columns: minmax(0, 1fr); gap: 22px; } .collage { min-height: 340px; } }
 .role-card .btn { background: #fff; color: var(--ink-strong); border: 1px solid var(--line-strong); }
+
+/* Login page */
+.auth-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; max-width: 900px; margin: 36px auto 18px; align-items: start; }
+.authcard { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 28px; }
+.authcard h1 { font-size: 32px; margin: 0 0 4px; text-align: left; }
+.authcard h2 { margin: 0 0 4px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 999px; background: var(--brand-soft); margin: 14px 0 18px; }
+.seg button { min-height: 44px; border: 0; border-radius: 999px; background: transparent; color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--card); box-shadow: 0 1px 3px rgba(37, 36, 34, 0.18); }
+.demo-box ul { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+.demo-box li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; }
+.demo-box li span { display: grid; min-width: 0; }
+.demo-box li small { color: var(--muted); overflow-wrap: anywhere; }
+@media (max-width: 760px) { .auth-grid { grid-template-columns: minmax(0, 1fr); margin-top: 20px; } .authcard { padding: 20px; } }

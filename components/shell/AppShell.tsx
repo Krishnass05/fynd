@@ -71,7 +71,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
           <div className="usermenu">
             <span className="usermenu-name">{user ? `${user.name}` : ''}<small>{user ? user.role : ''}</small></span>
             <span className="avatar" aria-hidden="true">{user ? initials(user.name) : ''}</span>
-            <button className="btn secondary" onClick={() => { clearUser(); router.push('/'); }}>Switch user</button>
+            <button className="btn secondary" onClick={() => { clearUser(); router.push('/login'); }}>Switch user</button>
           </div>
         </header>
         <main id="main-content" className="page">{children}</main>

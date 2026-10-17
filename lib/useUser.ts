@@ -11,7 +11,7 @@ export function useUser(requiredRole?: Role): { user: User | null; loading: bool
   const { data, error, loading } = useAsync(getMe, []);
   useEffect(() => {
     if (loading) return;
-    if (error || !data || (requiredRole && data.role !== requiredRole)) router.replace('/');
+    if (error || !data || (requiredRole && data.role !== requiredRole)) router.replace('/login');
   }, [loading, error, data, requiredRole, router]);
   return { user: data, loading };
 }

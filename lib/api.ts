@@ -35,6 +35,7 @@ const post = <T>(path: string, body?: unknown) => call<T>(path, { method: 'POST'
 // users and profile
 export const listDemoUsers = () => call<User[]>('/api/users');
 export const getMe = () => call<User>('/api/me');
+export const login = (b: { email: string; password: string; role: 'client' | 'freelancer' }) => post<User>('/api/login', b);
 export const updateMe = (b: { name?: string; skills?: string[]; headline?: string; overview?: string; location?: string; ratePerHour?: number }) =>
   call<User>('/api/me', { method: 'PUT', body: b });
 

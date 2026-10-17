@@ -41,6 +41,30 @@ export function actor(userId: string | null): User {
 // The start page offers only the demo users; the other freelancers exist to be browsed.
 export const listUsers = (): User[] => db().users.filter((u) => u.demo);
 
+// Demo sign-in. Real accounts (Supabase Auth) replace this later. The accounts and the shared
+// password are synthetic and shown on the login page on purpose.
+export const DEMO_PASSWORD = 'demo1234';
+export const DEMO_LOGINS: Record<string, string> = {
+  'client@demo.test': 'u_client1',
+  'freelancer@demo.test': 'u_freelancer1',
+  'freelancer2@demo.test': 'u_freelancer2',
+};
+
+export function login(body: Record<string, unknown>): User {
+  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+  const password = typeof body.password === 'string' ? body.password : '';
+  const role = body.role;
+  if (!email) throw bad('Enter your email');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw bad('That does not look like an email address');
+  if (!password) throw bad('Enter your password');
+  if (role !== 'client' && role !== 'freelancer') throw bad('Choose Client or Freelancer');
+  const id = DEMO_LOGINS[email];
+  const user = id ? db().users.find((u) => u.id === id) : undefined;
+  if (!user || password !== DEMO_PASSWORD) throw forbidden('Email or password is wrong');
+  if (user.role !== role) throw forbidden(`This is a ${user.role} account. Choose ${user.role === 'client' ? 'Client' : 'Freelancer'} above.`);
+  return user;
+}
+
 export function updateMe(u: User, body: Record<string, unknown>): User {
   if (body.name !== undefined) u.name = str(body.name, 'name', 80);
   if (body.skills !== undefined) {

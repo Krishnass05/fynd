@@ -22,6 +22,14 @@ const FREE = 'u_freelancer2';
 
 await ok('POST', '/api/reset');
 
+// login: right password works, wrong role / password / email are refused with clear messages
+const L = (b) => call('POST', '/api/login', null, b);
+assert.equal((await L({ email: 'Client@Demo.test', password: 'demo1234', role: 'client' })).data.id, 'u_client1');
+assert.equal((await L({ email: 'client@demo.test', password: 'demo1234', role: 'freelancer' })).status, 403, 'wrong account type');
+assert.equal((await L({ email: 'client@demo.test', password: 'nope', role: 'client' })).status, 403, 'wrong password');
+assert.equal((await L({ email: 'not-an-email', password: 'x', role: 'client' })).status, 400, 'bad email');
+assert.equal((await L({ email: 'client@demo.test', password: '', role: 'client' })).status, 400, 'missing password');
+
 // seeded project P1 shows every milestone state
 const p1 = await ok('GET', '/api/projects/P1', CLIENT);
 assert.deepEqual(p1.milestones.map((m) => m.status), ['approved', 'ready', 'pending']);

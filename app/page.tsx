@@ -1,16 +1,14 @@
 'use client';
 // Landing page and demo login. OWNER: Krishna (look follows the marketplace mock).
 // The numbers come from our own data: no made-up user counts.
-import { useRouter } from 'next/navigation';
 import type { CSSProperties } from 'react';
 import { getSiteStats, listDemoUsers } from '@/lib/api';
-import { setUserId } from '@/lib/session';
 import type { Role } from '@/lib/types';
 import { useAsync } from '@/lib/useAsync';
 import BlurText from '@/components/fx/BlurText';
 import SpotlightCard from '@/components/fx/SpotlightCard';
 import AppNav from '@/components/shell/AppNav';
-import { Button, ButtonLink, ErrorMessage, Spinner } from '@/components/ui';
+import { ButtonLink, ErrorMessage, Spinner } from '@/components/ui';
 import { ArrowRight } from '@/components/ui/icons';
 
 const Briefcase = () => (
@@ -53,13 +51,8 @@ function Collage() {
 }
 
 export default function Home() {
-  const router = useRouter();
   const users = useAsync(listDemoUsers, []);
   const stats = useAsync(getSiteStats, []);
-  const pick = (id: string, role: Role) => {
-    setUserId(id);
-    router.push(role === 'client' ? '/client' : '/freelancer');
-  };
   return (
     <main id="main-content" className="welcome">
       <div className="inner">
@@ -97,11 +90,7 @@ export default function Home() {
                 <h2>{title}</h2>
                 <p>{text}</p>
                 <div className="row">
-                  {(users.data ?? []).filter((u) => u.role === role).map((u) => (
-                    <Button key={u.id} variant={role === 'client' ? 'primary' : 'secondary'} onClick={() => pick(u.id, role)}>
-                      Continue as {u.name}
-                    </Button>
-                  ))}
+                  <ButtonLink href={`/login?role=${role}`}>Log in as {role}</ButtonLink>
                 </div>
               </SpotlightCard>
             ))}
