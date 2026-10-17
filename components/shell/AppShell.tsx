@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { MENUS, NAV, TOP_LINKS } from '@/lib/nav';
+import { HOME, LEAD, MENUS, PROFILE, TOP_LINKS } from '@/lib/nav';
 import { clearUser } from '@/lib/session';
 import { SERVICES } from '@/lib/services';
 import type { Role } from '@/lib/types';
@@ -24,7 +24,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
   const [q, setQ] = useState('');
   const [open, setOpen] = useState<MenuId | null>(null);
   const navRef = useRef<HTMLElement>(null);
-  const dash = NAV[role][0];
+  const lead = LEAD[role];
   const links = TOP_LINKS[role];
   const jobsMenu = MENUS[role];
   const searchBase = role === 'client' ? '/client/freelancers' : '/freelancer/jobs';
@@ -41,7 +41,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
 
   const isHere = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
   // The most specific link wins, so /client/jobs/new is not also "My jobs".
-  const all = [dash.href, ...links.map((l) => l.href), ...(jobsMenu?.items.map((i) => i.href) ?? [])];
+  const all = [...(lead ? [lead.href] : []), ...links.map((l) => l.href), ...(jobsMenu?.items.map((i) => i.href) ?? [])];
   const current = all.filter(isHere).sort((a, b) => b.length - a.length)[0];
   const jobsActive = Boolean(jobsMenu?.items.some((i) => i.href === current));
   const servicesQuery = (value: { category?: string; q?: string }) => {
@@ -62,10 +62,10 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
     <div className="shell">
       <header className="topnav">
         <div className="topnav-row">
-          <Link href={`/${role}`} className="brand topnav-brand">Scope Change Desk</Link>
+          <Link href={HOME[role]} className="brand topnav-brand">Scope Change Desk</Link>
 
           <nav className="topnav-menu" aria-label="Main" ref={navRef}>
-            <Link href={dash.href} className="topnav-link" aria-current={dash.href === current ? 'page' : undefined}>{dash.label}</Link>
+            {lead ? <Link href={lead.href} className="topnav-link" aria-current={lead.href === current ? 'page' : undefined}>{lead.label}</Link> : null}
 
             {jobsMenu ? (
             <div className="topnav-item" onMouseEnter={() => setOpen('jobs')} onMouseLeave={() => setOpen(null)}>
@@ -139,7 +139,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
 
           <div className="usermenu">
             <span className="usermenu-name">{user ? `${user.name}` : ''}<small>{user ? user.role : ''}</small></span>
-            <span className="avatar" aria-hidden="true">{user ? initials(user.name) : ''}</span>
+            <Link href={PROFILE[role]} className="avatar avatar-link" aria-label="Open your profile" aria-current={pathname.startsWith(PROFILE[role]) ? 'page' : undefined}>{user ? initials(user.name) : ''}</Link>
             <button className="btn secondary" onClick={() => { clearUser(); router.push('/login'); }}>Log out</button>
           </div>
         </div>

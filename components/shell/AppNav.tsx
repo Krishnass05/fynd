@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import PillNav from '@/components/fx/PillNav';
-import { NAV } from '@/lib/nav';
+import { HOME, NAV } from '@/lib/nav';
 import type { Role } from '@/lib/types';
 
 const PUBLIC_ITEMS = [
@@ -34,7 +34,7 @@ export default function AppNav({ role }: { role?: Role }) {
     <PillNav
       logo={<Mark />}
       logoAlt="Scope Change Desk, home"
-      logoHref={role ? `/${role}` : '/'}
+      logoHref={role ? HOME[role] : '/'}
       items={items}
       activeHref={best?.href ?? ''}
       linkComponent={Link}

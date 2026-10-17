@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import { login } from '@/lib/api';
+import { HOME } from '@/lib/nav';
 import { setUserId } from '@/lib/session';
 import type { Role } from '@/lib/types';
 import AppNav from '@/components/shell/AppNav';
@@ -32,7 +33,7 @@ function LoginForm() {
     try {
       const user = await login({ email, password, role });
       setUserId(user.id);
-      router.push(user.role === 'client' ? '/client' : '/freelancer');
+      router.push(HOME[user.role]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not log in');
       setBusy(false);

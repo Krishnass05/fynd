@@ -8,6 +8,7 @@ export interface User {
   name: string;
   role: Role;
   skills: string[];
+  email?: string; // what the person entered when they registered (demo accounts only for now)
   demo?: boolean; // shown on the start page as a one-click demo login
   // Freelancer profile fields. Seed values are sample data, not real people or real ratings.
   headline?: string;

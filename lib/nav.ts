@@ -11,11 +11,11 @@ export interface NavItem {
 
 export const NAV: Record<Role, NavItem[]> = {
   client: [
-    { href: '/client', label: 'Dashboard', icon: 'home' },
     { href: '/client/freelancers', label: 'Find freelancers', icon: 'search' },
     { href: '/client/jobs', label: 'My jobs', icon: 'jobs' },
     { href: '/client/saved', label: 'Saved', icon: 'heart' },
     { href: '/client/jobs/new', label: 'Post a job', icon: 'plus' },
+    { href: '/client/profile', label: 'Profile', icon: 'user' },
   ],
   freelancer: [
     { href: '/freelancer', label: 'Dashboard', icon: 'home' },
@@ -52,3 +52,10 @@ export const MENUS: Record<Role, MegaMenu | null> = {
   },
   freelancer: null,
 };
+
+// Where each side opens after login and where the logo goes. The client dashboard is not the first
+// page: it sits under the client's profile (the avatar in the top bar).
+export const HOME: Record<Role, string> = { client: '/client/freelancers', freelancer: '/freelancer' };
+export const PROFILE: Record<Role, string> = { client: '/client/profile', freelancer: '/freelancer/profile' };
+// The link before the drop-down menus in the desktop top bar (clients have none).
+export const LEAD: Record<Role, NavItem | null> = { client: null, freelancer: { href: '/freelancer', label: 'Dashboard', icon: 'home' } };

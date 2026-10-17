@@ -30,6 +30,9 @@ assert.equal((await L({ email: 'client@demo.test', password: 'nope', role: 'clie
 assert.equal((await L({ email: 'not-an-email', password: 'x', role: 'client' })).status, 400, 'bad email');
 assert.equal((await L({ email: 'client@demo.test', password: '', role: 'client' })).status, 400, 'missing password');
 
+// the client profile shows the details the person registered with
+assert.equal((await ok('GET', '/api/me', 'u_client1')).email, 'client@demo.test');
+
 // seeded project P1 shows every milestone state
 const p1 = await ok('GET', '/api/projects/P1', CLIENT);
 assert.deepEqual(p1.milestones.map((m) => m.status), ['approved', 'ready', 'pending']);
