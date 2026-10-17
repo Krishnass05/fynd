@@ -2,7 +2,7 @@
 // This is the ONLY file that knows where data lives. Supabase replaces it later; nothing else changes.
 import { ScopeDesk } from '@/lib/engine/scopeDesk';
 import fixture from '../../fixture.json';
-import type { Application, CompareLabel, Job, Message, Project, SowDocument, User } from '@/lib/types';
+import type { Application, CallSignal, CompareLabel, Job, Message, Project, SowDocument, User } from '@/lib/types';
 
 export interface Db {
   users: User[];
@@ -11,6 +11,7 @@ export interface Db {
   projects: Project[];
   sow: SowDocument[];
   messages: Message[];
+  signals: CallSignal[];
   desks: Map<string, ScopeDesk>;
   labels: Map<string, Record<string, CompareLabel>>;
   hashes: Map<string, string>; // projectId:sha256(text) -> sow document id, to ignore repeat uploads
@@ -52,7 +53,7 @@ function seed(): Db {
   // Project P1 starts with the case fixture so the three case checks are visible straight away.
   const desks = new Map<string, ScopeDesk>([['P1', ScopeDesk.fromFixture(fixture)]]);
   const labels = new Map<string, Record<string, CompareLabel>>([['P1', {}]]);
-  return { users, jobs, applications, projects, sow, messages, desks, labels, hashes: new Map(), seq: 100 };
+  return { users, jobs, applications, projects, sow, messages, signals: [], desks, labels, hashes: new Map(), seq: 100 };
 }
 
 const g = globalThis as unknown as { __scopeDeskDb?: Db };
@@ -70,4 +71,11 @@ export function nextId(prefix: string): string {
   const d = db();
   d.seq += 1;
   return `${prefix}${d.seq}`;
+}
+
+// Monotonic number for call-signal polling ("give me signals newer than this").
+export function nextSeq(): number {
+  const d = db();
+  d.seq += 1;
+  return d.seq;
 }

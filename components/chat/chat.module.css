@@ -1,0 +1,150 @@
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chatTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.liveIndicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--ok);
+  box-shadow: 0 0 0 2px var(--okbg);
+}
+
+.chatLog {
+  max-height: 380px;
+  min-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 4px;
+  scroll-behavior: smooth;
+}
+
+.messageRow {
+  display: flex;
+  flex-direction: column;
+  max-width: 82%;
+}
+
+.messageRowMe {
+  align-self: flex-end;
+}
+
+.messageRowOther {
+  align-self: flex-start;
+}
+
+.messageMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.messageRowMe .messageMeta {
+  justify-content: flex-end;
+}
+
+.senderName {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.messageBubble {
+  border-radius: 14px;
+  padding: 10px 14px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.45;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.bubbleMe {
+  background: var(--brand);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.bubbleOther {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 4px;
+}
+
+.messageForm {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding-top: 6px;
+}
+
+.inputWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.textInput {
+  width: 100%;
+  min-height: 44px;
+  max-height: 120px;
+  resize: vertical;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.textInput:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: -1px;
+}
+
+.sendButton {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.emptyNotice {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  margin: 12px 0;
+}

@@ -204,6 +204,23 @@ export interface DemoResult {
   steps: DemoStep[];
 }
 
+// ---- workspace call (audio-only voice call + on-demand screen share) ----
+// The call stays inside Fynd: signaling is in-app and the "room" is the project,
+// gated by projectFor(). No contact details are stored or exchanged, and the
+// camera is never requested — only the mic and, optionally, the screen.
+export type CallSignalType = 'ring' | 'offer' | 'answer' | 'ice' | 'hangup' | 'reject';
+
+export interface CallSignal {
+  id: string;
+  seq: number; // monotonic, used for polling ("give me signals newer than this")
+  projectId: string;
+  fromUserId: string;
+  toUserId: string; // only the other project member receives this signal
+  type: CallSignalType;
+  payload: string; // JSON string: SDP (offer/answer) or an ICE candidate; '' for ring/hangup/reject
+  at: string;
+}
+
 export interface ApiErrorBody {
   error: string;
   type: 'validation' | 'conflict' | 'forbidden' | 'not_found' | 'server';

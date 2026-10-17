@@ -1,7 +1,7 @@
 // The ONLY way pages talk to the server. OWNER: Krishna. Do not call fetch in pages.
 // Every function throws an Error whose message is safe to show to the user.
 import type {
-  Application, DemoResult, FreelancerDashboard, Job, JobDetail, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
+  Application, CallSignal, DemoResult, FreelancerDashboard, Job, JobDetail, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
 } from './types';
 import { getUserId } from './session';
 
@@ -66,3 +66,11 @@ export const getFreelancerDashboard = () => call<FreelancerDashboard>('/api/dash
 // demo and reset
 export const runCaseChecks = () => call<DemoResult>('/api/demo');
 export const resetData = () => post<{ ok: true }>('/api/reset');
+
+// workspace call (audio-only voice call + on-demand screen share)
+// Signaling stays in-app; the room is the project, gated by the server.
+export const startCall = (projectId: string) => post<CallSignal>(`/api/projects/${projectId}/call`, {});
+export const pollCallSignals = (projectId: string, since: number) =>
+  call<CallSignal[]>(`/api/projects/${projectId}/call/signals?since=${since}`);
+export const sendCallSignal = (projectId: string, body: { type: string; payload?: string }) =>
+  post<CallSignal>(`/api/projects/${projectId}/call/signal`, body);
