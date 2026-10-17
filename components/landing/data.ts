@@ -34,7 +34,7 @@ export const CATEGORIES: Category[] = [
   { slug: 'admin-support', name: 'Admin & Support', description: 'Virtual assistance, customer service, and operations.', image: '/img/categories/admin-support.png', alt: 'Four people joining hands over a desk of papers, a team working together', tone: '#eb5e28', to: { category: A } },
   { slug: 'finance-accounting', name: 'Finance & Accounting', description: 'Bookkeeping, financial analysis, and accounting.', image: '/img/categories/finance-accounting.png', alt: 'A calculator lying on printed charts and graphs', tone: '#ccc5b9', to: { q: 'data analysis' } },
   { slug: 'legal', name: 'Legal', description: 'Legal research, documentation, and professional legal services.', image: '/img/categories/legal.png', alt: 'A bronze statue of Lady Justice holding scales and a sword', tone: '#403d39', to: { category: B } },
-  { slug: 'hr-training', name: 'HR & Training', description: 'Recruitment, training, talent development, and HR support.', image: '/img/categories/hr-training.svg', alt: 'Three people around a presentation board', tone: '#eb5e28', to: { q: 'project management' } },
+  { slug: 'hr-training', name: 'HR & Training', description: 'Recruitment, training, talent development, and HR support.', image: '/img/categories/hr-training.png', alt: 'Three women in a meeting around a white table in a bright office', tone: '#eb5e28', to: { q: 'project management' } },
   { slug: 'engineering-architecture', name: 'Engineering & Architecture', description: 'Architecture, CAD, engineering, and technical design.', image: '/img/categories/engineering-architecture.svg', alt: 'A blueprint of a building with a set square', tone: '#ccc5b9', to: { category: E } },
 ];
 
