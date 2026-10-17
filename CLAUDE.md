@@ -92,6 +92,7 @@ Design of `scopeDesk.js`:
 - Small, clear commits under the teammate's own git identity.
 - Merge to `main` via PR every 2–4 hours. Feature freeze at hour 20.
 - Keep the README current as features land.
+- Keep `decision.md` and `flow.md` (repo root) current. When a decision is made or changed, add a row to `decision.md` the same day (never delete rows; mark them replaced). When behaviour changes, update the matching diagram in `flow.md` and say so in the pull request.
 
 ## Team documents (shared, outside the repo)
 

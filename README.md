@@ -38,6 +38,10 @@ Needs Node 20+. Data is held in server memory and resets on restart. Supabase re
 | Reject | Never counted as committed. Can return only through reopen with a reason |
 | Import | Same id and content is ignored, so no double charge or double booking |
 
+## Decisions and flows
+
+[decision.md](decision.md) records why each choice was made. [flow.md](flow.md) draws the user journey, the SOW comparison, the change-order states and how the team ships.
+
 ## Design
 
 Colours, type, motion and accessibility rules are in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md).

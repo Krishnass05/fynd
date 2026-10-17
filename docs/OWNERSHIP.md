@@ -4,7 +4,7 @@ Editing only your own folders is how we avoid merge conflicts. GitHub also asks 
 
 | Person | GitHub | Folders and files only they edit |
 | --- | --- | --- |
-| Krishna | Krishnass05 | `app/api/**`, `lib/**` (engine, server, types, api, session, hooks, nav), `supabase/**`, `app/(freelancer)/**`, `app/page.tsx`, `app/demo/**`, `components/sow/**`, `components/fx/**` (React Bits animations), `docs/DESIGN_SYSTEM.md`, `scripts/**`, `fixture.json`, `docs/API_CONTRACT.md` |
+| Krishna | Krishnass05 | `app/api/**`, `lib/**` (engine, server, types, api, session, hooks, nav), `supabase/**`, `app/(freelancer)/**`, `app/page.tsx`, `app/demo/**`, `components/sow/**`, `components/fx/**` (React Bits animations), `docs/DESIGN_SYSTEM.md`, `decision.md`, `flow.md`, `scripts/**`, `fixture.json`, `docs/API_CONTRACT.md` |
 | Sanjana | vincezo-ks | `components/ui/**`, `components/shell/**`, `app/globals.css`, `app/(client)/layout.tsx`, `app/(client)/client/page.tsx`, `app/(client)/client/jobs/**`, her `frontend/` design folder |
 | Harini | chinthakuntaharini | `components/chat/**`, `components/changes/**`, `app/(client)/client/projects/**` |
 | Swapnil | swapnil2648r-droid | `docs/sow/**` (his own files), demo script and business-proof documents |
