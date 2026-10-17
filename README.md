@@ -1,52 +1,51 @@
-# C35 Freelancer Scope Change Desk
+# C35 Scope Change Desk
 
-Fynd x NMIMS Hyderabad hackathon, 17-18 Oct 2026. A workflow aid that turns a vague client change request into a scope decision, a cost estimate and an approval record. It is not legal advice. All data is synthetic.
+Fynd x NMIMS Hyderabad hackathon, 17-18 Oct 2026. A client posts a job, a freelancer applies, they chat in a project workspace and share a signed SOW. When the client later uploads an amended SOW, the site compares the two, prices each extra item before tax, flags anything unusual, and records the client's decision. All data is synthetic. It is a workflow aid, not legal advice.
 
 ## Run and test
 
 ```bash
-npm start   # http://localhost:3000
-npm test    # 21 tests
+npm install
+npm run dev     # http://localhost:3000
+npm test        # rules engine tests
+npm run build   # type check and production build
+npm run smoke   # end-to-end API test (start the app first)
 ```
 
-Needs Node 20+. No dependencies. The UI (`public/`) only calls the rules engine through a small server (`server.js`). Each change is saved to `data/latest.json` (ignored by git) and can be exported as JSON or CSV from the page. The saved file is a record for evidence; it is not reloaded on restart.
+Needs Node 20+. Data is held in server memory and resets on restart. Supabase replaces it before the live deploy.
 
-## For teammates
+## How it fits together
 
-Read [TEAM_GUIDE.md](TEAM_GUIDE.md) for setup, the branch rules and how to send work to `main`. Statements of Work go in [docs/sow](docs/sow/README.md).
+| Part | Where | Notes |
+| --- | --- | --- |
+| Rules engine (money, approvals, capacity, audit) | `lib/engine/` | Plain JavaScript with tests. Every price and decision comes from here |
+| SOW reader and comparison | `lib/server/sow.ts` | Reads .txt and .md for now |
+| API | `app/api/**`, `lib/server/` | Contract in [docs/API_CONTRACT.md](docs/API_CONTRACT.md) |
+| Client pages | `app/(client)/` | Jobs, applicants, project page, change orders |
+| Freelancer pages | `app/(freelancer)/` | Find jobs, apply, profile, project workspace |
+| Shared parts | `components/` | UI kit, chat, change list, SOW upload |
+| Case checks | `/demo` page and `lib/engine/demo.js` | The 3 outcome checks in printed order |
 
-## Data note
-
-`fixture.json` is **reconstructed** from the case brief (flagged by `"_reconstructed": true`). It is not the organisers' original file. Swap in the official one if you get it.
-
-## Rules (all in `scopeDesk.js`)
+## Rules the engine enforces
 
 | Rule | Behaviour |
 | --- | --- |
-| `null` hours | Unknown, never zero. Request needs clarification and has no estimate. |
-| Excluded item | Classified as a change, quoted at `hours x rate`, before taxes. |
-| Included item | In scope, no charge, but the hours use capacity. |
-| Defect rework | Our own bug: hours booked, charge 0. |
-| No scope match | Needs clarification. |
-| Urgent | 1.5x rush multiplier, labelled as an assumption. |
-| Approve | Only from `quoted`; refused if rejected, already approved, or hours exceed remaining capacity. |
-| Reject | Only from `quoted` or `needs_clarification`. Never counted as committed. |
-| Reopen | Rejected goes back to `quoted`; needs a name and a reason. |
-| Import | Keyed by id + SHA-256 of content. Same content is ignored and logged. Changed content makes a new version and voids the old approval. |
-| Validation | Whole batch checked first; one bad row imports nothing. |
+| `null` hours | Unknown, never zero. No price until clarified |
+| Excluded item in the signed SOW | A paid change, hours x rate, before tax |
+| Defect rework (our own bug) | Booked as effort, charged 0 |
+| Urgent | 1.5x rush multiplier, labelled as an assumption |
+| Approve | Only from quoted, refused if rejected, already approved or over capacity |
+| Reject | Never counted as committed. Can return only through reopen with a reason |
+| Import | Same id and content is ignored, so no double charge or double booking |
 
-Committed hours = approved + defect rework + in scope. Committed value = approved only.
+## For teammates
 
-Every action is written to the audit trail with a sequence number and version. `desk.snapshot()` returns the full state as plain JSON.
+Read [TEAM_GUIDE.md](TEAM_GUIDE.md) for setup and the branch rules, and [docs/OWNERSHIP.md](docs/OWNERSHIP.md) for who edits what. Statements of Work go in [docs/sow](docs/sow/README.md).
 
-## The three case checks
+## Data note
 
-Tests in `scopeDesk.test.js` are named `check 1`, `check 2`, `check 3`, in the printed order:
-
-1. 6 extra hours at 1000/hr = 6000 before taxes
-2. A rejected change does not become committed work
-3. Re-importing the same request does not double-charge or double-book
+`fixture.json` is **reconstructed** from the case brief (flagged by `"_reconstructed": true`). It is not the organisers' original file. Swap in the official one if you get it. It seeds the first project so the three case checks are visible straight away.
 
 ## Not built yet
 
-v1/v2 tags for the business-feedback improvement, optional language model with a labelled manual fallback, reloading saved state on restart.
+PDF reading, anomaly flags beyond the first few, Supabase storage and the live deploy, the final design, v1/v2 tags for the business-feedback improvement, optional language model reader with a labelled manual fallback.

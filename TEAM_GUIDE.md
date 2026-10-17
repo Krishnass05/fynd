@@ -49,10 +49,12 @@ Replace `harini` with your own branch name. The first time you push, GitHub may 
 ### 5. Check that everything works
 
 ```bash
+npm install
 npm test
+npm run dev
 ```
 
-You should see every test pass. To open the app, run `npm start` and visit http://localhost:3000. Press `Ctrl+C` to stop it.
+`npm install` downloads the project parts (a few minutes the first time, once). `npm test` should show every test passing. `npm run dev` opens the app at http://localhost:3000 (press `Ctrl+C` to stop it). Pick "Demo Client" or "Demo Freelancer" on the start page. Data is in memory and resets when you restart. Read [docs/OWNERSHIP.md](docs/OWNERSHIP.md) to see which folders are yours.
 
 ## Your daily routine
 
@@ -61,6 +63,7 @@ git checkout harini          # make sure you are on YOUR branch
 git pull origin main         # bring in the latest team work
 # ... make your changes ...
 npm test                     # must pass before you commit
+npm run build                # must pass before you open a pull request
 git add -A
 git commit -m "Short clear message about what you did"
 git push origin harini
