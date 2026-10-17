@@ -40,7 +40,7 @@ Status: **Done** (built), **Planned** (agreed, not built), **Open** (still to de
 
 | ID | Date | Decision | Why | Status |
 | --- | --- | --- | --- | --- |
-| D-23 | 2026-10-17 | Look: green, cream and white, Fraunces headings, Manrope text, pill buttons, taken from the Crafthire Lovable design. The ui-ux-pro-max tool suggested a blue palette instead; we kept green | The team picked the Crafthire design. Switching later is a token change | Done |
+| D-23 | 2026-10-17 | Look (replaced by D-40): green, cream and white, Fraunces headings, Manrope text, pill buttons, taken from the Crafthire Lovable design. The ui-ux-pro-max tool suggested a blue palette instead; we kept green | The team picked the Crafthire design. Switching later is a token change | Done |
 | D-24 | 2026-10-17 | Accessibility first: text contrast at least 4.5 to 1, form field borders 3 to 1 (`--line-strong`), skip link, global reduced-motion rule, SVG icons (no emoji) | Rules from ui-ux-pro-max, checked with a script | Done |
 | D-25 | 2026-10-17 | Motion: at most two animated things per screen. React Bits components used: BlurText, CountUp, SpotlightCard, PillNav. We skipped GSAP-based and WebGL ones | Weight, battery and the one-or-two rule | Done |
 | D-26 | 2026-10-17 | The shared `Card` is the pastel card from the reference picture (pill label, icon, facts, progress bar, footer with a dark button). `JobCard` and `ProjectCard` are ready-made versions | Requested by Krishna | Done |
@@ -52,6 +52,7 @@ Status: **Done** (built), **Planned** (agreed, not built), **Open** (still to de
 | D-37 | 2026-10-18 | Proposals are compared in a table that scrolls inside its own box on phones, with lowest price marked and each price shown against the job budget and the library price | FR38. Prices are the main thing a client compares | Done |
 | D-38 | 2026-10-18 | Milestones (FR42): the client splits the applicant's price when accepting (default 30/40/30, whole rupees, must add up exactly, a bad split changes nothing). The freelancer marks one ready, the client approves it. Record only, no money moves. Milestone page is `/client/projects/[id]/milestones`; Harini's project page is not edited until her PR merges | Matches what Upwork clients do (pay by milestone) without real payments (D-04). Avoids a merge conflict with PR #3 | Done |
 | D-39 | 2026-10-18 | Clients can browse freelancers (FR31 to FR34): search, category, skill, highest rate and availability filters, pastel cards, and a profile page. Eight sample freelancers, three of them demo logins. Ratings and job counts are sample numbers and the pages say so. Freelancers can edit their headline, about text, place and rate | Upwork-style discovery. Fake numbers are labelled so we never present them as real reviews (D-03 is unchanged for real reviews) | Done |
+| D-40 | 2026-10-18 | The whole site uses Krishna's five-colour palette: Space Indigo #22223B, Dusty Grape #4A4E69, Lilac Ash #9A8C98, Almond Silk #C9ADA7, Seashell #F2E9E4. Primary buttons and links are Dusty Grape, text is Space Indigo, the page is Seashell. Lilac Ash is decoration only (2.7:1 on Seashell), field borders use a darker lilac (3.9:1). Status colours stay green, red and amber | Requested by Krishna. Replaces the green look in D-23. Contrast was checked for every pairing | Done |
 
 ## Team and process
 

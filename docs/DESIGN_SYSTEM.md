@@ -1,6 +1,18 @@
 # Design system
 
-Rules for how the app looks and moves. Sanjana owns the final look. Everyone follows these so the pages feel like one product. Built from the Crafthire design you shared (green, cream, serif headings), checked against the ui-ux-pro-max rules (accessibility first, restrained motion), with animation from React Bits.
+Rules for how the app looks and moves. Sanjana owns the final look. Everyone follows these so the pages feel like one product. Colours come from the five-colour palette below; the layout and headings follow the Crafthire design. Checked against the ui-ux-pro-max rules (accessibility first, restrained motion), with animation from React Bits.
+
+## Colour palette
+
+Five colours, chosen by Krishna. Everything on screen comes from these or a lighter or darker tint of them.
+
+| Name | Hex | Where it is used |
+| --- | --- | --- |
+| Space Indigo | `#22223B` | Body text, headings, the dark button |
+| Dusty Grape | `#4A4E69` | Primary buttons, links, the highlight in the navigation, secondary text |
+| Lilac Ash | `#9A8C98` | Decoration only (the start page gradient, the corner of the role tiles) |
+| Almond Silk | `#C9ADA7` | Soft panels, tags, dividers (lightened) |
+| Seashell | `#F2E9E4` | Page background |
 
 ## Tokens (already in `app/globals.css`)
 
@@ -8,17 +20,20 @@ Use the variables. Never put a raw colour in a component.
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `--bg` | cream `oklch(98.5% .008 95)` | page background |
-| `--card` | white | cards, inputs |
-| `--ink` / `--ink-strong` | deep green-black | body text / headings |
-| `--muted` | `oklch(48% .02 160)` | secondary text |
-| `--brand` | green `oklch(52% .13 155)` | primary buttons, links, highlights |
-| `--brand-soft` | pale green | neutral badges, bar tracks |
-| `--accent` | warm yellow | decorative tiles only |
-| `--line` | light grey-green | card edges and dividers (decoration) |
-| `--line-strong` | `oklch(62% .02 150)` | **form field borders** |
-| `--ok`, `--bad`, `--warn` (+ `bg`) | status colours | badges and alerts, always with a word |
+| `--bg` | `#F2E9E4` Seashell | page background |
+| `--card` | `#FBF8F5` (a lighter Seashell) | cards, inputs |
+| `--ink` / `--ink-strong` | `#22223B` Space Indigo | body text / headings |
+| `--muted` | `#4A4E69` Dusty Grape | secondary text |
+| `--brand` | `#4A4E69` Dusty Grape | primary buttons, links, highlights |
+| `--brand-soft` | `#E6D9D4` | neutral badges, bar tracks |
+| `--accent` | `#C9ADA7` Almond Silk | decorative tiles |
+| `--lilac` | `#9A8C98` Lilac Ash | decoration only, never text or field borders |
+| `--line` | `#E0D0CB` | card edges and dividers (decoration) |
+| `--line-strong` | `#7E707C` (a darker Lilac Ash) | **form field borders** |
+| `--ok`, `--bad`, `--warn` (+ `bg`) | green, red, amber | statuses. The palette has no green or red, so these stay recognisable and always come with a word |
 | `--radius` | `0.75rem` | cards and fields; buttons are pills |
+
+Card tints (`data-tone`): pink is an Almond Silk tint, blue a Dusty Grape tint, yellow a warm Seashell tint, green a Lilac Ash tint. The names are kept so older code keeps working; the colours come from the palette.
 
 Typography: Fraunces for headings (`--font-display`), Manrope for text (`--font-body`). Body 15px, line height 1.55. Spacing in steps of 4 and 8.
 
@@ -26,14 +41,17 @@ Typography: Fraunces for headings (`--font-display`), Manrope for text (`--font-
 
 | Pair | Ratio | Needs |
 | --- | --- | --- |
-| Body text on page | 17.2 : 1 | 4.5 |
-| Muted text on page / card | 6.2 / 6.5 : 1 | 4.5 |
-| White on primary button | 5.2 : 1 | 4.5 |
-| Links on page / card | 4.95 / 5.2 : 1 | 4.5 |
-| Status badges (good, bad, warn) | 5.7 to 6.5 : 1 | 4.5 |
-| Form field border on page / card | 3.2 to 3.9 : 1 | 3 |
+| Space Indigo on Seashell / card | 12.9 / 14.6 : 1 | 4.5 |
+| Dusty Grape (secondary text) on Seashell / card | 6.8 / 7.7 : 1 | 4.5 |
+| White on Dusty Grape (primary button) | 8.1 : 1 | 4.5 |
+| White on Space Indigo (dark button) | 15.4 : 1 | 4.5 |
+| Links (Dusty Grape) on Seashell | 6.8 : 1 | 4.5 |
+| Space Indigo on the four card tints | 11.3 to 13.1 : 1 | 4.5 |
+| Dusty Grape on the four card tints | 6.0 to 6.9 : 1 | 4.5 |
+| Status badges (good, bad, warn) | 5.0 to 5.5 : 1 | 4.5 |
+| Form field border (`--line-strong`) on Seashell / card | 3.9 / 4.4 : 1 | 3 |
 
-The thin `--line` border is 1.3 : 1. That is fine for card edges, but **never use it to outline a form field or a control**.
+**Lilac Ash itself is only 2.7 : 1 on Seashell.** Use it for decoration, never for text and never to outline a form field. The thin `--line` border is for card edges only, never for a field or a control.
 
 ## Motion
 
@@ -50,7 +68,7 @@ The thin `--line` border is 1.3 : 1. That is fine for card edges, but **never us
 | `BlurText` | start page headline | one reveal on load, readable by screen readers |
 | `CountUp` | dashboard numbers | shows that figures are live, ends on the real value |
 | `SpotlightCard` | role cards, project cards | a soft glow under the pointer, also appears on keyboard focus |
-| `PillNav` | the navigation bar on every page | marks the current page, fills the hovered link with green, folds into a menu button on phones |
+| `PillNav` | the navigation bar on every page | marks the current page, fills the hovered link with Dusty Grape, folds into a menu button on phones |
 
 Source: reactbits.dev (MIT with Commons Clause: free to use inside our product). The files were copied unchanged. Only these four are installed on purpose. FadeContent and similar pull in GSAP, and the WebGL backgrounds cost a lot of battery, so we left them out. To add another, copy it into `components/fx/`, recolour it with our tokens, and check it for reduced motion first.
 
@@ -72,7 +90,7 @@ Ready-made versions: `JobCard` (a job: status, description, budget, deadline) an
 
 ## Navigation
 
-Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `PillNav` in our colours (white bar, green highlight, light theme). `TopBar` puts it next to the user name and "Switch user" on the client and freelancer sides, and the start page and case-checks page show it on its own. The links come from `lib/nav.ts`. To add a page to the menu, add it there and nowhere else. Do not build a second nav.
+Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `PillNav` in our colours (light Seashell bar, Dusty Grape highlight, light theme). `TopBar` puts it next to the user name and "Switch user" on the client and freelancer sides, and the start page and case-checks page show it on its own. The links come from `lib/nav.ts`. To add a page to the menu, add it there and nowhere else. Do not build a second nav.
 
 ## Component rules
 
@@ -103,6 +121,6 @@ Every page is checked at 375px wide (a small phone), with long unbroken titles a
 - [ ] 375 px wide: no sideways scroll, nothing cut off, buttons at least 44px tall
 - [ ] No raw hex or `oklch` values in new CSS, only tokens
 
-## Open decision
+## History
 
-The ui-ux-pro-max tool suggested a different palette for a SaaS dashboard: flat style, blue `#0369A1` with green `#16A34A`, Plus Jakarta Sans. We kept the green and cream look from the Crafthire design instead, because the team picked it. Switching is a change of the token values and the two fonts in `globals.css` and `app/layout.tsx`, nothing else.
+The first look was green and cream, taken from the Crafthire design. On 18 October 2026 Krishna replaced it with the five-colour palette above (decision D-40). The ui-ux-pro-max tool had also suggested a blue and green SaaS palette; we did not use it.
