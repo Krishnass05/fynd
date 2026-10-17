@@ -53,6 +53,22 @@ The thin `--line` border is 1.3 : 1. That is fine for card edges, but **never us
 
 Source: reactbits.dev (MIT with Commons Clause: free to use inside our product). The files were copied unchanged. Only these three are installed on purpose. FadeContent and similar pull in GSAP, and the WebGL backgrounds cost a lot of battery, so we left them out. To add another, copy it into `components/fx/`, recolour it with our tokens, and check it for reduced motion first.
 
+## The card
+
+`Card` (in `components/ui`) is the pastel card from the reference design: a coloured panel with a pill label, title, description, a row of icon facts and a progress bar, then a white strip with a label on the left and a dark pill button on the right. Every page that uses `Card` gets this look.
+
+| Prop | What it does |
+| --- | --- |
+| `title`, children | the content (all the older pages pass) |
+| `badge` | pill label at the top left (for example a job status) |
+| `icon` | large decorative icon in a circle at the top right |
+| `progress` | `{ value: 0 to 100, label? }` draws the bar |
+| `footer` | the white strip, usually a text label plus `ButtonLink` |
+| `tone` | `pink`, `blue`, `yellow` or `green`. Left out, it is picked from the title so a card keeps its colour |
+| `plain` | the old flat white card, for dense content such as long forms or tables |
+
+Ready-made versions: `JobCard` (a job: status, description, budget, deadline) and `ProjectCard` (a project: capacity bar, facts, footer). Lists of cards use `<div className="card-grid">`. Icons are in `components/ui/icons.tsx` (one family). `Button` now also has a `dark` variant, and `ButtonLink` is a link styled as a button.
+
 ## Component rules
 
 - Use the shared parts from `components/ui` (Button, Card, Badge, ErrorMessage, EmptyState, Spinner, Field). Keep their export names and props stable.
