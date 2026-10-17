@@ -62,21 +62,21 @@ export default function Profile() {
                 fontWeight: 800,
               }}
             >
-              FD
+              H
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: 18, color: 'var(--space-indigo)' }}>
-                {data.name || 'Freelancer_Dev'}
+                {data.name || 'Harini'}
               </div>
               <div style={{ fontSize: 12, color: 'var(--muted)' }}>
-                Platform Handle: <strong>Freelancer_Dev</strong> · Hourly Rate: <strong>₹1,000/hr</strong> · Capacity: <strong>10h baseline</strong>
+                Platform Handle: <strong>Harini</strong> · Hourly Rate: <strong>₹1,000/hr</strong> · Capacity: <strong>10h baseline</strong>
               </div>
             </div>
           </div>
 
           <form onSubmit={save} key={data.name + data.skills.join()}>
             <Field label="Anonymous Platform Display Name">
-              <input name="name" defaultValue={data.name || 'Freelancer_Dev'} required maxLength={80} />
+              <input name="name" defaultValue={data.name || 'Harini'} required maxLength={80} />
             </Field>
             <Field label="Skills (separate with commas)">
               <input

@@ -154,7 +154,7 @@
         const text = customText || chatInput;
         if (!text.trim()) return;
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        setMessages(prev => [...prev, { id: Date.now(), sender: 'Freelancer_Dev', text, time: now }]);
+        setMessages(prev => [...prev, { id: Date.now(), sender: 'Harini', text, time: now }]);
         setChatInput('');
       };
 
@@ -162,7 +162,7 @@
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         setMessages(prev => [
           ...prev,
-          { id: Date.now(), sender: 'Freelancer_Dev', text: '@AI Analyze chat and quote scope variance', time: now },
+          { id: Date.now(), sender: 'Harini', text: '@AI Analyze chat and quote scope variance', time: now },
           { id: Date.now() + 1, sender: 'Meta_AI', text: '[@AI] Scanned messages against SOW v1.\n\n• Baseline Included: "one landing page", "contact form"\n• Baseline Excluded: "payment checkout"\n\nDetected Exclusion Override: R1 ("Add payment checkout") for 6h @ ₹1,000/hr = ₹6,000 before taxes.', time: now }
         ]);
       };

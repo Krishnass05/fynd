@@ -86,7 +86,6 @@ export default function TopBar({ role }: { role: Role }) {
       </div>
 
       <div className="topbar-right">
-        {/* Anonymous platform display name */}
         <span
           className="muted"
           style={{
@@ -99,7 +98,7 @@ export default function TopBar({ role }: { role: Role }) {
             color: 'var(--space-indigo)',
           }}
         >
-          {isFreelancer ? 'Freelancer_Dev' : 'Client_A'}
+          {isFreelancer ? (user?.name ? `${user.name} (Freelancer)` : 'Harini (Freelancer)') : 'Client_A (Client)'}
         </span>
 
         {/* Quick Role Switcher */}

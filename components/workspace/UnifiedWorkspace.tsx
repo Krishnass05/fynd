@@ -33,7 +33,7 @@ export interface ScopeRequestItem {
 
 export interface ChatMessage {
   id: string;
-  sender: 'Freelancer_Dev' | 'Client_A' | 'Meta_AI';
+  sender: 'Harini' | 'Freelancer_Dev' | 'Client_A' | 'Meta_AI';
   text: string;
   timestamp: string;
   redacted?: boolean;
@@ -208,7 +208,7 @@ export default function UnifiedWorkspace({
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const newMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
-      sender: 'Freelancer_Dev',
+      sender: 'Harini',
       text: clean,
       timestamp: timeStr,
       redacted: wasRedacted,
@@ -229,7 +229,7 @@ export default function UnifiedWorkspace({
       ...prev,
       {
         id: `msg-${Date.now()}`,
-        sender: 'Freelancer_Dev',
+        sender: 'Harini',
         text: `@AI ${customPrompt || 'Analyze chat history and quote scope variance against baseline SOW'}`,
         timestamp: timeStr,
       },
@@ -325,7 +325,7 @@ export default function UnifiedWorkspace({
       ...prev,
       {
         id: `msg-${Date.now()}`,
-        sender: 'Freelancer_Dev',
+        sender: 'Harini',
         text: `[Approved] Scope Change Approved: ${req.id} ("${req.text}") for ${req.hours}h (${money(req.billableTotal)} before tax). Baseline version advanced to v${scopeVersion + 1}.`,
         timestamp: now,
       },
@@ -351,7 +351,7 @@ export default function UnifiedWorkspace({
       ...prev,
       {
         id: `msg-${Date.now()}`,
-        sender: 'Freelancer_Dev',
+        sender: 'Harini',
         text: `[Rejected] Scope Change Rejected: ${req.id} ("${req.text}"). Reason: "${reason}". (0h booked, ₹0 billed). Version advanced to v${scopeVersion + 1}.`,
         timestamp: now,
       },
@@ -379,7 +379,7 @@ export default function UnifiedWorkspace({
       ...prev,
       {
         id: `msg-${Date.now()}`,
-        sender: 'Freelancer_Dev',
+        sender: 'Harini',
         text: `[Clarification] Clarification Requested for ${req.id} ("${req.text}"): ${note}`,
         timestamp: now,
       },
@@ -706,7 +706,7 @@ export default function UnifiedWorkspace({
             </div>
           ) : (
             messages.map((m) => {
-            const isMe = m.sender === 'Freelancer_Dev';
+            const isMe = m.sender === 'Harini' || m.sender === 'Freelancer_Dev';
             const isAi = m.sender === 'Meta_AI';
 
             if (isAi) {
@@ -1338,7 +1338,7 @@ export default function UnifiedWorkspace({
                 <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>[Video Stream]</div>
                 <div style={{ fontWeight: 700, fontSize: 16 }}>HD Peer-to-Peer Video Stream Active</div>
                 <div style={{ fontSize: 12, color: 'var(--almond-silk)' }}>
-                  Encrypted browser WebRTC session between Freelancer_Dev and Client_A
+                  Encrypted browser WebRTC session between Harini and Client_A
                 </div>
               </div>
             ) : (

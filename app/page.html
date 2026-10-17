@@ -143,11 +143,11 @@
     function AuthApp() {
       const [role, setRole] = React.useState('freelancer');
       const [tab, setTab] = React.useState('login');
-      const [handle, setHandle] = React.useState('Freelancer_Dev');
+      const [handle, setHandle] = React.useState('Harini');
 
       const handleRoleChange = (newRole) => {
         setRole(newRole);
-        setHandle(newRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A');
+        setHandle(newRole === 'freelancer' ? 'Harini' : 'Client_A');
       };
 
       const handleSubmit = (e) => {

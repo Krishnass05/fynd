@@ -311,8 +311,8 @@
       // Navigation / Auth State
       const [currentView, setCurrentView] = useState('auth'); // 'auth' | 'portal'
       const [userRole, setUserRole] = useState('freelancer'); // 'freelancer' | 'client'
-      const [anonymousHandle, setAnonymousHandle] = useState('Freelancer_Dev');
-      const [portalTab, setPortalTab] = useState('dashboard'); // 'dashboard' | 'jobs' | 'post-job' | 'profile'
+      const [anonymousHandle, setAnonymousHandle] = useState('Harini');
+      const [portalTab, setPortalTab] = useState('dashboard'); // 'dashboard' | 'jobs' | 'tasks' | 'alerts' | 'post-job' | 'profile'
       const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
 
       // Jobs Catalog State
@@ -442,7 +442,7 @@
           setPortalTab('dashboard');
         } else {
           setUserRole('freelancer');
-          setAnonymousHandle('Freelancer_Dev');
+          setAnonymousHandle('Harini');
           setPortalTab('dashboard');
         }
       }
@@ -468,7 +468,7 @@
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const newMsg = {
           id: `m_${Date.now()}`,
-          sender: userRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A',
+          sender: userRole === 'freelancer' ? anonymousHandle : 'Client_A',
           text: clean,
           timestamp: timeStr,
           redacted: wasRedacted
@@ -486,7 +486,7 @@
           ...prev,
           {
             id: `usr_ai_${Date.now()}`,
-            sender: userRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A',
+            sender: userRole === 'freelancer' ? anonymousHandle : 'Client_A',
             text: `@AI ${promptText || 'Extract scope change requests from chat and compare against baseline SOW'}`,
             timestamp: timeStr
           }
@@ -584,7 +584,7 @@
           ...prev,
           {
             id: `msg_appr_${Date.now()}`,
-            sender: userRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A',
+            sender: userRole === 'freelancer' ? anonymousHandle : 'Client_A',
             text: `[Approved] Scope Change Approved: ${req.id} ("${req.text}") for ${req.hours}h (${money(req.billableTotal)} before tax). Baseline version advanced to v${scopeVersion + 1}.`,
             timestamp: timeStr
           }
@@ -605,7 +605,7 @@
           ...prev,
           {
             id: `msg_rej_${Date.now()}`,
-            sender: userRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A',
+            sender: userRole === 'freelancer' ? anonymousHandle : 'Client_A',
             text: `[Rejected] Scope Change Rejected: ${req.id} ("${req.text}"). Reason: "${reason}". (0h booked, ₹0 billed). Version advanced to v${scopeVersion + 1}.`,
             timestamp: timeStr
           }
@@ -628,7 +628,7 @@
           ...prev,
           {
             id: `msg_clar_${Date.now()}`,
-            sender: userRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A',
+            sender: userRole === 'freelancer' ? anonymousHandle : 'Client_A',
             text: `[Clarify] Clarification Requested for ${req.id} ("${req.text}"): ${note}`,
             timestamp: timeStr
           }
@@ -849,7 +849,7 @@
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
-                      onClick={() => { setUserRole('freelancer'); setAnonymousHandle('Freelancer_Dev'); }}
+                      onClick={() => { setUserRole('freelancer'); setAnonymousHandle('Harini'); }}
                       className={`p-3.5 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${
                         userRole === 'freelancer'
                           ? 'border-carbon-black bg-floral-white text-carbon-black font-bold shadow-sm'
@@ -946,7 +946,7 @@
               </div>
 
               {/* Navigation Tabs based on Role */}
-              <nav className="flex items-center gap-1">
+              <nav className="flex items-center gap-1.5 flex-wrap">
                 <button
                   type="button"
                   onClick={() => { setPortalTab('dashboard'); setIsWorkspaceOpen(false); }}
@@ -960,30 +960,17 @@
                 </button>
 
                 {userRole === 'freelancer' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => { setPortalTab('jobs'); setIsWorkspaceOpen(false); }}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
-                        portalTab === 'jobs' && !isWorkspaceOpen
-                          ? 'bg-carbon-black text-floral-white shadow-sm'
-                          : 'text-charcoal-brown hover:bg-silver/20'
-                      }`}
-                    >
-                      Find Jobs
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setPortalTab('profile'); setIsWorkspaceOpen(false); }}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
-                        portalTab === 'profile' && !isWorkspaceOpen
-                          ? 'bg-carbon-black text-floral-white shadow-sm'
-                          : 'text-charcoal-brown hover:bg-silver/20'
-                      }`}
-                    >
-                      Profile
-                    </button>
-                  </>
+                  <button
+                    type="button"
+                    onClick={() => { setPortalTab('jobs'); setIsWorkspaceOpen(false); }}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                      portalTab === 'jobs' && !isWorkspaceOpen
+                        ? 'bg-carbon-black text-floral-white shadow-sm'
+                        : 'text-charcoal-brown hover:bg-silver/20'
+                    }`}
+                  >
+                    Find Jobs
+                  </button>
                 ) : (
                   <>
                     <button
@@ -1010,6 +997,60 @@
                     </button>
                   </>
                 )}
+
+                {/* TASKS: Task List Panel in Navigation Pane */}
+                <button
+                  type="button"
+                  onClick={() => { setPortalTab('tasks'); setIsWorkspaceOpen(false); }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    portalTab === 'tasks' && !isWorkspaceOpen
+                      ? 'bg-carbon-black text-floral-white shadow-sm'
+                      : 'text-charcoal-brown hover:bg-silver/20'
+                  }`}
+                  title="Open Task List Panel & Effort Capacity"
+                >
+                  <span>TASKS</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                    portalTab === 'tasks' && !isWorkspaceOpen
+                      ? 'bg-spicy-paprika text-white'
+                      : 'bg-silver/40 text-carbon-black'
+                  }`}>
+                    {remainingHours}h
+                  </span>
+                </button>
+
+                {/* ALERTS: Alert Notifications Panel in Navigation Pane */}
+                <button
+                  type="button"
+                  onClick={() => { setPortalTab('alerts'); setIsWorkspaceOpen(false); }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    portalTab === 'alerts' && !isWorkspaceOpen
+                      ? 'bg-carbon-black text-floral-white shadow-sm'
+                      : 'text-charcoal-brown hover:bg-silver/20'
+                  }`}
+                  title="Open Alert Notifications Panel"
+                >
+                  <span>ALERTS</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                    portalTab === 'alerts' && !isWorkspaceOpen
+                      ? 'bg-spicy-paprika text-white'
+                      : 'bg-spicy-paprika/20 text-spicy-paprika'
+                  }`}>
+                    {notifications.length}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setPortalTab('profile'); setIsWorkspaceOpen(false); }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    portalTab === 'profile' && !isWorkspaceOpen
+                      ? 'bg-carbon-black text-floral-white shadow-sm'
+                      : 'text-charcoal-brown hover:bg-silver/20'
+                  }`}
+                >
+                  Profile
+                </button>
 
                 {isWorkspaceOpen && (
                   <span className="ml-2 px-3 py-1 rounded-full text-[11px] font-bold bg-spicy-paprika text-white">
@@ -1088,12 +1129,12 @@
                     <div className="bg-carbon-black text-floral-white px-5 py-3.5 flex items-center justify-between border-b border-charcoal-brown">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-spicy-paprika text-white font-bold text-sm flex items-center justify-center">
-                          {userRole === 'freelancer' ? 'CA' : 'FD'}
+                          {userRole === 'freelancer' ? 'CA' : anonymousHandle.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-sm text-floral-white">
-                              {userRole === 'freelancer' ? 'Client_A' : 'Freelancer_Dev'}
+                              {userRole === 'freelancer' ? 'Client_A' : anonymousHandle}
                             </span>
                             <span className="w-2 h-2 rounded-full bg-spicy-paprika inline-block" title="Online" />
                           </div>
@@ -1490,84 +1531,11 @@
               </div>
             ) : (
               // ============================================================
-              // STEP 2 & 3: 3-COLUMN PORTAL (LEFT SIDEBAR + CENTER + RIGHT SIDEBAR)
-              // (Sidebars remain beside Dashboard, Jobs, and Profile! NO EMOJIS)
+              // STEP 2 & 3: MAIN PORTAL VIEW
+              // (TASKS and ALERTS have moved to the top navigation pane!)
               // ============================================================
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                {/* 1. LEFT SIDEBAR: Task List Panel (3 Cols, NO EMOJIS) */}
-                <aside className="lg:col-span-3 bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col gap-5 sticky top-20">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-bold bg-carbon-black text-floral-white px-2 py-0.5 rounded">TASKS</span>
-                      <h3 className="font-serif font-bold text-sm text-carbon-black">Task List Panel</h3>
-                    </div>
-                    <p className="text-xs text-charcoal-brown">Committed work items & capacity</p>
-                  </div>
-
-                  {/* Effort Capacity Widget */}
-                  <div className="bg-floral-white border border-silver rounded-xl p-3.5">
-                    <div className="flex justify-between items-baseline mb-2">
-                      <span className="text-[11px] font-bold text-carbon-black uppercase">Remaining Capacity</span>
-                      <span className={`text-base font-black ${remainingHours <= 2 ? 'text-spicy-paprika' : 'text-carbon-black'}`}>
-                        {remainingHours}h / 10h
-                      </span>
-                    </div>
-                    <div className="w-full h-2 bg-silver/40 rounded-full overflow-hidden mb-2">
-                      <div
-                        className="h-full bg-spicy-paprika transition-all duration-300"
-                        style={{ width: `${Math.min(100, (committedHours / 10) * 100)}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-[10px] text-charcoal-brown font-medium">
-                      <span>Rate: ₹1,000/hr</span>
-                      <span>10h baseline ceiling</span>
-                    </div>
-                  </div>
-
-                  {/* Committed Work Checklist */}
-                  <div>
-                    <div className="text-xs font-bold text-carbon-black mb-2">Committed Deliverables:</div>
-                    <div className="flex flex-col gap-2">
-                      {tasks.map(t => (
-                        <label key={t.id} className="flex items-start gap-2.5 p-2 rounded-lg bg-floral-white border border-silver/70 text-xs cursor-pointer hover:bg-silver/20 transition-all">
-                          <input
-                            type="checkbox"
-                            checked={t.completed}
-                            onChange={() => setTasks(prev => prev.map(item => item.id === t.id ? { ...item, completed: !item.completed } : item))}
-                            className="mt-0.5 cursor-pointer accent-[#EB5E28]"
-                          />
-                          <div className="flex-1">
-                            <span className={`font-semibold ${t.completed ? 'line-through text-charcoal-brown/60' : 'text-carbon-black'}`}>
-                              {t.label}
-                            </span>
-                            {t.isScopeChange && (
-                              <div className="text-[10px] text-spicy-paprika font-bold mt-0.5">[Scope Change] (+{t.hours}h)</div>
-                            )}
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Active Milestones */}
-                  <div className="border-t border-silver pt-3 text-xs">
-                    <div className="font-bold text-carbon-black mb-2">Active Milestones:</div>
-                    <div className="flex flex-col gap-1.5 text-charcoal-brown">
-                      <div className="flex items-center gap-1.5 font-medium">
-                        <span className="text-carbon-black font-bold">[Done]</span> M1: SOW & Wireframes
-                      </div>
-                      <div className="flex items-center gap-1.5 font-bold text-spicy-paprika">
-                        <span>[Active]</span> M2: Contact Form Integration
-                      </div>
-                      <div className="flex items-center gap-1.5 opacity-70">
-                        <span>[Pending]</span> M3: Payment Checkout
-                      </div>
-                    </div>
-                  </div>
-                </aside>
-
-                {/* 2. CENTER CONTENT AREA (6 Cols) - Dynamically Renders Tab */}
-                <main className="lg:col-span-6 flex flex-col gap-5">
+              <div className="w-full">
+                <main className="w-full flex flex-col gap-6">
                   {portalTab === 'dashboard' && (
                     <>
                       {/* Welcome Banner */}
@@ -1610,70 +1578,153 @@
                         </div>
                       </div>
 
-                      {/* Active Project Card */}
-                      <div className="bg-white border-2 border-silver rounded-2xl p-6 shadow-sm">
-                        <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[10px] bg-carbon-black text-floral-white px-2 py-0.5 rounded font-bold uppercase">Flagship Contract</span>
-                              <span className="text-xs text-charcoal-brown font-semibold">Client: Client_A · Baseline SOW v1</span>
+                      {/* Dashboard 2-Column Split: Active Contract & Scope (7 cols) + Quick Widgets (5 cols) */}
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        {/* Left: Active Project + Scope Actions (7 cols) */}
+                        <div className="lg:col-span-7 flex flex-col gap-6">
+                          {/* Active Project Card */}
+                          <div className="bg-white border-2 border-silver rounded-2xl p-6 shadow-sm">
+                            <div className="flex justify-between items-start mb-3">
+                              <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-[10px] bg-carbon-black text-floral-white px-2 py-0.5 rounded font-bold uppercase">Flagship Contract</span>
+                                  <span className="text-xs text-charcoal-brown font-semibold">Client: Client_A · Baseline SOW v1</span>
+                                </div>
+                                <h2 className="font-serif text-xl font-bold text-carbon-black">
+                                  Landing page for a small shop
+                                </h2>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setIsWorkspaceOpen(true)}
+                                className="px-4 py-2 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all"
+                              >
+                                [ Open Project Workspace ]
+                              </button>
                             </div>
-                            <h2 className="font-serif text-xl font-bold text-carbon-black">
-                              Landing page for a small shop
-                            </h2>
+
+                            <p className="text-xs text-charcoal-brown leading-relaxed mb-4">
+                              Develop a responsive, high-converting landing page with a validated contact form. Baseline capacity ceiling of 10 hours at ₹1,000/hr before tax. Features browser-native WebRTC calls, Meta-AI assistant, and ScopeDesk variance pricing.
+                            </p>
+
+                            <div className="bg-floral-white border border-silver rounded-xl p-3 flex justify-between items-center text-xs">
+                              <div>
+                                <strong className="text-carbon-black">Scope In:</strong> 1 landing page, contact form | <strong className="text-carbon-black">Scope Out:</strong> payment checkout
+                              </div>
+                              <span className="font-bold text-spicy-paprika">Budget: ₹10,000 (10h @ ₹1,000/hr)</span>
+                            </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => setIsWorkspaceOpen(true)}
-                            className="px-4 py-2 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all"
-                          >
-                            [ Open Project Workspace ]
-                          </button>
+
+                          {/* Pending Scope Desk Actions */}
+                          <div className="bg-white border border-silver rounded-2xl p-5 shadow-sm">
+                            <h3 className="font-serif font-bold text-sm text-carbon-black mb-3">
+                              Pending Scope Desk Actions
+                            </h3>
+                            <div className="flex flex-col gap-2.5">
+                              <div className="p-3 rounded-xl bg-floral-white border border-silver flex items-center justify-between">
+                                <div>
+                                  <div className="font-bold text-xs text-carbon-black">Request R1: &quot;Add payment checkout&quot; (6h)</div>
+                                  <div className="text-[11px] text-charcoal-brown">Explicit Exclusion Override · Estimated Quote: {money(6000)} before tax</div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsWorkspaceOpen(true)}
+                                  className="px-3 py-1.5 rounded-lg bg-carbon-black hover:bg-charcoal-brown text-floral-white text-xs font-bold transition-all"
+                                >
+                                  Review →
+                                </button>
+                              </div>
+
+                              <div className="p-3 rounded-xl bg-floral-white border border-silver flex items-center justify-between">
+                                <div>
+                                  <div className="font-bold text-xs text-carbon-black">Request R2: &quot;Fix our broken contact form&quot; (2h)</div>
+                                  <div className="text-[11px] text-charcoal-brown">Internal Defect Rework · Billable Quote: ₹0 (Effort logged, price 0)</div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsWorkspaceOpen(true)}
+                                  className="px-3 py-1.5 rounded-lg bg-carbon-black hover:bg-charcoal-brown text-floral-white text-xs font-bold transition-all"
+                                >
+                                  Review →
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
-                        <p className="text-xs text-charcoal-brown leading-relaxed mb-4">
-                          Develop a responsive, high-converting landing page with a validated contact form. Baseline capacity ceiling of 10 hours at ₹1,000/hr before tax. Features browser-native WebRTC calls, Meta-AI assistant, and ScopeDesk variance pricing.
-                        </p>
-
-                        <div className="bg-floral-white border border-silver rounded-xl p-3 flex justify-between items-center text-xs">
-                          <div>
-                            <strong className="text-carbon-black">Scope In:</strong> 1 landing page, contact form | <strong className="text-carbon-black">Scope Out:</strong> payment checkout
-                          </div>
-                          <span className="font-bold text-spicy-paprika">Budget: ₹10,000 (10h @ ₹1,000/hr)</span>
-                        </div>
-                      </div>
-
-                      {/* Pending Scope Desk Actions */}
-                      <div className="bg-white border border-silver rounded-2xl p-5 shadow-sm">
-                        <h3 className="font-serif font-bold text-sm text-carbon-black mb-3">
-                          Pending Scope Desk Actions
-                        </h3>
-                        <div className="flex flex-col gap-2.5">
-                          <div className="p-3 rounded-xl bg-floral-white border border-silver flex items-center justify-between">
-                            <div>
-                              <div className="font-bold text-xs text-carbon-black">Request R1: &quot;Add payment checkout&quot; (6h)</div>
-                              <div className="text-[11px] text-charcoal-brown">Explicit Exclusion Override · Estimated Quote: {money(6000)} before tax</div>
+                        {/* Right: Quick Access Cards to Tasks & Alerts (5 cols) */}
+                        <div className="lg:col-span-5 flex flex-col gap-6">
+                          {/* Tasks Quick Card */}
+                          <div className="bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col gap-3.5">
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold bg-carbon-black text-floral-white px-2 py-0.5 rounded">TASKS</span>
+                                <h3 className="font-serif font-bold text-sm text-carbon-black">Task List & Capacity</h3>
+                              </div>
+                              <span className={`text-xs font-black ${remainingHours <= 2 ? 'text-spicy-paprika' : 'text-carbon-black'}`}>
+                                {remainingHours}h / 10h Left
+                              </span>
                             </div>
+
+                            <div className="w-full h-2 bg-silver/40 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-spicy-paprika transition-all duration-300"
+                                style={{ width: `${Math.min(100, (committedHours / 10) * 100)}%` }}
+                              />
+                            </div>
+
+                            <div className="flex flex-col gap-1.5 text-xs">
+                              {tasks.slice(0, 2).map(t => (
+                                <div key={t.id} className="flex items-center justify-between p-2 rounded-lg bg-floral-white border border-silver/50">
+                                  <span className={`font-medium ${t.completed ? 'line-through text-charcoal-brown/60' : 'text-carbon-black'}`}>
+                                    {t.label}
+                                  </span>
+                                  <span className="text-[10px] font-bold text-charcoal-brown font-mono">{t.hours}h</span>
+                                </div>
+                              ))}
+                            </div>
+
                             <button
                               type="button"
-                              onClick={() => setIsWorkspaceOpen(true)}
-                              className="px-3 py-1.5 rounded-lg bg-carbon-black hover:bg-charcoal-brown text-floral-white text-xs font-bold transition-all"
+                              onClick={() => setPortalTab('tasks')}
+                              className="w-full py-2.5 rounded-xl border border-carbon-black bg-white hover:bg-carbon-black hover:text-floral-white text-carbon-black text-xs font-bold transition-all text-center"
                             >
-                              Review →
+                              Open Task List Panel ({remainingHours}h Capacity) →
                             </button>
                           </div>
 
-                          <div className="p-3 rounded-xl bg-floral-white border border-silver flex items-center justify-between">
-                            <div>
-                              <div className="font-bold text-xs text-carbon-black">Request R2: &quot;Fix our broken contact form&quot; (2h)</div>
-                              <div className="text-[11px] text-charcoal-brown">Internal Defect Rework · Billable Quote: ₹0 (Effort logged, price 0)</div>
+                          {/* Alerts Quick Card */}
+                          <div className="bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col gap-3.5">
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold bg-carbon-black text-floral-white px-2 py-0.5 rounded">ALERTS</span>
+                                <h3 className="font-serif font-bold text-sm text-carbon-black">Notifications</h3>
+                              </div>
+                              <span className="text-xs font-bold text-spicy-paprika font-mono">
+                                {notifications.length} Unread
+                              </span>
                             </div>
+
+                            <div className="flex flex-col gap-2">
+                              {notifications.slice(0, 2).map(n => (
+                                <div key={n.id} className="p-2.5 rounded-xl bg-floral-white border border-silver text-xs flex flex-col gap-0.5">
+                                  <div className="flex justify-between items-center font-bold text-carbon-black">
+                                    <span className="flex items-center gap-1">
+                                      <span className="font-mono text-[10px] text-spicy-paprika">[{n.tag}]</span> {n.title}
+                                    </span>
+                                    <span className="text-[9px] text-charcoal-brown font-normal">{n.time}</span>
+                                  </div>
+                                  <p className="text-charcoal-brown text-[11px] line-clamp-1">{n.desc}</p>
+                                </div>
+                              ))}
+                            </div>
+
                             <button
                               type="button"
-                              onClick={() => setIsWorkspaceOpen(true)}
-                              className="px-3 py-1.5 rounded-lg bg-carbon-black hover:bg-charcoal-brown text-floral-white text-xs font-bold transition-all"
+                              onClick={() => setPortalTab('alerts')}
+                              className="w-full py-2.5 rounded-xl border border-carbon-black bg-white hover:bg-carbon-black hover:text-floral-white text-carbon-black text-xs font-bold transition-all text-center"
                             >
-                              Review →
+                              Open Alert Notifications Panel ({notifications.length} Alerts) →
                             </button>
                           </div>
                         </div>
@@ -2002,22 +2053,310 @@
                     </div>
                   )}
 
+                  {portalTab === 'tasks' && (
+                    /* DEDICATED FULL TASK LIST PANEL */
+                    <div className="max-w-5xl mx-auto flex flex-col gap-6">
+                      {/* Header */}
+                      <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-xs font-bold bg-carbon-black text-floral-white px-2.5 py-0.5 rounded">TASKS</span>
+                            <h2 className="font-serif font-bold text-xl text-carbon-black">Task List Panel</h2>
+                          </div>
+                          <p className="text-xs text-charcoal-brown">
+                            Committed deliverables, effort capacity tracking & milestone progress.
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setIsWorkspaceOpen(true)}
+                            className="px-4 py-2 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all"
+                          >
+                            [ Open Project Workspace ]
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {/* Effort Capacity Widget */}
+                        <div className="bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                          <div>
+                            <div className="flex justify-between items-baseline mb-2">
+                              <span className="text-xs font-bold text-carbon-black uppercase">Remaining Capacity</span>
+                              <span className={`text-xl font-black ${remainingHours <= 2 ? 'text-spicy-paprika' : 'text-carbon-black'}`}>
+                                {remainingHours}h / 10h
+                              </span>
+                            </div>
+                            <div className="w-full h-2.5 bg-silver/40 rounded-full overflow-hidden mb-3">
+                              <div
+                                className="h-full bg-spicy-paprika transition-all duration-300"
+                                style={{ width: `${Math.min(100, (committedHours / 10) * 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex justify-between text-xs text-charcoal-brown font-medium pt-2 border-t border-silver/50">
+                            <span>Committed: {committedHours}h</span>
+                            <span>Baseline: 10h ceiling</span>
+                          </div>
+                        </div>
+
+                        {/* Billing Rate Widget */}
+                        <div className="bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                          <div>
+                            <div className="text-xs font-bold text-carbon-black uppercase mb-1">Standard Billing Rate</div>
+                            <div className="text-2xl font-black text-carbon-black mb-1">₹1,000 / hr</div>
+                            <div className="text-xs text-charcoal-brown">Straight hours × rate, before taxes</div>
+                          </div>
+                          <div className="text-xs text-charcoal-brown pt-2 border-t border-silver/50">
+                            Total Budget: <strong className="text-carbon-black">₹10,000</strong>
+                          </div>
+                        </div>
+
+                        {/* Capacity Status */}
+                        <div className="bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                          <div>
+                            <div className="text-xs font-bold text-carbon-black uppercase mb-1">Capacity Status</div>
+                            <div className="text-lg font-bold text-spicy-paprika mb-1">
+                              {remainingHours <= 2 ? 'Near Baseline Ceiling' : 'Capacity Available'}
+                            </div>
+                            <div className="text-xs text-charcoal-brown">
+                              {remainingHours} hours left before change-orders required.
+                            </div>
+                          </div>
+                          <div className="text-xs text-charcoal-brown pt-2 border-t border-silver/50">
+                            Scope Version: <strong className="text-carbon-black">v{scopeVersion}</strong>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Main Two-Column Layout for Deliverables & Milestones */}
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        {/* Committed Work Checklist (7 cols) */}
+                        <div className="lg:col-span-7 bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+                          <div className="flex justify-between items-center">
+                            <h3 className="font-serif font-bold text-base text-carbon-black">
+                              Committed Deliverables Checklist
+                            </h3>
+                            <span className="text-xs font-semibold text-charcoal-brown">
+                              {tasks.filter(t => t.completed).length} / {tasks.length} Completed
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col gap-2.5">
+                            {tasks.map(t => (
+                              <label
+                                key={t.id}
+                                className={`flex items-start gap-3 p-3.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                                  t.completed
+                                    ? 'bg-silver/10 border-silver/50 opacity-70'
+                                    : 'bg-floral-white border-silver hover:bg-silver/20'
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={t.completed}
+                                  onChange={() => setTasks(prev => prev.map(item => item.id === t.id ? { ...item, completed: !item.completed } : item))}
+                                  className="mt-0.5 cursor-pointer accent-[#EB5E28] w-4 h-4"
+                                />
+                                <div className="flex-1">
+                                  <div className="flex justify-between items-center">
+                                    <span className={`font-bold text-sm ${t.completed ? 'line-through text-charcoal-brown' : 'text-carbon-black'}`}>
+                                      {t.label}
+                                    </span>
+                                    <span className="text-xs font-bold text-charcoal-brown font-mono">
+                                      {t.hours}h
+                                    </span>
+                                  </div>
+                                  {t.isScopeChange && (
+                                    <div className="text-[11px] text-spicy-paprika font-bold mt-1">
+                                      [Scope Change Order] (+{t.hours}h @ ₹1,000/hr)
+                                    </div>
+                                  )}
+                                </div>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Active Milestones & Project Metadata (5 cols) */}
+                        <div className="lg:col-span-5 flex flex-col gap-4">
+                          <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+                            <h3 className="font-serif font-bold text-base text-carbon-black">
+                              Active Project Milestones
+                            </h3>
+                            <div className="flex flex-col gap-3">
+                              <div className="p-3 rounded-xl bg-floral-white border border-silver flex items-center justify-between">
+                                <div>
+                                  <div className="font-bold text-xs text-carbon-black">M1: SOW & Wireframes</div>
+                                  <div className="text-[11px] text-charcoal-brown">Baseline agreement signed</div>
+                                </div>
+                                <span className="text-[10px] font-bold bg-carbon-black text-floral-white px-2 py-0.5 rounded uppercase">Done</span>
+                              </div>
+
+                              <div className="p-3 rounded-xl bg-floral-white border border-spicy-paprika flex items-center justify-between">
+                                <div>
+                                  <div className="font-bold text-xs text-spicy-paprika">M2: Contact Form Integration</div>
+                                  <div className="text-[11px] text-charcoal-brown">Currently active sprint</div>
+                                </div>
+                                <span className="text-[10px] font-bold bg-spicy-paprika text-white px-2 py-0.5 rounded uppercase">Active</span>
+                              </div>
+
+                              <div className="p-3 rounded-xl bg-floral-white border border-silver opacity-70 flex items-center justify-between">
+                                <div>
+                                  <div className="font-bold text-xs text-carbon-black">M3: Payment Checkout</div>
+                                  <div className="text-[11px] text-charcoal-brown">Awaiting ScopeDesk approval</div>
+                                </div>
+                                <span className="text-[10px] font-bold bg-silver/50 text-carbon-black px-2 py-0.5 rounded uppercase">Pending</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Quick Scope Rules Box */}
+                          <div className="bg-floral-white border border-silver rounded-2xl p-5 text-xs text-charcoal-brown leading-relaxed flex flex-col gap-2">
+                            <div className="font-bold text-carbon-black uppercase text-[11px]">Scope Change Policy:</div>
+                            <p>Any items requested outside baseline SOW require explicit quote approval before work begins. Hours are strictly billed at ₹1,000/hr before taxes.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {portalTab === 'alerts' && (
+                    /* DEDICATED FULL ALERT NOTIFICATIONS PANEL */
+                    <div className="max-w-5xl mx-auto flex flex-col gap-6">
+                      {/* Header */}
+                      <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-xs font-bold bg-carbon-black text-floral-white px-2.5 py-0.5 rounded">ALERTS</span>
+                            <h2 className="font-serif font-bold text-xl text-carbon-black">Alert Notifications Panel</h2>
+                          </div>
+                          <p className="text-xs text-charcoal-brown">
+                            Real-time contract updates, scope variance alerts, WebRTC call events & quota warnings.
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => showToast('All notifications marked as read.')}
+                            className="px-3.5 py-1.5 rounded-xl border border-silver text-xs font-bold text-carbon-black bg-floral-white hover:bg-silver/30 transition-all"
+                          >
+                            Mark All Read
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsWorkspaceOpen(true)}
+                            className="px-4 py-2 rounded-xl bg-carbon-black hover:bg-charcoal-brown text-floral-white font-bold text-xs shadow-sm transition-all"
+                          >
+                            Open Workspace
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Notifications List */}
+                      <div className="flex flex-col gap-3">
+                        {notifications.map(n => (
+                          <div
+                            key={n.id}
+                            className={`p-5 rounded-2xl border text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 transition-all ${
+                              n.urgent ? 'bg-white border-spicy-paprika shadow-sm' : 'bg-white border-silver shadow-xs'
+                            }`}
+                          >
+                            <div className="flex items-start gap-3 flex-1">
+                              <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-floral-white border border-silver text-spicy-paprika shrink-0">
+                                [{n.tag}]
+                              </span>
+                              <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h4 className="font-bold text-sm text-carbon-black">{n.title}</h4>
+                                  {n.urgent && (
+                                    <span className="text-[10px] bg-spicy-paprika text-white px-2 py-0.5 rounded-full font-bold uppercase">
+                                      Action Required
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-charcoal-brown leading-relaxed text-xs">{n.desc}</p>
+                                <span className="text-[10px] text-charcoal-brown/70 mt-1 inline-block">{n.time}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                              {n.tag === 'SCOPE' && (
+                                <button
+                                  type="button"
+                                  onClick={() => setIsWorkspaceOpen(true)}
+                                  className="px-3 py-1.5 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-xs transition-all"
+                                >
+                                  Review Scope →
+                                </button>
+                              )}
+                              {n.tag === 'CALL' && (
+                                <button
+                                  type="button"
+                                  onClick={() => { setIsWorkspaceOpen(true); handleStartCall(); }}
+                                  className="px-3 py-1.5 rounded-xl bg-carbon-black hover:bg-charcoal-brown text-floral-white font-bold text-xs shadow-xs transition-all"
+                                >
+                                  Join Call →
+                                </button>
+                              )}
+                              {n.tag === 'QUOTA' && (
+                                <button
+                                  type="button"
+                                  onClick={() => setShowPaywallModal(true)}
+                                  className="px-3 py-1.5 rounded-xl bg-carbon-black hover:bg-charcoal-brown text-floral-white font-bold text-xs shadow-xs transition-all"
+                                >
+                                  Upgrade Pro →
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {portalTab === 'profile' && (
-                    /* PROFILE VIEW (NO EMOJIS) */
-                    <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-5">
+                    /* PROFILE VIEW (With Editable Name) */
+                    <div className="max-w-3xl mx-auto bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-5">
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-full bg-carbon-black text-floral-white font-black text-xl flex items-center justify-center shadow-sm">
                           {anonymousHandle.slice(0, 2).toUpperCase()}
                         </div>
-                        <div>
+                        <div className="flex-1">
                           <h2 className="font-serif text-xl font-bold text-carbon-black">{anonymousHandle}</h2>
                           <div className="flex items-center gap-2">
                             <span className="text-[10px] bg-silver/40 text-carbon-black px-2 py-0.5 rounded font-bold uppercase">
                               Platform Verified
                             </span>
-                            <span className="text-xs text-charcoal-brown">[Privacy-Guarded Identity]</span>
+                            <span className="text-xs text-charcoal-brown">[{userRole === 'freelancer' ? 'Freelancer' : 'Client'} Identity]</span>
                           </div>
                         </div>
+                      </div>
+
+                      {/* Editable User Name Section */}
+                      <div className="bg-floral-white border border-silver rounded-xl p-4 flex flex-col gap-2">
+                        <label className="text-xs font-bold text-carbon-black uppercase">Your Platform Name / Handle</label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={anonymousHandle}
+                            onChange={(e) => setAnonymousHandle(e.target.value)}
+                            className="flex-1 px-3.5 py-2.5 rounded-xl border border-silver bg-white text-carbon-black font-semibold text-xs focus:outline-none focus:border-carbon-black"
+                            placeholder="Enter your name"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => showToast(`Name updated to "${anonymousHandle}"!`)}
+                            className="px-4 py-2 rounded-xl bg-carbon-black hover:bg-charcoal-brown text-floral-white text-xs font-bold transition-all"
+                          >
+                            Update Name
+                          </button>
+                        </div>
+                        <p className="text-[11px] text-charcoal-brown">
+                          This name is displayed in the navigation pane header, project chat, and contracts.
+                        </p>
                       </div>
 
                       <div className="grid grid-cols-3 gap-3 text-center">
@@ -2051,44 +2390,6 @@
                     </div>
                   )}
                 </main>
-
-                {/* 3. RIGHT SIDEBAR: Notifications Panel (3 Cols, NO EMOJIS) */}
-                <aside className="lg:col-span-3 bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col gap-4 sticky top-20">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-bold bg-carbon-black text-floral-white px-2 py-0.5 rounded">ALERTS</span>
-                      <h3 className="font-serif font-bold text-sm text-carbon-black">Notifications Panel</h3>
-                    </div>
-                    <p className="text-xs text-charcoal-brown">Real-time workspace alerts</p>
-                  </div>
-
-                  <div className="flex flex-col gap-2.5">
-                    {notifications.map(n => (
-                      <div
-                        key={n.id}
-                        className={`p-3 rounded-xl border text-xs flex flex-col gap-1 transition-all ${
-                          n.urgent ? 'bg-floral-white border-carbon-black shadow-sm' : 'bg-white border-silver/60'
-                        }`}
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="font-bold text-carbon-black flex items-center gap-1.5">
-                            <span className="font-mono text-[10px] text-spicy-paprika font-bold">[{n.tag}]</span> {n.title}
-                          </span>
-                          <span className="text-[10px] text-charcoal-brown">{n.time}</span>
-                        </div>
-                        <p className="text-charcoal-brown leading-relaxed text-[11px]">{n.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsWorkspaceOpen(true)}
-                    className="w-full py-2.5 rounded-xl bg-carbon-black hover:bg-charcoal-brown text-floral-white font-bold text-xs uppercase tracking-wide transition-all mt-2 shadow-sm"
-                  >
-                    Open Project Workspace
-                  </button>
-                </aside>
               </div>
             )}
           </div>
@@ -2114,15 +2415,15 @@
                   <div className="h-52 bg-carbon-black rounded-xl flex flex-col items-center justify-center text-floral-white p-4 border border-charcoal-brown">
                     <div className="text-xs font-bold bg-spicy-paprika text-white px-3 py-1 rounded mb-2">HD VIDEO STREAM</div>
                     <div className="font-bold text-sm">HD Peer-to-Peer Video Stream Active</div>
-                    <div className="text-xs text-silver mt-1">Encrypted WebRTC between Freelancer_Dev and Client_A</div>
+                    <div className="text-xs text-silver mt-1">Encrypted WebRTC between {anonymousHandle} and Client_A</div>
                   </div>
                 ) : (
                   <div className="h-44 bg-floral-white rounded-xl border border-silver flex flex-col items-center justify-center p-4">
                     <div className="w-16 h-16 rounded-full bg-spicy-paprika text-white font-black text-2xl flex items-center justify-center mb-2 shadow-md">
-                      {userRole === 'freelancer' ? 'CA' : 'FD'}
+                      {userRole === 'freelancer' ? 'CA' : anonymousHandle.slice(0, 2).toUpperCase()}
                     </div>
                     <div className="font-bold text-sm text-carbon-black">
-                      Connected to {userRole === 'freelancer' ? 'Client_A' : 'Freelancer_Dev'}
+                      Connected to {userRole === 'freelancer' ? 'Client_A' : anonymousHandle}
                     </div>
                     {/* Animated Audio Waveform */}
                     <div className="flex items-center gap-1.5 mt-3">

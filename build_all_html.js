@@ -223,11 +223,11 @@ function buildAppPage() {
     function AuthApp() {
       const [role, setRole] = React.useState('freelancer');
       const [tab, setTab] = React.useState('login');
-      const [handle, setHandle] = React.useState('Freelancer_Dev');
+      const [handle, setHandle] = React.useState('Harini');
 
       const handleRoleChange = (newRole) => {
         setRole(newRole);
-        setHandle(newRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A');
+        setHandle(newRole === 'freelancer' ? 'Harini' : 'Client_A');
       };
 
       const handleSubmit = (e) => {
@@ -408,7 +408,7 @@ function buildClientDashboardPage() {
                   <span class="badge badge-carbon">[SOW v1 Locked]</span>
                 </div>
                 <div class="text-xs text-charcoal-brown">
-                  Freelancer: <strong>Freelancer_Dev</strong> &nbsp;|&nbsp; Rate: ₹1,000/hr &nbsp;|&nbsp; Capacity: 10h Baseline
+                  Freelancer: <strong>Harini</strong> &nbsp;|&nbsp; Rate: ₹1,000/hr &nbsp;|&nbsp; Capacity: 10h Baseline
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -602,7 +602,7 @@ function buildClientJobDetailPage() {
   const script = `
     function ClientJobDetail() {
       const applicants = [
-        { id: 'app_1', name: 'Freelancer_Dev', rate: 1000, pitch: 'Expert in Next.js, WebRTC, and scope change contracts. Built 14 verified projects.', verified: true },
+        { id: 'app_1', name: 'Harini', rate: 1000, pitch: 'Expert in Next.js, WebRTC, and scope change contracts. Built 14 verified projects.', verified: true },
         { id: 'app_2', name: 'Dev_Alex', rate: 1200, pitch: 'Full stack engineer with experience in privacy-first architectures.', verified: false }
       ];
 
@@ -656,7 +656,7 @@ function buildClientProjectDetailPage() {
             <div>
               <span class="badge badge-carbon mb-2">[Client Project Workspace]</span>
               <h1 class="text-2xl font-display font-bold text-carbon-black">Project P1: Responsive Landing Page</h1>
-              <p class="text-xs text-charcoal-brown">Freelancer: <strong>Freelancer_Dev</strong> &nbsp;|&nbsp; Rate: ₹1,000/hr before tax</p>
+              <p class="text-xs text-charcoal-brown">Freelancer: <strong>Harini</strong> &nbsp;|&nbsp; Rate: ₹1,000/hr before tax</p>
             </div>
             <a href="${relRoot}components/workspace/UnifiedWorkspace.html" class="btn btn-primary">Open Live Workspace (Chat + Call + ScopeDesk) →</a>
           </div>
@@ -1091,7 +1091,7 @@ function buildFreelancerPortalPage() {
                   <div class="flex items-center gap-4">
                     <div class="w-14 h-14 rounded-full bg-carbon-black text-floral-white flex items-center justify-center font-bold text-lg">FD</div>
                     <div>
-                      <h2 class="text-lg font-bold text-carbon-black">Freelancer_Dev</h2>
+                      <h2 class="text-lg font-bold text-carbon-black">Harini</h2>
                       <span class="badge badge-carbon">[Privacy-First Platform Profile]</span>
                     </div>
                   </div>
@@ -1300,7 +1300,7 @@ function buildFreelancerProfilePage() {
           <form onSubmit={handleSubmit} class="space-y-4">
             <div>
               <label class="block text-xs font-bold text-charcoal-brown mb-1">Anonymous Display Name</label>
-              <input type="text" disabled value="Freelancer_Dev" class="w-full px-3 py-2 border border-silver rounded-lg text-sm bg-silver/20 font-bold text-carbon-black" />
+              <input type="text" disabled value="Harini" class="w-full px-3 py-2 border border-silver rounded-lg text-sm bg-silver/20 font-bold text-carbon-black" />
             </div>
 
             <div>
@@ -1436,7 +1436,7 @@ function buildTopBarPage() {
       <div class="border border-silver rounded-xl p-4 bg-floral-white flex items-center justify-between">
         <div class="flex items-center gap-3">
           <span class="font-display font-bold text-lg text-carbon-black">Fynd ScopeDesk</span>
-          <span class="badge badge-carbon">[Role: Freelancer_Dev]</span>
+          <span class="badge badge-carbon">[Role: Harini (Freelancer)]</span>
         </div>
         <div class="flex items-center gap-4 text-xs font-semibold text-charcoal-brown">
           <a href="${relRoot}app/(freelancer)/freelancer/page.html" class="hover:text-spicy-paprika">Portal</a>
@@ -1463,7 +1463,7 @@ function buildChatPage() {
         const textToSend = txt || input;
         if (!textToSend.trim()) return;
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        setMessages([...messages, { id: Date.now(), sender: 'Freelancer_Dev', text: textToSend, time: now }]);
+        setMessages([...messages, { id: Date.now(), sender: 'Harini', text: textToSend, time: now }]);
         setInput('');
       };
 
@@ -1741,7 +1741,7 @@ function buildUnifiedWorkspacePage() {
         const text = customText || chatInput;
         if (!text.trim()) return;
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        setMessages(prev => [...prev, { id: Date.now(), sender: 'Freelancer_Dev', text, time: now }]);
+        setMessages(prev => [...prev, { id: Date.now(), sender: 'Harini', text, time: now }]);
         setChatInput('');
       };
 
@@ -1749,7 +1749,7 @@ function buildUnifiedWorkspacePage() {
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         setMessages(prev => [
           ...prev,
-          { id: Date.now(), sender: 'Freelancer_Dev', text: '@AI Analyze chat and quote scope variance', time: now },
+          { id: Date.now(), sender: 'Harini', text: '@AI Analyze chat and quote scope variance', time: now },
           { id: Date.now() + 1, sender: 'Meta_AI', text: '[@AI] Scanned messages against SOW v1.\\n\\n• Baseline Included: "one landing page", "contact form"\\n• Baseline Excluded: "payment checkout"\\n\\nDetected Exclusion Override: R1 ("Add payment checkout") for 6h @ ₹1,000/hr = ₹6,000 before taxes.', time: now }
         ]);
       };

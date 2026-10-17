@@ -15,12 +15,12 @@ export default function Home() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [selectedRole, setSelectedRole] = useState<Role>('freelancer');
-  const [anonymousHandle, setAnonymousHandle] = useState<string>('Freelancer_Dev');
+  const [anonymousHandle, setAnonymousHandle] = useState<string>('Harini');
 
   function handleRoleChange(newRole: Role) {
     setSelectedRole(newRole);
     if (newRole === 'freelancer') {
-      setAnonymousHandle('Freelancer_Dev');
+      setAnonymousHandle('Harini');
     } else {
       setAnonymousHandle('Client_A');
     }
@@ -186,7 +186,7 @@ export default function Home() {
                 type="text"
                 value={anonymousHandle}
                 onChange={(e) => setAnonymousHandle(e.target.value)}
-                placeholder="e.g. Freelancer_Dev"
+                placeholder="e.g. Harini"
                 required
                 style={{
                   background: 'var(--seashell)',
