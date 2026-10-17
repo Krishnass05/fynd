@@ -28,6 +28,7 @@ export type ApplicationStatus = 'pending' | 'accepted' | 'rejected';
 export interface Application {
   id: string;
   jobId: string;
+  jobTitle?: string; // filled in by the dashboard endpoint
   freelancerId: string;
   freelancerName: string;
   pitch: string;
@@ -164,6 +165,30 @@ export interface UploadSowResult {
 export interface JobDetail {
   job: Job;
   applications: Application[]; // owner client sees all; a freelancer sees only their own
+}
+
+export interface DashboardProject {
+  project: Project;
+  clientName: string;
+  totals: Totals;
+  hasBaseline: boolean;
+  counts: { awaitingClient: number; needsClarification: number; rejected: number; approved: number };
+}
+
+export interface AttentionItem {
+  kind: 'upload_sow' | 'clarify_hours' | 'rejected_change' | 'awaiting_client';
+  projectId: string;
+  projectTitle: string;
+  text: string;
+}
+
+// Everything the freelancer dashboard shows, in one call.
+export interface FreelancerDashboard {
+  stats: { activeProjects: number; pendingApplications: number; openJobs: number; approvedValue: number };
+  projects: DashboardProject[];
+  attention: AttentionItem[];
+  applications: Application[];
+  openJobs: Job[]; // newest open jobs the freelancer has not applied to, at most 3
 }
 
 export interface DemoStep {

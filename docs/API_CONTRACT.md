@@ -40,6 +40,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `approveChange` | `POST /api/projects/:id/changes/:changeId/approve` | client | `ProjectDetail` |
 | `rejectChange` | `POST /api/projects/:id/changes/:changeId/reject` `{reason}` | client | `ProjectDetail` |
 | `reopenChange` | `POST /api/projects/:id/changes/:changeId/reopen` `{reason}` | either | `ProjectDetail` (reason required) |
+| `getFreelancerDashboard` | `GET /api/dashboard` | freelancer | `FreelancerDashboard` (stats, projects with capacity and counts, things needing attention, applications, up to 3 open jobs) |
 | `runCaseChecks` | `GET /api/demo` | anyone | `DemoResult` (the 3 checks, in printed order) |
 | `resetData` | `POST /api/reset` | anyone (demos and tests) | `{ ok: true }` |
 

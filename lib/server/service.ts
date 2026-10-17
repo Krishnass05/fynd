@@ -4,8 +4,8 @@ import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
-  Application, ChangeRequest, DemoResult, Flag, Job, JobDetail, JobStatus, Message, Project,
-  ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
+  Application, AttentionItem, ChangeRequest, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
+  JobStatus, Message, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
@@ -241,5 +241,43 @@ export const rejectChange = (u: User, pid: string, cid: string, reason: unknown)
   decide(u, pid, cid, 'client', (d) => d.reject(cid, u.name, typeof reason === 'string' ? reason : undefined));
 export const reopenChange = (u: User, pid: string, cid: string, reason: unknown) =>
   decide(u, pid, cid, 'any', (d) => d.reopen(cid, u.name, typeof reason === 'string' ? reason : ''));
+
+// ---- freelancer dashboard ----
+export function freelancerDashboard(u: User): FreelancerDashboard {
+  if (u.role !== 'freelancer') throw forbidden('This dashboard is for freelancers');
+  const projects: DashboardProject[] = [];
+  const attention: AttentionItem[] = [];
+  for (const p of listProjects(u)) {
+    const d = getProject(u, p.id);
+    const count = (s: string) => d.changeRequests.filter((c) => c.state === s).length;
+    const hasBaseline = d.sowDocuments.some((s) => s.kind === 'baseline');
+    projects.push({
+      project: p, clientName: d.client.name, totals: d.totals, hasBaseline,
+      counts: { awaitingClient: count('quoted'), needsClarification: count('needs_clarification'), rejected: count('rejected'), approved: count('approved') },
+    });
+    const note = (kind: AttentionItem['kind'], text: string) => attention.push({ kind, projectId: p.id, projectTitle: p.jobTitle, text });
+    if (!hasBaseline) note('upload_sow', 'Upload the signed SOW so extra requests can be compared against it.');
+    for (const c of d.changeRequests) {
+      if (c.state === 'needs_clarification') note('clarify_hours', `${c.text}: hours are unknown, so it cannot be priced yet.`);
+      if (c.state === 'rejected') note('rejected_change', `${c.text} was rejected${c.decisionReason ? ` (${c.decisionReason})` : ''}. You can reopen it with a reason.`);
+    }
+    const waiting = count('quoted');
+    if (waiting) note('awaiting_client', `${waiting} change ${waiting === 1 ? 'order is' : 'orders are'} waiting for the client to decide.`);
+  }
+  const applications = db().applications
+    .filter((a) => a.freelancerId === u.id)
+    .map((a) => ({ ...a, jobTitle: db().jobs.find((j) => j.id === a.jobId)?.title }))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const open = db().jobs.filter((j) => j.status === 'open' && !hasApplied(u, j.id)).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return {
+    stats: {
+      activeProjects: projects.length,
+      pendingApplications: applications.filter((a) => a.status === 'pending').length,
+      openJobs: open.length,
+      approvedValue: projects.reduce((sum, p) => sum + p.totals.committedValue, 0),
+    },
+    projects, attention, applications, openJobs: open.slice(0, 3),
+  };
+}
 
 export const demo = (): DemoResult => runDemo();

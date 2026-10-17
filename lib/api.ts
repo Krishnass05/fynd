@@ -1,7 +1,7 @@
 // The ONLY way pages talk to the server. OWNER: Krishna. Do not call fetch in pages.
 // Every function throws an Error whose message is safe to show to the user.
 import type {
-  Application, DemoResult, Job, JobDetail, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
+  Application, DemoResult, FreelancerDashboard, Job, JobDetail, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
 } from './types';
 import { getUserId } from './session';
 
@@ -59,6 +59,9 @@ export const rejectChange = (projectId: string, changeId: string, reason: string
   post<ProjectDetail>(`/api/projects/${projectId}/changes/${changeId}/reject`, { reason });
 export const reopenChange = (projectId: string, changeId: string, reason: string) =>
   post<ProjectDetail>(`/api/projects/${projectId}/changes/${changeId}/reopen`, { reason });
+
+// freelancer dashboard (one call for everything on the page)
+export const getFreelancerDashboard = () => call<FreelancerDashboard>('/api/dashboard');
 
 // demo and reset
 export const runCaseChecks = () => call<DemoResult>('/api/demo');

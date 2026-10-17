@@ -22,6 +22,14 @@ const FREE = 'u_freelancer2';
 
 await ok('POST', '/api/reset');
 
+// freelancer dashboard on the seed data
+const seedDash = await ok('GET', '/api/dashboard', 'u_freelancer1');
+assert.equal(seedDash.stats.activeProjects, 1);
+assert.equal(seedDash.projects[0].counts.awaitingClient, 1, 'seed R1 is waiting for the client');
+assert.ok(seedDash.attention.some((a) => a.kind === 'awaiting_client'));
+assert.equal(seedDash.stats.openJobs, 1, 'seed job J2 is open');
+assert.equal((await call('GET', '/api/dashboard', CLIENT)).status, 403, 'dashboard is freelancer only');
+
 // hiring: post, apply, accept
 const job = await ok('POST', '/api/jobs', CLIENT, { title: 'Shop website', description: 'A small shop website with a contact form.', budget: 15000, deadline: '2026-12-01' });
 assert.equal(job.status, 'open');
@@ -31,6 +39,10 @@ assert.equal((await call('POST', `/api/jobs/${job.id}/applications`, FREE, { pit
 assert.equal((await call('POST', `/api/applications/${app.id}/accept`, FREE)).status, 403, 'freelancer cannot accept');
 const { projectId } = await ok('POST', `/api/applications/${app.id}/accept`, CLIENT);
 assert.equal((await call('POST', `/api/applications/${app.id}/accept`, CLIENT)).status, 409, 'cannot accept twice');
+const dash1 = await ok('GET', '/api/dashboard', FREE);
+assert.ok(dash1.attention.some((a) => a.kind === 'upload_sow' && a.projectId === projectId), 'asked to upload the signed SOW');
+assert.equal(dash1.applications.find((a) => a.id === app.id).status, 'accepted');
+assert.equal(dash1.applications.find((a) => a.id === app.id).jobTitle, 'Shop website');
 
 // chat
 await ok('POST', `/api/projects/${projectId}/messages`, FREE, { body: 'Hello, ready to start.' });
@@ -40,6 +52,7 @@ assert.equal((await ok('GET', `/api/projects/${projectId}/messages`, CLIENT)).le
 const baseline = ['Rate: Rs 1000/hr', '', 'Deliverables', '- One landing page', '- Contact form', '', 'Excluded', '- Payment checkout', '- Blog'].join('\n');
 const up1 = await ok('POST', `/api/projects/${projectId}/sow`, FREE, { kind: 'baseline', filename: 'signed.txt', text: baseline });
 assert.equal(up1.compare, null);
+assert.ok(!(await ok('GET', '/api/dashboard', FREE)).attention.some((a) => a.kind === 'upload_sow'), 'no SOW prompt once uploaded');
 assert.equal((await call('POST', `/api/projects/${projectId}/sow`, FREE, { kind: 'baseline', filename: 'again.txt', text: baseline + '\n- extra' })).status, 409, 'only one signed SOW');
 
 const amend = ['Deliverables', '- One landing page', '- Contact form', '- Payment checkout (6 hours)', '- Loyalty points page (4 hours)', '- Newsletter signup'].join('\n');
@@ -66,6 +79,9 @@ const reopened = await ok('POST', `/api/projects/${projectId}/changes/${checkout
 assert.equal(reopened.changeRequests.find((c) => c.id === checkout.id).state, 'quoted');
 const approved = await ok('POST', `/api/projects/${projectId}/changes/${checkout.id}/approve`, CLIENT);
 assert.equal(approved.totals.committedValue, 6000);
+const dash2 = await ok('GET', '/api/dashboard', FREE);
+assert.equal(dash2.stats.approvedValue, 6000);
+assert.equal(dash2.projects[0].counts.approved, 1);
 
 // check 3: same amendment again does not double-charge or double-book
 const again = await ok('POST', `/api/projects/${projectId}/sow`, CLIENT, { kind: 'amendment', filename: 'v2-again.txt', text: amend });
