@@ -23,6 +23,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
   const { user } = useUser(role);
   const [q, setQ] = useState('');
   const [open, setOpen] = useState<MenuId | null>(null);
+  const [domain, setDomain] = useState<number | null>(null); // the Services domain being hovered
   const navRef = useRef<HTMLElement>(null);
   const lead = LEAD[role];
   const links = TOP_LINKS[role];
@@ -38,6 +39,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
     return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick); };
   }, []);
   useEffect(() => setOpen(null), [pathname]);
+  useEffect(() => { if (open !== 'services') setDomain(null); }, [open]);
 
   const isHere = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
   // The most specific link wins, so /client/jobs/new is not also "My jobs".
@@ -109,24 +111,38 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
                 <div className="megamenu megamenu--wide" id="menu-services">
                   <div className="mega-intro">
                     <strong>Browse our services</strong>
-                    <span>{role === 'client' ? 'Pick a domain to see the freelancers who work in it.' : 'Pick a domain to see open jobs in it.'}</span>
+                    <span>{role === 'client' ? 'Hover a domain to see its topics. Pick one to see the freelancers who work in it.' : 'Hover a domain to see its topics. Pick one to see open jobs in it.'}</span>
                   </div>
-                  <div className="mega-body">
-                    <p className="mega-label">DOMAINS</p>
-                    <div className="mega-grid mega-grid--3">
-                      {SERVICES.map((d) => (
-                        <div key={d.name} className="mega-domain">
-                          <Link href={servicesQuery({ category: d.name })} className="mega-domain-title" onClick={() => setOpen(null)}>
-                            {d.name}<ChevronRight size={14} />
-                          </Link>
-                          <ul>
-                            {d.topics.slice(0, 5).map((t) => (
-                              <li key={t}><Link href={servicesQuery({ q: t })} onClick={() => setOpen(null)}>{t}</Link></li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                  <div className="mega-body mega-split">
+                    <div>
+                      <p className="mega-label">DOMAINS</p>
+                      <ul className="mega-domains" onMouseLeave={() => setDomain(null)}>
+                        {SERVICES.map((d, i) => (
+                          <li key={d.name}>
+                            <Link
+                              href={servicesQuery({ category: d.name })}
+                              className="mega-domain-link"
+                              aria-current={domain === i ? 'true' : undefined}
+                              onMouseEnter={() => setDomain(i)}
+                              onFocus={() => setDomain(i)}
+                              onClick={() => setOpen(null)}
+                            >
+                              {d.name}<ChevronRight size={14} />
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
+                    {domain !== null ? (
+                      <div className="mega-topics" aria-label={`Topics in ${SERVICES[domain].name}`}>
+                        <p className="mega-label">TOPICS</p>
+                        <ul>
+                          {SERVICES[domain].topics.map((t) => (
+                            <li key={t}><Link href={servicesQuery({ q: t })} onClick={() => setOpen(null)}>{t}</Link></li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ) : null}

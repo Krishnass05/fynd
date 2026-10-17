@@ -421,3 +421,15 @@ button.avatar-link { border: 0; font: inherit; font-weight: 700; font-size: 14px
 .usermenu-panel a, .usermenu-panel button { display: flex; align-items: center; min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--ink); font: inherit; font-weight: 500; text-align: left; text-decoration: none; cursor: pointer; }
 .usermenu-panel a:hover, .usermenu-panel button:hover { background: var(--brand-soft); }
 .usermenu-panel button { border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; margin-top: 4px; }
+
+/* Services menu: domains first, topics appear when a domain is hovered */
+.megamenu--wide { width: min(860px, calc(100vw - 48px)); }
+.mega-split { display: grid; grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.mega-domains { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.mega-domain-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 8px 12px; border-radius: 10px; color: var(--ink-strong); font-weight: 600; line-height: 1.3; text-decoration: none; }
+.mega-domain-link:hover, .mega-domain-link[aria-current="true"] { background: var(--brand-soft); }
+.mega-topics { border-left: 1px solid var(--line); padding-left: 24px; min-height: 120px; }
+.mega-topics ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+.mega-topics a { display: block; min-height: 40px; padding: 10px 0; color: var(--muted); text-decoration: none; }
+.mega-topics a:hover { color: var(--ink-strong); text-decoration: underline; }
+@media (max-width: 960px) { .mega-split { grid-template-columns: minmax(0, 1fr); } .mega-topics { border-left: 0; padding-left: 0; } }
