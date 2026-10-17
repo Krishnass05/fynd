@@ -19,7 +19,7 @@ Needs Node 20+. Data is held in server memory and resets on restart. Supabase re
 | Part | Where | Notes |
 | --- | --- | --- |
 | Rules engine (money, approvals, capacity, audit) | `lib/engine/` | Plain JavaScript with tests. Every price and decision comes from here |
-| SOW reader and comparison | `lib/server/sow.ts` | Reads .txt and .md for now |
+| SOW reader and comparison | `lib/engine/sow.js` | Reads .txt and .md for now |
 | API | `app/api/**`, `lib/server/` | Contract in [docs/API_CONTRACT.md](docs/API_CONTRACT.md) |
 | Client pages | `app/(client)/` | Jobs, applicants, project page, change orders |
 | Freelancer pages | `app/(freelancer)/` | Find jobs, apply, profile, project workspace |

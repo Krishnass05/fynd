@@ -9,7 +9,7 @@ import type {
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
-import { parseSow, compareSow } from './sow';
+import { parseSow, compareSow } from '@/lib/engine/sow';
 import { db, nextId } from './store';
 
 const nowIso = () => new Date().toISOString();
