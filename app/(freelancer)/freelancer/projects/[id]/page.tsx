@@ -6,6 +6,7 @@ import { useAsync } from '@/lib/useAsync';
 import Chat from '@/components/chat/Chat';
 import ChangeList from '@/components/changes/ChangeList';
 import SowUpload from '@/components/sow/SowUpload';
+import MilestoneList from '@/components/milestones/MilestoneList';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
 
 export default function FreelancerProject() {
@@ -30,6 +31,7 @@ export default function FreelancerProject() {
               <SowUpload projectId={id} kind="baseline" onDone={() => void reload()} />
             </Card>
           ) : null}
+          <MilestoneList projectId={id} milestones={data.milestones} summary={data.milestoneSummary} role="freelancer" onChanged={setData} />
           <h2>Change orders</h2>
           <ChangeList projectId={id} changes={data.changeRequests} canDecide={false} onChanged={setData} />
           <h2>Chat</h2>

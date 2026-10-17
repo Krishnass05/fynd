@@ -44,13 +44,18 @@ export const createJob = (b: { title: string; description: string; budget: numbe
 export const getLibrary = () => call<LibraryResponse>('/api/library');
 export const getJob = (id: string) => call<JobDetail>(`/api/jobs/${id}`);
 export const applyToJob = (jobId: string, b: { pitch: string; proposedPrice: number }) => post<Application>(`/api/jobs/${jobId}/applications`, b);
-export const acceptApplication = (applicationId: string) => post<{ projectId: string }>(`/api/applications/${applicationId}/accept`);
+export const acceptApplication = (applicationId: string, milestones?: Array<{ title: string; amount: number }>) =>
+  post<{ projectId: string }>(`/api/applications/${applicationId}/accept`, milestones ? { milestones } : {});
 
 // projects and workspace
 export const listProjects = () => call<Project[]>('/api/projects');
 export const getProject = (id: string) => call<ProjectDetail>(`/api/projects/${id}`);
 export const listMessages = (projectId: string) => call<Message[]>(`/api/projects/${projectId}/messages`);
 export const sendMessage = (projectId: string, body: string) => post<Message>(`/api/projects/${projectId}/messages`, { body });
+
+// milestones (record only, no money moves)
+export const markMilestoneReady = (projectId: string, milestoneId: string) => post<ProjectDetail>(`/api/projects/${projectId}/milestones/${milestoneId}/ready`);
+export const approveMilestone = (projectId: string, milestoneId: string) => post<ProjectDetail>(`/api/projects/${projectId}/milestones/${milestoneId}/approve`);
 
 // SOW upload (txt or md text for now) and change orders
 export const uploadSow = (projectId: string, b: { kind: SowKind; filename: string; text: string }) =>

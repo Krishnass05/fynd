@@ -50,6 +50,7 @@ Status: **Done** (built), **Planned** (agreed, not built), **Open** (still to de
 | D-35 | 2026-10-18 | Krishna approved the two items D-03 had put out of scope: reviews (FR47) and a simulated protected-payment ledger (FR43), as small clearly labelled versions | Request on 2026-10-18. They stay Could until the Should items are done | Planned |
 | D-36 | 2026-10-18 | The SOW library is a snapshot file (`lib/data/sowLibrary.json`): 28 profiles from Harini's 15 SOWs and the rate and budget lines of Sanjana's PDF. A job started from a profile gives the project that profile's rate and hours | Gives FR35 and FR41 real numbers. Refresh the file as more SOWs are written. Figures are illustrative | Done |
 | D-37 | 2026-10-18 | Proposals are compared in a table that scrolls inside its own box on phones, with lowest price marked and each price shown against the job budget and the library price | FR38. Prices are the main thing a client compares | Done |
+| D-38 | 2026-10-18 | Milestones (FR42): the client splits the applicant's price when accepting (default 30/40/30, whole rupees, must add up exactly, a bad split changes nothing). The freelancer marks one ready, the client approves it. Record only, no money moves. Milestone page is `/client/projects/[id]/milestones`; Harini's project page is not edited until her PR merges | Matches what Upwork clients do (pay by milestone) without real payments (D-04). Avoids a merge conflict with PR #3 | Done |
 
 ## Team and process
 

@@ -8,7 +8,7 @@ How things move through the product and through the team. Diagrams are Mermaid, 
 flowchart TD
   A[Client posts a job, optionally from a library profile that fills scope, rate and hours] --> B[Freelancers apply; client compares proposals side by side]
   B --> C{Client accepts one}
-  C -->|accept| D[Job becomes in progress, project workspace opens, others are rejected]
+  C -->|accept, after splitting the price into milestones| D[Job becomes in progress, project workspace opens, others are rejected]
   D --> E[Client and freelancer chat in the workspace]
   D --> F[Freelancer uploads the signed SOW, the baseline]
   F --> G[Reader extracts deliverables, exclusions, rate, hours]
@@ -119,3 +119,16 @@ Folders are owned by one person each (`docs/OWNERSHIP.md`). SOW files stay on th
 | Frontend | `app/`, `components/` | Sanjana, Harini, Krishna |
 | Backend | `lib/engine`, `lib/server`, `app/api` | Krishna |
 | Database | `lib/server/store.ts` today, Supabase planned | Krishna |
+
+## 8. Milestone states
+
+```mermaid
+stateDiagram-v2
+  [*] --> pending: created when the client accepts, amounts add up to the price
+  pending --> ready: freelancer marks it ready
+  pending --> approved: client approves
+  ready --> approved: client approves
+  approved --> [*]
+```
+
+Record only: approving a milestone marks it approved and no money moves.

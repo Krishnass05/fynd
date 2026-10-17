@@ -2,7 +2,7 @@
 // This is the ONLY file that knows where data lives. Supabase replaces it later; nothing else changes.
 import { ScopeDesk } from '@/lib/engine/scopeDesk';
 import fixture from '../../fixture.json';
-import type { Application, CompareLabel, Job, Message, Project, SowDocument, User } from '@/lib/types';
+import type { Application, CompareLabel, Job, Message, Milestone, Project, SowDocument, User } from '@/lib/types';
 
 export interface Db {
   users: User[];
@@ -11,6 +11,7 @@ export interface Db {
   projects: Project[];
   sow: SowDocument[];
   messages: Message[];
+  milestones: Milestone[];
   desks: Map<string, ScopeDesk>;
   labels: Map<string, Record<string, CompareLabel>>;
   hashes: Map<string, string>; // projectId:sha256(text) -> sow document id, to ignore repeat uploads
@@ -50,10 +51,15 @@ function seed(): Db {
   const messages: Message[] = [
     { id: 'M1', projectId: 'P1', senderId: 'u_client1', senderName: 'Demo Client', body: 'Welcome. The signed SOW is uploaded.', sentAt: NOW },
   ];
+  const milestones: Milestone[] = [
+    { id: 'MS1', projectId: 'P1', title: 'Kickoff and design', amount: 3600, status: 'approved', readyAt: NOW, approvedAt: NOW, approvedBy: 'Demo Client' },
+    { id: 'MS2', projectId: 'P1', title: 'Build the page', amount: 4800, status: 'ready', readyAt: NOW, approvedAt: null, approvedBy: null },
+    { id: 'MS3', projectId: 'P1', title: 'Final delivery', amount: 3600, status: 'pending', readyAt: null, approvedAt: null, approvedBy: null },
+  ];
   // Project P1 starts with the case fixture so the three case checks are visible straight away.
   const desks = new Map<string, ScopeDesk>([['P1', ScopeDesk.fromFixture(fixture)]]);
   const labels = new Map<string, Record<string, CompareLabel>>([['P1', {}]]);
-  return { users, jobs, applications, projects, sow, messages, desks, labels, hashes: new Map(), seq: 100 };
+  return { users, jobs, applications, projects, sow, messages, milestones, desks, labels, hashes: new Map(), seq: 100 };
 }
 
 const g = globalThis as unknown as { __scopeDeskDb?: Db };

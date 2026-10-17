@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { ButtonLink, Card, Meta } from './index';
 import { FileText } from './icons';
 
-export default function ProjectCard({ title, detail, facts, usedPercent, badge = 'In progress', footerLabel, footerValue, href, cta }: {
+export default function ProjectCard({ title, detail, facts, usedPercent, badge = 'In progress', footerLabel, footerValue, href, cta, secondary }: {
   title: string;
   detail: string;
   facts: Array<{ icon?: ReactNode; text: string }>;
@@ -15,6 +15,7 @@ export default function ProjectCard({ title, detail, facts, usedPercent, badge =
   footerValue: ReactNode;
   href: string;
   cta: string;
+  secondary?: { href: string; label: string };
 }) {
   return (
     <Card
@@ -25,7 +26,10 @@ export default function ProjectCard({ title, detail, facts, usedPercent, badge =
       footer={
         <>
           <span>{footerLabel}: <b>{footerValue}</b></span>
-          <ButtonLink href={href}>{cta}</ButtonLink>
+          <span className="pcard-actions">
+            {secondary ? <ButtonLink href={secondary.href} variant="secondary">{secondary.label}</ButtonLink> : null}
+            <ButtonLink href={href}>{cta}</ButtonLink>
+          </span>
         </>
       }
     >

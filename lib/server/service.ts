@@ -5,11 +5,13 @@ import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDes
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
   Application, AttentionItem, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
-  JobStatus, Message, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
+  JobStatus, Message, MilestoneSummary, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
 import { parseSow, compareSow } from '@/lib/engine/sow';
+import { checkSplit, defaultSplit } from '@/lib/milestones';
+import type { MilestoneDraft } from '@/lib/milestones';
 import { findProfile } from './library';
 import { db, nextId } from './store';
 
@@ -22,6 +24,12 @@ const str = (v: unknown, name: string, max: number): string => {
 const num = (v: unknown, name: string): number => {
   if (typeof v !== 'number' || !Number.isFinite(v) || v <= 0) throw bad(`${name} must be a number above 0`);
   return v;
+};
+
+const wholeRupees = (v: unknown, name: string): number => {
+  const n = num(v, name);
+  if (!Number.isInteger(n)) throw bad(`${name} must be a whole number of rupees`);
+  return n;
 };
 
 export function actor(userId: string | null): User {
@@ -94,19 +102,32 @@ export function applyToJob(u: User, jobId: string, b: Record<string, unknown>): 
   if (hasApplied(u, jobId)) throw conflict('You already applied to this job');
   const app: Application = {
     id: nextId('A'), jobId, freelancerId: u.id, freelancerName: u.name, pitch: str(b.pitch, 'pitch', 1000),
-    proposedPrice: num(b.proposedPrice, 'proposedPrice'), status: 'pending', createdAt: nowIso(),
+    proposedPrice: wholeRupees(b.proposedPrice, 'proposedPrice'), status: 'pending', createdAt: nowIso(),
   };
   db().applications.push(app);
   return app;
 }
 
-export function acceptApplication(u: User, applicationId: string): { projectId: string } {
+export function acceptApplication(u: User, applicationId: string, body: Record<string, unknown> = {}): { projectId: string } {
   const app = db().applications.find((a) => a.id === applicationId);
   if (!app) throw notFound('Application not found');
   const job = db().jobs.find((j) => j.id === app.jobId)!;
   if (u.role !== 'client' || job.clientId !== u.id) throw forbidden('Only the client who posted the job can accept');
   if (job.status !== 'open') throw conflict('This job already has an accepted freelancer');
   if (app.status !== 'pending') throw conflict('This application was already decided');
+  // Split the agreed price into milestones before anything changes, so a bad split leaves everything as it was.
+  let parts: MilestoneDraft[];
+  if (body.milestones === undefined) {
+    parts = defaultSplit(app.proposedPrice);
+  } else {
+    if (!Array.isArray(body.milestones)) throw bad('milestones must be a list');
+    parts = (body.milestones as Array<{ title?: unknown; amount?: unknown }>).map((m) => ({
+      title: typeof m?.title === 'string' ? m.title.trim() : '',
+      amount: typeof m?.amount === 'number' ? m.amount : NaN,
+    }));
+  }
+  const splitError = checkSplit(parts, app.proposedPrice);
+  if (splitError) throw bad(splitError);
   for (const a of db().applications.filter((x) => x.jobId === job.id)) a.status = a.id === app.id ? 'accepted' : 'rejected';
   job.status = 'in_progress';
   const project: Project = {
@@ -120,6 +141,9 @@ export function acceptApplication(u: User, applicationId: string): { projectId: 
   db().projects.push(project);
   db().desks.set(project.id, new ScopeDesk({ scope: { included: [], excluded: [] }, ratePerHour: project.ratePerHour, availableHours: project.availableHours }));
   db().labels.set(project.id, {});
+  for (const part of parts) {
+    db().milestones.push({ id: nextId('MS'), projectId: project.id, title: part.title, amount: part.amount, status: 'pending', readyAt: null, approvedAt: null, approvedBy: null });
+  }
   return { projectId: project.id };
 }
 
@@ -152,12 +176,49 @@ export function getProject(u: User, id: string): ProjectDetail {
     project, client, freelancer,
     sowDocuments: db().sow.filter((s) => s.projectId === id),
     changeRequests: desk.requests().map((v) => toChange(id, v)),
+    milestones: db().milestones.filter((m) => m.projectId === id),
+    milestoneSummary: milestoneSummary(id),
     totals: {
       committedHours: desk.committedHours(), remainingHours: desk.remainingHours(), committedValue: desk.committedValue(),
       utilization: desk.utilization(), beforeTax: true,
     },
     audit: desk.audit(),
   };
+}
+
+// ---- milestones (record only: no money moves) ----
+function milestoneSummary(projectId: string): MilestoneSummary {
+  const list = db().milestones.filter((m) => m.projectId === projectId);
+  const total = list.reduce((n, m) => n + m.amount, 0);
+  const approved = list.filter((m) => m.status === 'approved').reduce((n, m) => n + m.amount, 0);
+  return { total, approved, remaining: total - approved };
+}
+
+function milestoneFor(projectId: string, milestoneId: string) {
+  const m = db().milestones.find((x) => x.id === milestoneId && x.projectId === projectId);
+  if (!m) throw notFound('Milestone not found');
+  return m;
+}
+
+export function markMilestoneReady(u: User, projectId: string, milestoneId: string): ProjectDetail {
+  projectFor(u, projectId);
+  if (u.role !== 'freelancer') throw forbidden('Only the freelancer marks a milestone ready');
+  const m = milestoneFor(projectId, milestoneId);
+  if (m.status !== 'pending') throw conflict(`"${m.title}" is already ${m.status}`);
+  m.status = 'ready';
+  m.readyAt = nowIso();
+  return getProject(u, projectId);
+}
+
+export function approveMilestone(u: User, projectId: string, milestoneId: string): ProjectDetail {
+  projectFor(u, projectId);
+  if (u.role !== 'client') throw forbidden('Only the client approves a milestone');
+  const m = milestoneFor(projectId, milestoneId);
+  if (m.status === 'approved') throw conflict(`"${m.title}" is already approved`);
+  m.status = 'approved';
+  m.approvedAt = nowIso();
+  m.approvedBy = u.name;
+  return getProject(u, projectId);
 }
 
 // ---- messages ----

@@ -31,7 +31,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `createJob` | `POST /api/jobs` `{title, description, budget, deadline, profileId?}` | client | `Job`. With a `profileId`, accepting an applicant sets the project rate and hours from that profile |
 | `getJob` | `GET /api/jobs/:id` | owner client, or freelancer | `JobDetail`: the job, `typicalTotal` (library price, or null) and applicants with their skills (client sees all, freelancer only their own) |
 | `applyToJob` | `POST /api/jobs/:id/applications` `{pitch, proposedPrice}` | freelancer | `Application` (409 if already applied or job not open) |
-| `acceptApplication` | `POST /api/applications/:id/accept` | owner client | `{ projectId }` (closes the job, rejects other applicants, creates the project) |
+| `acceptApplication` | `POST /api/applications/:id/accept` `{milestones?: [{title, amount}]}` | owner client | `{ projectId }` (closes the job, rejects other applicants, creates the project and its milestones). The milestones must be whole rupees and add up to the applicant's price exactly, or the call is refused and nothing changes. Left out, the price is split 30/40/30 |
 | `listProjects` | `GET /api/projects` | participant | `Project[]` |
 | `getProject` | `GET /api/projects/:id` | participant | `ProjectDetail` (SOW versions, change requests, totals, audit) |
 | `listMessages` | `GET /api/projects/:id/messages` | participant | `Message[]` |
@@ -42,6 +42,8 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `reopenChange` | `POST /api/projects/:id/changes/:changeId/reopen` `{reason}` | either | `ProjectDetail` (reason required) |
 | `getClientDashboard` | `GET /api/client-dashboard` | client | `ClientDashboard` (stats, things needing attention, projects with capacity and counts, jobs with applicant counts) |
 | `getLibrary` | `GET /api/library` | any user | `LibraryResponse` (28 job profiles with typical rate, hours, deliverables and exclusions; illustrative) |
+| `markMilestoneReady` | `POST /api/projects/:id/milestones/:milestoneId/ready` | freelancer | `ProjectDetail` (pending becomes ready, 409 otherwise) |
+| `approveMilestone` | `POST /api/projects/:id/milestones/:milestoneId/approve` | client | `ProjectDetail` (409 if already approved). `ProjectDetail` now has `milestones` and `milestoneSummary`. Record only: no money moves |
 | `getFreelancerDashboard` | `GET /api/dashboard` | freelancer | `FreelancerDashboard` (stats, projects with capacity and counts, things needing attention, applications, up to 3 open jobs) |
 | `runCaseChecks` | `GET /api/demo` | anyone | `DemoResult` (the 3 checks, in printed order) |
 | `resetData` | `POST /api/reset` | anyone (demos and tests) | `{ ok: true }` |

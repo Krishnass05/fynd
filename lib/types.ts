@@ -69,6 +69,26 @@ export interface Project {
   createdAt: string;
 }
 
+// Milestones split the agreed price. Record only: approving one marks it approved, no money moves.
+export type MilestoneStatus = 'pending' | 'ready' | 'approved';
+
+export interface Milestone {
+  id: string;
+  projectId: string;
+  title: string;
+  amount: number; // whole rupees, before tax
+  status: MilestoneStatus;
+  readyAt: string | null; // freelancer marked it ready for review
+  approvedAt: string | null;
+  approvedBy: string | null;
+}
+
+export interface MilestoneSummary {
+  total: number;
+  approved: number;
+  remaining: number;
+}
+
 export type SowKind = 'baseline' | 'amendment';
 export type SowSection = 'deliverable' | 'included' | 'excluded';
 
@@ -156,6 +176,8 @@ export interface ProjectDetail {
   freelancer: User;
   sowDocuments: SowDocument[];
   changeRequests: ChangeRequest[];
+  milestones: Milestone[];
+  milestoneSummary: MilestoneSummary;
   totals: Totals;
   audit: AuditEntry[];
 }

@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { acceptApplication, getJob } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
+import MilestoneSplit from '@/components/milestones/MilestoneSplit';
 import { Badge, Button, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
 import s from './compare.module.css';
 
@@ -15,14 +16,20 @@ export default function JobDetail() {
   const router = useRouter();
   const { data, error, loading, reload } = useAsync(() => getJob(id), [id]);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [accepting, setAccepting] = useState<{ id: string; name: string; price: number } | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  async function accept(applicationId: string) {
+  async function accept(applicationId: string, parts: Array<{ title: string; amount: number }>) {
+    setBusy(true);
     try {
-      const { projectId } = await acceptApplication(applicationId);
+      const { projectId } = await acceptApplication(applicationId, parts);
       router.push(`/client/projects/${projectId}`);
     } catch (e) {
       setActionError(e instanceof Error ? e.message : 'Could not accept');
+      setAccepting(null);
       await reload();
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -44,6 +51,9 @@ export default function JobDetail() {
           </p>
 
           <h2>Applicants</h2>
+          {accepting ? (
+            <MilestoneSplit price={accepting.price} who={accepting.name} busy={busy} onCancel={() => setAccepting(null)} onConfirm={(parts) => accept(accepting.id, parts)} />
+          ) : null}
           {apps.length === 0 ? <EmptyState>No applicants yet.</EmptyState> : null}
 
           {apps.length > 1 ? (
@@ -70,7 +80,7 @@ export default function JobDetail() {
                         {data.typicalTotal ? <td>{vs(pct(a.proposedPrice, data.typicalTotal))}</td> : null}
                         <td>{(a.freelancerSkills ?? []).join(', ') || 'Not listed'}</td>
                         <td className={s.pitch}>{a.pitch}</td>
-                        <td className={s.nowrap}>{canAccept && a.status === 'pending' ? <Button onClick={() => accept(a.id)}>Accept</Button> : <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>}</td>
+                        <td className={s.nowrap}>{canAccept && a.status === 'pending' ? <Button onClick={() => setAccepting({ id: a.id, name: a.freelancerName, price: a.proposedPrice })}>Accept</Button> : <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -84,7 +94,7 @@ export default function JobDetail() {
               <strong>{a.freelancerName}</strong> <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>
               <p>{a.pitch}</p>
               <p className="muted">Proposed price {money(a.proposedPrice)} ({vs(pct(a.proposedPrice, data.job.budget))} your budget){a.freelancerSkills?.length ? ` · ${a.freelancerSkills.join(', ')}` : ''}</p>
-              {canAccept && a.status === 'pending' ? <Button onClick={() => accept(a.id)}>Accept</Button> : null}
+              {canAccept && a.status === 'pending' ? <Button onClick={() => setAccepting({ id: a.id, name: a.freelancerName, price: a.proposedPrice })}>Accept</Button> : null}
             </Card>
           ))}
         </>
