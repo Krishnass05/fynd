@@ -138,7 +138,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
           </form>
 
           <div className="usermenu">
-            <span className="usermenu-name">{user ? `${user.name}` : ''}<small>{user ? user.role : ''}</small></span>
+            <span className="usermenu-name"><small>Hello,</small>{user ? user.name : ''}</span>
             <div className="usermenu-wrap" onMouseEnter={() => setOpen('user')} onMouseLeave={() => setOpen(null)}>
               <button type="button" className="avatar avatar-link" aria-label="Open your account menu" aria-haspopup="menu" aria-expanded={open === 'user'} aria-controls="menu-user" data-here={pathname.startsWith(PROFILE[role]) || pathname.startsWith(DASHBOARD[role]) || undefined} onClick={() => toggle('user')}>
                 {user ? initials(user.name) : ''}
