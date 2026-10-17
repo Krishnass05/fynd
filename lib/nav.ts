@@ -16,6 +16,7 @@ export const NAV: Record<Role, NavItem[]> = {
     { href: '/client/saved', label: 'Saved', icon: 'heart' },
     { href: '/client/jobs/new', label: 'Post a job', icon: 'plus' },
     { href: '/client/profile', label: 'Profile', icon: 'user' },
+    { href: '/client/dashboard', label: 'Dashboard', icon: 'home' },
   ],
   freelancer: [
     { href: '/freelancer', label: 'Dashboard', icon: 'home' },
@@ -57,5 +58,6 @@ export const MENUS: Record<Role, MegaMenu | null> = {
 // page: it sits under the client's profile (the avatar in the top bar).
 export const HOME: Record<Role, string> = { client: '/client', freelancer: '/freelancer' };
 export const PROFILE: Record<Role, string> = { client: '/client/profile', freelancer: '/freelancer/profile' };
+export const DASHBOARD: Record<Role, string> = { client: '/client/dashboard', freelancer: '/freelancer' };
 // The link before the drop-down menus in the desktop top bar (clients have none).
 export const LEAD: Record<Role, NavItem | null> = { client: null, freelancer: { href: '/freelancer', label: 'Dashboard', icon: 'home' } };

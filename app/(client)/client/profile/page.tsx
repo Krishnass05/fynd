@@ -1,8 +1,7 @@
 'use client';
-// The client's profile: what they gave when they registered, with the dashboard underneath. OWNER: Krishna.
+// The client's profile: what they gave when they registered. The dashboard has its own page. OWNER: Krishna.
 import { initials } from '@/lib/format';
 import { useUser } from '@/lib/useUser';
-import ClientDashboardView from '@/components/dashboard/ClientDashboardView';
 import { Badge, Spinner } from '@/components/ui';
 
 export default function ClientProfile() {
@@ -24,7 +23,6 @@ export default function ClientProfile() {
           <div><dt>Account</dt><dd>Demo account, synthetic data</dd></div>
         </dl>
       </section>
-      <ClientDashboardView />
     </>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 // Client dashboard: number tiles, recent activity, what needs the client, projects and jobs.
-// Shown under the client's profile (app/(client)/client/profile). OWNER: Sanjana (look).
+// Shown on /client/dashboard, opened from the avatar menu. OWNER: Sanjana (look).
 import Link from 'next/link';
 import { getClientDashboard } from '@/lib/api';
 import { initials, timeAgo } from '@/lib/format';
@@ -26,7 +26,7 @@ export default function ClientDashboardView() {
     <>
       <div className="section-head">
         <div>
-          <h2 style={{ marginBottom: 4 }}>Your dashboard</h2>
+          <h1 style={{ marginBottom: 4 }}>Your dashboard</h1>
           <p className="muted" style={{ margin: 0 }}>Here is what is happening with your projects. Amounts are before tax.</p>
         </div>
         <ButtonLink href="/client/jobs/new" variant="dark">Post a job</ButtonLink>

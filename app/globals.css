@@ -411,3 +411,12 @@ input, select { min-height: 44px; }
 .rcar-dots button[aria-current="true"]::after { width: 22px; border-radius: 99px; background: var(--orange); opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .rcar-card, .rcar-card::before, .rcar-wash span, .rcar-dots button::after { transition: none; } }
 @media (max-width: 700px) { .rcar-stage { --step: 190px; height: 290px; } .rcar-card { width: 280px; margin-left: -140px; } }
+
+/* Avatar menu: Profile, Dashboard, Log out */
+.usermenu-wrap { position: relative; padding-bottom: 8px; margin-bottom: -8px; }
+button.avatar-link { border: 0; font: inherit; font-weight: 700; font-size: 14px; }
+.avatar-link[data-here] { box-shadow: 0 0 0 2px var(--orange); }
+.usermenu-panel { position: absolute; right: 0; top: 100%; z-index: 60; min-width: 190px; display: grid; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 24px 50px -24px rgba(37, 36, 34, 0.4); }
+.usermenu-panel a, .usermenu-panel button { display: flex; align-items: center; min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--ink); font: inherit; font-weight: 500; text-align: left; text-decoration: none; cursor: pointer; }
+.usermenu-panel a:hover, .usermenu-panel button:hover { background: var(--brand-soft); }
+.usermenu-panel button { border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; margin-top: 4px; }

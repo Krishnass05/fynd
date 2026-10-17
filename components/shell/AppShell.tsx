@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { HOME, LEAD, MENUS, PROFILE, TOP_LINKS } from '@/lib/nav';
+import { DASHBOARD, HOME, LEAD, MENUS, PROFILE, TOP_LINKS } from '@/lib/nav';
 import { clearUser } from '@/lib/session';
 import { SERVICES } from '@/lib/services';
 import type { Role } from '@/lib/types';
@@ -15,7 +15,7 @@ import AppNav from './AppNav';
 
 const initials = (name: string) => name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
-type MenuId = 'jobs' | 'services';
+type MenuId = 'jobs' | 'services' | 'user';
 
 export default function AppShell({ role, children }: { role: Role; children: React.ReactNode }) {
   const router = useRouter();
@@ -60,11 +60,11 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
 
   return (
     <div className="shell">
-      <header className="topnav">
+      <header className="topnav" ref={navRef}>
         <div className="topnav-row">
           <Link href={HOME[role]} className="brand topnav-brand">Scope Change Desk</Link>
 
-          <nav className="topnav-menu" aria-label="Main" ref={navRef}>
+          <nav className="topnav-menu" aria-label="Main">
             {lead ? <Link href={lead.href} className="topnav-link" aria-current={lead.href === current ? 'page' : undefined}>{lead.label}</Link> : null}
 
             {jobsMenu ? (
@@ -139,8 +139,18 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
 
           <div className="usermenu">
             <span className="usermenu-name">{user ? `${user.name}` : ''}<small>{user ? user.role : ''}</small></span>
-            <Link href={PROFILE[role]} className="avatar avatar-link" aria-label="Open your profile" aria-current={pathname.startsWith(PROFILE[role]) ? 'page' : undefined}>{user ? initials(user.name) : ''}</Link>
-            <button className="btn secondary" onClick={() => { clearUser(); router.push('/login'); }}>Log out</button>
+            <div className="usermenu-wrap" onMouseEnter={() => setOpen('user')} onMouseLeave={() => setOpen(null)}>
+              <button type="button" className="avatar avatar-link" aria-label="Open your account menu" aria-haspopup="menu" aria-expanded={open === 'user'} aria-controls="menu-user" data-here={pathname.startsWith(PROFILE[role]) || pathname.startsWith(DASHBOARD[role]) || undefined} onClick={() => toggle('user')}>
+                {user ? initials(user.name) : ''}
+              </button>
+              {open === 'user' ? (
+                <div className="usermenu-panel" id="menu-user" role="menu" aria-label="Account">
+                  <Link href={PROFILE[role]} role="menuitem" onClick={() => setOpen(null)}>Profile</Link>
+                  <Link href={DASHBOARD[role]} role="menuitem" onClick={() => setOpen(null)}>Dashboard</Link>
+                  <button type="button" role="menuitem" onClick={() => { clearUser(); router.push('/login'); }}>Log out</button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
         <div className="mobilebar"><AppNav role={role} /></div>

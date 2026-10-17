@@ -152,7 +152,7 @@ Profiles are sample data. A freelancer edits their own profile on the Profile pa
 flowchart LR
   L[Landing page] --> G[Login: Client or Freelancer, email and password]
   G --> C[Client home: search box and client reviews, top bar with Jobs and Services menus]
-  C --> CP[Avatar: client profile with the dashboard underneath]
+  C --> CP[Avatar menu: Profile, Dashboard, Log out]
   G --> F[Freelancer: top bar with Services menu]
   CP --> C1[Dashboard: tiles, activity, attention]
   C --> C2[Find freelancers: chips, cards, profile]
