@@ -132,27 +132,8 @@ export default function UnifiedWorkspace({
     }
   }, [committedHours, remainingHours, onCapacityUpdate]);
 
-  // Chat State
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'msg-1',
-      sender: 'Client_A',
-      text: 'Hi Freelancer_Dev! We reviewed the baseline SOW for the landing page.',
-      timestamp: '10:02 AM',
-    },
-    {
-      id: 'msg-2',
-      sender: 'Freelancer_Dev',
-      text: 'Hello Client_A. SOW v1 is locked with 10h capacity. Let me know if you need any adjustments.',
-      timestamp: '10:04 AM',
-    },
-    {
-      id: 'msg-3',
-      sender: 'Client_A',
-      text: 'We really need to add payment checkout to the landing page as well. Can we include that?',
-      timestamp: '10:07 AM',
-    },
-  ]);
+  // Chat State - Starts empty as requested
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [redactionNotice, setRedactionNotice] = useState<string | null>(null);
 
@@ -708,7 +689,23 @@ export default function UnifiedWorkspace({
             gap: 12,
           }}
         >
-          {messages.map((m) => {
+          {messages.length === 0 ? (
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: 'var(--muted)' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>💬</div>
+              <strong style={{ color: 'var(--carbon-black)', fontSize: 15, marginBottom: 6 }}>Project Chat is Empty</strong>
+              <p style={{ fontSize: 13, maxWidth: 360, margin: '0 0 16px', lineHeight: 1.5 }}>
+                Start typing below or type <strong>@AI</strong> to extract scope changes and estimate variance pricing.
+              </p>
+              <button
+                type="button"
+                className="btn secondary pill-sm"
+                onClick={() => handleSendMessage("Hello! I reviewed the baseline SOW and I am ready to begin work on the landing page.")}
+              >
+                👋 Say Hello
+              </button>
+            </div>
+          ) : (
+            messages.map((m) => {
             const isMe = m.sender === 'Freelancer_Dev';
             const isAi = m.sender === 'Meta_AI';
 
@@ -823,7 +820,7 @@ export default function UnifiedWorkspace({
                 </span>
               </div>
             );
-          })}
+          }))}
 
           {isAiThinking ? (
             <div

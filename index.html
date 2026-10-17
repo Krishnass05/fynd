@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fynd ScopeDesk - Case C35</title>
+  <title>Fynd ScopeDesk - Freelancer Discovery & Scope Change Desk</title>
   
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,17 +15,23 @@
   <!-- Babel Standalone via CDN -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Strict Color Palette Configuration (Only 5 designated hex codes) -->
+  <!-- Strict 5-Color Palette Configuration:
+       1. Floral White:   #FFFCF2 (Luxurious misty off-white canvas)
+       2. ~Silver:        #CCC5B9 (Lustrous metallic sheen, soft borders & dividers)
+       3. ~Charcoal Brown:#403D39 (Cool deep earth, dark headers, secondary text)
+       4. ~Carbon Black:  #252422 (Matte intensity, dark buttons & primary accents)
+       5. ~Spicy Paprika: #EB5E28 (Lively zesty hue, CTAs, notifications, highlights)
+  -->
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            'space-indigo': '#22223B',
-            'dusty-grape': '#4A4E69',
-            'lilac-ash': '#9A8C98',
-            'almond-silk': '#C9ADA7',
-            'seashell': '#F2E9E4',
+            'floral-white': '#FFFCF2',
+            'silver': '#CCC5B9',
+            'charcoal-brown': '#403D39',
+            'carbon-black': '#252422',
+            'spicy-paprika': '#EB5E28',
           }
         }
       }
@@ -34,15 +40,15 @@
 
   <style>
     :root {
-      --space-indigo: #22223B;
-      --dusty-grape:  #4A4E69;
-      --lilac-ash:    #9A8C98;
-      --almond-silk:  #C9ADA7;
-      --seashell:     #F2E9E4;
+      --floral-white:    #FFFCF2;
+      --silver:          #CCC5B9;
+      --charcoal-brown:  #403D39;
+      --carbon-black:    #252422;
+      --spicy-paprika:   #EB5E28;
     }
     body {
-      background-color: var(--seashell);
-      color: var(--space-indigo);
+      background-color: var(--floral-white);
+      color: var(--carbon-black);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
@@ -53,11 +59,14 @@
       height: 6px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: var(--seashell);
+      background: var(--floral-white);
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: var(--lilac-ash);
+      background: var(--silver);
       border-radius: 999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: var(--charcoal-brown);
     }
     @keyframes pulse-wave {
       0%, 100% { height: 6px; }
@@ -75,7 +84,7 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // --- FIXTURE DATA (CASE C35) ---
+    // --- FIXTURE DATA ---
     const FIXTURE_DATA = {
       project: "Landing page for a small client",
       currency: "INR",
@@ -132,14 +141,176 @@
       return `${id}::${text.trim().toLowerCase()}::${hours}`;
     }
 
+    // Rich Multi-Domain Jobs Catalog
+    const JOBS_CATALOG = [
+      {
+        id: 'J_FLAGSHIP',
+        projectId: 'P1',
+        title: 'Landing page for a small shop',
+        domain: 'web',
+        categoryName: 'Web Development',
+        clientHandle: 'Client_A',
+        description:
+          'Develop a responsive, high-converting landing page with a validated contact form. Strict capacity ceiling of 10 hours at ₹1,000/hr before tax. Scope boundaries are legally locked in baseline SOW v1.',
+        hourlyRate: 1000,
+        availableHours: 10,
+        budget: 10000,
+        deadline: '2026-11-15',
+        includedScope: ['one landing page', 'contact form'],
+        excludedScope: ['payment checkout'],
+        skills: ['React', 'Node.js', 'WebRTC', 'UI Design', 'ScopeDesk'],
+        isFlagship: true,
+        isRecent: true,
+        isActive: true,
+      },
+      {
+        id: 'J_WEB_2',
+        projectId: 'P2',
+        title: 'SaaS Customer Onboarding Portal',
+        domain: 'web',
+        categoryName: 'Web Development',
+        clientHandle: 'Client_B',
+        description:
+          'Build step-by-step interactive onboarding flow with telemetry tracking and workspace invite links. Integration with existing API endpoints.',
+        hourlyRate: 1200,
+        availableHours: 15,
+        budget: 18000,
+        deadline: '2026-11-28',
+        includedScope: ['3-step onboarding wizard', 'team invite modal'],
+        excludedScope: ['custom billing integration', 'SSO authentication'],
+        skills: ['Next.js', 'TypeScript', 'Tailwind', 'REST API'],
+        isRecent: false,
+        isActive: false,
+      },
+      {
+        id: 'J_UIUX_1',
+        projectId: 'P3',
+        title: 'Fintech Mobile Dashboard Wireframes & Design System',
+        domain: 'design',
+        categoryName: 'UI/UX Design',
+        clientHandle: 'Client_C',
+        description:
+          'Create high-fidelity Figma components and tokenized dark/light UI palette for an investment tracking app with accessible color contrast.',
+        hourlyRate: 950,
+        availableHours: 20,
+        budget: 19000,
+        deadline: '2026-12-05',
+        includedScope: ['Figma design system tokens', '5 core application views'],
+        excludedScope: ['interactive micro-prototypes', 'user testing sessions'],
+        skills: ['Figma', 'UI Design', 'Design Systems', 'Accessibility'],
+        isRecent: true,
+        isActive: false,
+      },
+      {
+        id: 'J_UIUX_2',
+        projectId: 'P4',
+        title: 'Brand Identity & Vector Component Kit',
+        domain: 'design',
+        categoryName: 'UI/UX Design',
+        clientHandle: 'Client_F',
+        description:
+          'Design cohesive brand asset kit with responsive SVG icons, typography scale, and multi-platform logo guidelines for tech startup.',
+        hourlyRate: 850,
+        availableHours: 12,
+        budget: 10200,
+        deadline: '2026-12-12',
+        includedScope: ['vector icon library', 'typography spec sheet', 'export presets'],
+        excludedScope: ['3D animated branding', 'merchandise packaging renders'],
+        skills: ['Illustrator', 'Figma', 'Vector Art', 'Branding'],
+        isRecent: false,
+        isActive: false,
+      },
+      {
+        id: 'J_AI_1',
+        projectId: 'P5',
+        title: 'Enterprise Document RAG Extractor & Classifier',
+        domain: 'ai',
+        categoryName: 'AI/ML & Data Science',
+        clientHandle: 'Client_D',
+        description:
+          'Build offline deterministic text classifier pipeline and vector semantic search over contracts and SOWs for compliance verification.',
+        hourlyRate: 1500,
+        availableHours: 25,
+        budget: 37500,
+        deadline: '2026-12-10',
+        includedScope: ['PDF chunking pipeline', 'hybrid keyword/vector search'],
+        excludedScope: ['fine-tuned LLM checkpoints', 'multi-region GPU deployment'],
+        skills: ['Python', 'Embeddings', 'LangChain', 'FastAPI'],
+        isRecent: true,
+        isActive: false,
+      },
+      {
+        id: 'J_AI_2',
+        projectId: 'P6',
+        title: 'Computer Vision Defect Inspection Pipeline',
+        domain: 'ai',
+        categoryName: 'AI/ML & Data Science',
+        clientHandle: 'Client_G',
+        description:
+          'Train and package edge-ready object detection model for surface defects with inference latency under 45ms per frame.',
+        hourlyRate: 1800,
+        availableHours: 30,
+        budget: 54000,
+        deadline: '2026-12-20',
+        includedScope: ['YOLOv8 fine-tuning script', 'ONNX runtime wrapper'],
+        excludedScope: ['industrial camera hardware setup', 'PLC factory integration'],
+        skills: ['PyTorch', 'Computer Vision', 'ONNX', 'Python'],
+        isRecent: false,
+        isActive: false,
+      },
+      {
+        id: 'J_ECOM_1',
+        projectId: 'P7',
+        title: 'Multi-Vendor Product Catalog & Cart Workflow',
+        domain: 'ecommerce',
+        categoryName: 'E-Commerce',
+        clientHandle: 'Client_E',
+        description:
+          'Implement responsive catalog filtering, inventory state sync, and headless cart reconciliation with optimistic state updates.',
+        hourlyRate: 1100,
+        availableHours: 18,
+        budget: 19800,
+        deadline: '2026-12-01',
+        includedScope: ['product grid with facet filters', 'in-memory cart state'],
+        excludedScope: ['Stripe payment gateway', 'logistics courier API'],
+        skills: ['React', 'State Management', 'E-Commerce', 'GraphQL'],
+        isRecent: false,
+        isActive: false,
+      },
+      {
+        id: 'J_ECOM_2',
+        projectId: 'P8',
+        title: 'Shopify Headless Storefront & Rehydration',
+        domain: 'ecommerce',
+        categoryName: 'E-Commerce',
+        clientHandle: 'Client_H',
+        description:
+          'Build ultra-fast Next.js 14 headless storefront for luxury apparel with localized currency switcher and instant product previews.',
+        hourlyRate: 1300,
+        availableHours: 16,
+        budget: 20800,
+        deadline: '2026-12-15',
+        includedScope: ['collection page grids', 'product detail page templates'],
+        excludedScope: ['custom ERP warehouse sync', 'multi-currency tax filing'],
+        skills: ['Next.js', 'Storefront API', 'Tailwind', 'TypeScript'],
+        isRecent: true,
+        isActive: false,
+      },
+    ];
+
     // --- MAIN APP COMPONENT ---
     function App() {
       // Navigation / Auth State
-      const [currentView, setCurrentView] = useState('auth'); // 'auth' | 'freelancer' | 'client'
+      const [currentView, setCurrentView] = useState('auth'); // 'auth' | 'portal'
       const [userRole, setUserRole] = useState('freelancer'); // 'freelancer' | 'client'
       const [anonymousHandle, setAnonymousHandle] = useState('Freelancer_Dev');
       const [portalTab, setPortalTab] = useState('dashboard'); // 'dashboard' | 'jobs' | 'profile'
       const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
+
+      // Jobs Discovery & Domain Filter State
+      const [jobSubTab, setJobSubTab] = useState('find'); // 'recent' | 'find' | 'working'
+      const [selectedDomain, setSelectedDomain] = useState('all'); // 'all' | 'web' | 'design' | 'ai' | 'ecommerce'
+      const [selectedJobId, setSelectedJobId] = useState('J_FLAGSHIP');
 
       // Freemium WebRTC Call & Subscription State
       const [callCount, setCallCount] = useState(0);
@@ -189,50 +360,34 @@
         { id: 't4', label: 'Scope Request R1 (Payment Checkout)', hours: 6, completed: false, isScopeChange: true }
       ]);
 
-      // Chat State
-      const [messages, setMessages] = useState([
-        {
-          id: 'm1',
-          sender: 'Client_A',
-          text: 'Hi Freelancer_Dev! We reviewed the baseline SOW for the landing page.',
-          timestamp: '10:02 AM'
-        },
-        {
-          id: 'm2',
-          sender: 'Freelancer_Dev',
-          text: 'Hello Client_A. SOW v1 is locked with 10h baseline capacity. Ready to proceed.',
-          timestamp: '10:04 AM'
-        },
-        {
-          id: 'm3',
-          sender: 'Client_A',
-          text: 'We really need to add payment checkout to the landing page as well. Can we include that?',
-          timestamp: '10:07 AM'
-        }
-      ]);
+      // Chat State - STARTS EMPTY AS REQUESTED
+      const [messages, setMessages] = useState([]);
       const [chatInput, setChatInput] = useState('');
       const [redactionNotice, setRedactionNotice] = useState(null);
       const [aiMode, setAiMode] = useState('semantic'); // 'semantic' | 'deterministic'
       const [isAiThinking, setIsAiThinking] = useState(false);
       const chatEndRef = useRef(null);
 
-      // Modals
+      // Modals State
       const [rejectionModalRequest, setRejectionModalRequest] = useState(null);
       const [rejectionReasonInput, setRejectionReasonInput] = useState('');
       const [clarifyModalRequest, setClarifyModalRequest] = useState(null);
       const [clarifyNotesInput, setClarifyNotesInput] = useState('');
       const [toastNotification, setToastNotification] = useState(null);
+      const [showSowUploadModal, setShowSowUploadModal] = useState(false);
+      const [uploadedFileName, setUploadedFileName] = useState('');
+      const [uploadDiffResult, setUploadDiffResult] = useState(null);
 
       // Notifications Feed
       const [notifications, setNotifications] = useState([
-        { id: 'n1', icon: '🔔', title: 'Scope Request R1 Received', desc: 'Client_A submitted "Add payment checkout" (6 hrs) flagged as Exclusion Override.', time: '5m ago', urgent: true },
-        { id: 'n2', icon: '📞', title: 'Incoming WebRTC Call Ready', desc: 'Browser-native peer room projectFor(C35) available for audio call.', time: '12m ago' },
-        { id: 'n3', icon: '⚠️', title: 'Free Call Quota Warning', desc: '5 free audio calls available on this workspace. Video unlocked on Pro.', time: '25m ago' },
+        { id: 'n1', icon: '🔔', title: 'Scope Request R1 Received', desc: 'Client submitted "Add payment checkout" (6 hrs) flagged as Exclusion Override.', time: '5m ago', urgent: true },
+        { id: 'n2', icon: '📞', title: 'WebRTC Audio Channel Ready', desc: 'Browser-native peer room available for encrypted calls.', time: '12m ago' },
+        { id: 'n3', icon: '⚠️', title: 'Free Call Quota Reminder', desc: '5 free audio calls available on this workspace. Video unlocked on Pro.', time: '25m ago' },
         { id: 'n4', icon: '📝', title: 'Baseline SOW v1 Locked', desc: 'Included: 1 landing page, contact form. Excluded: payment checkout.', time: '1h ago' },
-        { id: 'n5', icon: '🤖', title: 'WhatsApp Meta-AI Available', desc: 'Type @AI in chat to extract scope changes and calculate variance pricing.', time: '2h ago' }
+        { id: 'n5', icon: '🤖', title: 'Meta-AI Scope Assistant Online', desc: 'Type @AI in chat to extract scope changes and calculate variance pricing.', time: '2h ago' }
       ]);
 
-      // Capacity Math
+      // Capacity Calculations
       const approvedItems = requests.filter(r => r.status === 'approved');
       const committedHours = approvedItems.reduce((acc, r) => acc + (r.hours || 0), 0);
       const remainingHours = Math.max(0, FIXTURE_DATA.availableHours - committedHours);
@@ -265,11 +420,9 @@
         if (userRole === 'freelancer') {
           setUserRole('client');
           setAnonymousHandle('Client_A');
-          setCurrentView('client');
         } else {
           setUserRole('freelancer');
           setAnonymousHandle('Freelancer_Dev');
-          setCurrentView('freelancer');
         }
       }
 
@@ -324,7 +477,7 @@
             ? `🤖 @AI (Semantic Parser): Scanned chat history against baseline SOW v1.\n\n` +
               `• Baseline In-Scope: "one landing page", "contact form"\n` +
               `• Baseline Excluded: "payment checkout"\n\n` +
-              `Detected Request: Client requested "payment checkout". This matches an EXPLICIT EXCLUSION in fixture.json. Generated formal ScopeDesk quote: R1 (6 hours × ₹1,000/hr = ₹6,000 before taxes).`
+              `Detected Request: Client requested "payment checkout". This matches an EXPLICIT EXCLUSION in baseline SOW. Generated formal ScopeDesk quote: R1 (6 hours × ₹1,000/hr = ₹6,000 before taxes).`
             : `🤖 @AI (Deterministic Rule Engine): Pattern matched token "payment checkout" in exclusion dictionary.\n\n` +
               `• Rule Triggered: EXCLUSION_OVERRIDE_FLAG\n` +
               `• Item: R1 ("Add payment checkout")\n` +
@@ -510,10 +663,38 @@
         }
       }
 
+      // SOW Upload Handler (PDF, MD, TXT)
+      function handleSowFileUpload(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const validExts = ['.pdf', '.md', '.txt'];
+        const fileName = file.name.toLowerCase();
+        const isValid = validExts.some(ext => fileName.endsWith(ext));
+
+        if (!isValid) {
+          alert('Invalid file format. Only SOW amendments in .pdf, .md, or .txt format are accepted.');
+          return;
+        }
+
+        setUploadedFileName(file.name);
+        // Simulate SOW Comparison Analysis
+        setUploadDiffResult({
+          file: file.name,
+          comparedAgainst: 'Baseline SOW v1',
+          detectedChanges: [
+            { id: 'SOW_DIFF_1', label: 'Payment Checkout Integration', deltaHours: 6, classification: 'Exclusion Override', price: 6000 },
+            { id: 'SOW_DIFF_2', label: 'Defect Rework on Form Validation', deltaHours: 2, classification: 'Defect Rework', price: 0 }
+          ],
+          totalDeltaHours: 8,
+          totalBillableIncrease: 6000
+        });
+      }
+
       // Evidence Export JSON
       function handleExportEvidenceJson() {
         const evidence = {
-          workspaceId: "C35",
+          workspaceId: "WS-01",
           projectTitle: FIXTURE_DATA.project,
           exportTimestamp: new Date().toISOString(),
           baselineSow: {
@@ -537,7 +718,7 @@
             totalCallsMade: callCount,
             freeCallsUsed: Math.min(5, callCount),
             freeCallsLeft: Math.max(0, 5 - callCount),
-            isProSubscribed,
+            isProSubscribed: isSubscribed,
             plan: isSubscribed ? "Per-Seat Pro Agency Plan (₹499/seat/month)" : "Free 5-Call Audio Freemium Tier",
             logs: callLogs
           },
@@ -551,7 +732,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Fynd_ScopeDesk_C35_Evidence_v${scopeVersion}_${Date.now()}.json`;
+        a.download = `Fynd_ScopeDesk_Evidence_v${scopeVersion}_${Date.now()}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -559,82 +740,105 @@
         showToast('📥 Evidence JSON export downloaded successfully.');
       }
 
+      // Filtered Jobs List for Jobs Tab
+      const filteredJobs = JOBS_CATALOG.filter(job => {
+        if (jobSubTab === 'working') {
+          return job.isActive;
+        }
+        if (jobSubTab === 'recent') {
+          if (selectedDomain === 'all') return job.isRecent;
+          return job.isRecent && job.domain === selectedDomain;
+        }
+        // 'find' sub-tab
+        if (selectedDomain === 'all') return true;
+        return job.domain === selectedDomain;
+      });
+
+      const currentSelectedJob = JOBS_CATALOG.find(j => j.id === selectedJobId) || JOBS_CATALOG[0];
+
+      const domainCategories = [
+        { id: 'all', label: 'All Domains', icon: '⚡', count: JOBS_CATALOG.length },
+        { id: 'web', label: 'Web Development', icon: '🌐', count: JOBS_CATALOG.filter(j => j.domain === 'web').length },
+        { id: 'design', label: 'UI/UX Design', icon: '🎨', count: JOBS_CATALOG.filter(j => j.domain === 'design').length },
+        { id: 'ai', label: 'AI/ML & Data', icon: '🤖', count: JOBS_CATALOG.filter(j => j.domain === 'ai').length },
+        { id: 'ecommerce', label: 'E-Commerce', icon: '🛍️', count: JOBS_CATALOG.filter(j => j.domain === 'ecommerce').length },
+      ];
+
       // ============================================================
-      // RENDER STEP 1: AUTHENTICATION VIEW
+      // VIEW 1: AUTHENTICATION / START VIEW
+      // (Cleaned: Removed 3 bottom cards, removed Evaluator buttons, removed Case 35)
       // ============================================================
       if (currentView === 'auth') {
         return (
-          <div className="min-h-screen bg-gradient-to-b from-almond-silk via-seashell to-seashell flex flex-col justify-center items-center px-4 py-12">
-            <div className="max-w-xl w-full">
+          <div className="min-h-screen bg-floral-white flex flex-col justify-center items-center px-4 py-12">
+            <div className="max-w-md w-full">
               {/* Header Banner */}
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="font-serif font-bold text-2xl text-space-indigo tracking-tight">Fynd ScopeDesk</span>
-                  <span className="text-[10px] bg-space-indigo text-seashell px-2 py-0.5 rounded font-bold uppercase tracking-wider">Case C35</span>
-                </div>
-                <span className="text-xs font-semibold text-dusty-grape">Privacy-First Architecture</span>
-              </div>
-
               <div className="text-center mb-8">
-                <h1 className="font-serif text-3xl sm:text-4xl font-bold text-space-indigo mb-3">
-                  Great work starts with a <em className="text-dusty-grape italic">clear</em> scope.
+                <div className="inline-flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-carbon-black flex items-center justify-center text-floral-white font-black text-sm">
+                    F
+                  </div>
+                  <span className="font-serif font-bold text-2xl text-carbon-black tracking-tight">Fynd ScopeDesk</span>
+                </div>
+                <h1 className="font-serif text-3xl font-bold text-carbon-black mb-2">
+                  Great work starts with a <em className="text-spicy-paprika not-italic font-black">clear</em> scope.
                 </h1>
-                <p className="text-sm text-dusty-grape max-w-md mx-auto">
-                  Freelancer Discovery with browser-native WebRTC calls, contact redaction, WhatsApp Meta-AI assistant, and SOW variance pricing.
+                <p className="text-xs text-charcoal-brown max-w-sm mx-auto leading-relaxed">
+                  Freelancer Discovery with privacy-first chat, WebRTC audio calls, Meta-AI scope assistant, and SOW variance pricing.
                 </p>
               </div>
 
-              {/* Login / Signup Card */}
-              <div className="bg-white border-2 border-lilac-ash rounded-2xl p-8 shadow-xl">
+              {/* Login / Role Selection Card */}
+              <div className="bg-white border-2 border-silver rounded-2xl p-7 shadow-lg">
                 {/* Role Switcher */}
-                <div className="mb-6">
-                  <label className="block text-xs font-bold text-dusty-grape uppercase tracking-wider mb-2">
-                    Select Your Platform Role
+                <div className="mb-5">
+                  <label className="block text-xs font-bold text-charcoal-brown uppercase tracking-wider mb-2">
+                    Select Platform Role
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => { setUserRole('freelancer'); setAnonymousHandle('Freelancer_Dev'); }}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1.5 transition-all ${
+                      className={`p-3.5 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${
                         userRole === 'freelancer'
-                          ? 'border-space-indigo bg-seashell text-space-indigo font-bold shadow-sm'
-                          : 'border-almond-silk bg-white text-dusty-grape font-semibold hover:border-lilac-ash'
+                          ? 'border-carbon-black bg-floral-white text-carbon-black font-bold shadow-sm'
+                          : 'border-silver/60 bg-white text-charcoal-brown hover:border-silver'
                       }`}
                     >
                       <span className="text-2xl">💻</span>
-                      <span className="text-sm">Freelancer</span>
-                      <span className="text-[11px] text-dusty-grape font-normal">Discover jobs & negotiate</span>
+                      <span className="text-xs font-bold">Freelancer</span>
+                      <span className="text-[10px] text-charcoal-brown/80">Discover & negotiate</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { setUserRole('client'); setAnonymousHandle('Client_A'); }}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1.5 transition-all ${
+                      className={`p-3.5 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${
                         userRole === 'client'
-                          ? 'border-space-indigo bg-seashell text-space-indigo font-bold shadow-sm'
-                          : 'border-almond-silk bg-white text-dusty-grape font-semibold hover:border-lilac-ash'
+                          ? 'border-carbon-black bg-floral-white text-carbon-black font-bold shadow-sm'
+                          : 'border-silver/60 bg-white text-charcoal-brown hover:border-silver'
                       }`}
                     >
                       <span className="text-2xl">💼</span>
-                      <span className="text-sm">Client</span>
-                      <span className="text-[11px] text-dusty-grape font-normal">Post jobs & approve scope</span>
+                      <span className="text-xs font-bold">Client</span>
+                      <span className="text-[10px] text-charcoal-brown/80">Post & approve scope</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Anonymous Display Name */}
                 <div className="mb-6">
-                  <label className="block text-xs font-bold text-dusty-grape uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-bold text-charcoal-brown uppercase tracking-wider mb-1.5">
                     Anonymous Platform Display Name
                   </label>
                   <input
                     type="text"
                     value={anonymousHandle}
                     onChange={(e) => setAnonymousHandle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-lilac-ash bg-seashell text-space-indigo font-semibold text-sm focus:outline-none focus:border-space-indigo"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-silver bg-floral-white text-carbon-black font-semibold text-xs focus:outline-none focus:border-carbon-black"
                     required
                   />
-                  <p className="text-xs text-dusty-grape mt-2 flex items-center gap-1">
+                  <p className="text-[11px] text-charcoal-brown/80 mt-1.5 flex items-center gap-1">
                     <span>🔒</span> Zero personal email or phone number exposed.
                   </p>
                 </div>
@@ -643,102 +847,63 @@
                 <button
                   type="button"
                   onClick={() => {
-                    setCurrentView(userRole);
+                    setCurrentView('portal');
                     setIsWorkspaceOpen(false);
                   }}
-                  className="w-full py-3 px-6 rounded-xl bg-space-indigo hover:bg-dusty-grape text-seashell font-bold text-sm tracking-wide shadow-md transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 px-6 rounded-xl bg-carbon-black hover:bg-charcoal-brown text-floral-white font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2"
                 >
-                  {userRole === 'freelancer' ? 'Enter as Freelancer → (Open Portal)' : 'Enter as Client → (Open Portal)'}
+                  Enter Platform as {userRole === 'freelancer' ? 'Freelancer' : 'Client'} →
                 </button>
-
-                {/* Quick Shortcuts Strip */}
-                <div className="mt-6 pt-5 border-t border-almond-silk text-center">
-                  <span className="text-xs text-dusty-grape block mb-2.5 font-medium">Evaluator One-Click Access:</span>
-                  <div className="flex gap-2 justify-center">
-                    <button
-                      type="button"
-                      onClick={() => { setUserRole('freelancer'); setAnonymousHandle('Freelancer_Dev'); setCurrentView('freelancer'); }}
-                      className="px-3 py-1.5 rounded-lg border border-lilac-ash bg-seashell hover:bg-almond-silk text-space-indigo text-xs font-bold transition-all"
-                    >
-                      Freelancer_Dev (P1)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setUserRole('client'); setAnonymousHandle('Client_A'); setCurrentView('client'); }}
-                      className="px-3 py-1.5 rounded-lg border border-lilac-ash bg-seashell hover:bg-almond-silk text-space-indigo text-xs font-bold transition-all"
-                    >
-                      Client_A (P1)
-                    </button>
-                  </div>
-                </div>
               </div>
 
-              {/* Feature Highlights Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-8">
-                <div className="bg-white border border-almond-silk rounded-xl p-3.5 shadow-sm">
-                  <h4 className="font-bold text-xs text-space-indigo mb-1 flex items-center gap-1.5">
-                    <span>📞</span> Freemium Call Gate
-                  </h4>
-                  <p className="text-xs text-dusty-grape leading-relaxed">
-                    5 audio-only calls free per workspace. 6th call unlocks HD video on Pro.
-                  </p>
-                </div>
-                <div className="bg-white border border-almond-silk rounded-xl p-3.5 shadow-sm">
-                  <h4 className="font-bold text-xs text-space-indigo mb-1 flex items-center gap-1.5">
-                    <span>🤖</span> WhatsApp Meta-AI
-                  </h4>
-                  <p className="text-xs text-dusty-grape leading-relaxed">
-                    Type @AI to extract scope changes, compare with fixture, and quote before tax.
-                  </p>
-                </div>
-                <div className="bg-white border border-almond-silk rounded-xl p-3.5 shadow-sm">
-                  <h4 className="font-bold text-xs text-space-indigo mb-1 flex items-center gap-1.5">
-                    <span>🛡️</span> Contact Redaction
-                  </h4>
-                  <p className="text-xs text-dusty-grape leading-relaxed">
-                    Regex filter automatically masks personal emails and phones to ***REDACTED***.
-                  </p>
-                </div>
+              <div className="text-center mt-6">
+                <span className="text-[11px] text-charcoal-brown/70">
+                  Fynd ScopeDesk · Privacy-Guarded Freelancer Platform
+                </span>
               </div>
             </div>
           </div>
         );
       }
 
-      // ============================================================
-      // RENDER PORTAL HEADER (STEPS 2 & 3 & 4)
-      // ============================================================
+      // Calls left calculation for in-chat display
       const callsLeft = Math.max(0, 5 - callCount);
 
+      // ============================================================
+      // VIEW 2: MAIN PORTAL VIEW (TopBar + 3-Column Layout for Dashboard, Jobs, Profile)
+      // ============================================================
       return (
-        <div className="min-h-screen bg-seashell flex flex-col">
+        <div className="min-h-screen bg-floral-white flex flex-col">
           {/* Toast Notification */}
           {toastNotification && (
-            <div className="fixed top-4 right-4 z-50 bg-space-indigo text-seashell px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 border border-almond-silk animate-bounce">
+            <div className="fixed top-4 right-4 z-50 bg-carbon-black text-floral-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 border border-silver animate-bounce">
               <span>🔔</span> {toastNotification}
             </div>
           )}
 
           {/* TOP NAVIGATION BAR */}
-          <header className="sticky top-0 z-40 bg-white border-b border-almond-silk shadow-sm px-6 py-3 flex items-center justify-between flex-wrap gap-4">
+          {/* Note: Call quota badge is REMOVED from topbar, visible ONLY in chat workspace */}
+          <header className="sticky top-0 z-40 bg-white border-b border-silver shadow-sm px-6 py-3 flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-6">
               <div 
                 onClick={() => { setIsWorkspaceOpen(false); setPortalTab('dashboard'); }}
                 className="flex items-center gap-2 cursor-pointer"
               >
-                <span className="font-serif font-bold text-xl text-space-indigo tracking-tight">Fynd ScopeDesk</span>
-                <span className="text-[10px] bg-almond-silk text-space-indigo font-bold px-2 py-0.5 rounded">CASE C35</span>
+                <div className="w-7 h-7 rounded-md bg-carbon-black flex items-center justify-center text-floral-white font-black text-xs">
+                  F
+                </div>
+                <span className="font-serif font-bold text-xl text-carbon-black tracking-tight">Fynd ScopeDesk</span>
               </div>
 
-              {/* Navigation Tabs */}
+              {/* Navigation Tabs (Dashboard, Jobs, Profile) */}
               <nav className="flex items-center gap-1">
                 <button
                   type="button"
                   onClick={() => { setPortalTab('dashboard'); setIsWorkspaceOpen(false); }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
                     portalTab === 'dashboard' && !isWorkspaceOpen
-                      ? 'bg-space-indigo text-seashell'
-                      : 'text-dusty-grape hover:bg-seashell'
+                      ? 'bg-carbon-black text-floral-white shadow-sm'
+                      : 'text-charcoal-brown hover:bg-silver/20'
                   }`}
                 >
                   Dashboard
@@ -746,10 +911,10 @@
                 <button
                   type="button"
                   onClick={() => { setPortalTab('jobs'); setIsWorkspaceOpen(false); }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
                     portalTab === 'jobs' && !isWorkspaceOpen
-                      ? 'bg-space-indigo text-seashell'
-                      : 'text-dusty-grape hover:bg-seashell'
+                      ? 'bg-carbon-black text-floral-white shadow-sm'
+                      : 'text-charcoal-brown hover:bg-silver/20'
                   }`}
                 >
                   Jobs
@@ -757,33 +922,26 @@
                 <button
                   type="button"
                   onClick={() => { setPortalTab('profile'); setIsWorkspaceOpen(false); }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
                     portalTab === 'profile' && !isWorkspaceOpen
-                      ? 'bg-space-indigo text-seashell'
-                      : 'text-dusty-grape hover:bg-seashell'
+                      ? 'bg-carbon-black text-floral-white shadow-sm'
+                      : 'text-charcoal-brown hover:bg-silver/20'
                   }`}
                 >
                   Profile
                 </button>
+
+                {isWorkspaceOpen && (
+                  <span className="ml-2 px-3 py-1 rounded-full text-[11px] font-bold bg-spicy-paprika text-white animate-pulse">
+                    ● Active Project Workspace
+                  </span>
+                )}
               </nav>
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Subscription Tier Badge */}
-              {isSubscribed ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-space-indigo text-seashell shadow-sm">
-                  ★ Pro Seat Active
-                </span>
-              ) : (
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
-                  callsLeft <= 1 ? 'bg-almond-silk border-space-indigo text-space-indigo' : 'bg-seashell border-lilac-ash text-dusty-grape'
-                }`}>
-                  Free Tier: {callsLeft}/5 Audio Calls Left
-                </span>
-              )}
-
               {/* Anonymous Display Name */}
-              <span className="bg-seashell text-space-indigo border border-almond-silk px-2.5 py-1 rounded-md text-xs font-bold">
+              <span className="bg-floral-white text-carbon-black border border-silver px-3 py-1 rounded-full text-xs font-bold">
                 {anonymousHandle}
               </span>
 
@@ -791,7 +949,7 @@
               <button
                 type="button"
                 onClick={toggleRole}
-                className="px-3 py-1 rounded-full text-xs font-bold border border-lilac-ash bg-white text-space-indigo hover:bg-seashell transition-all"
+                className="px-3 py-1 rounded-full text-xs font-bold border border-silver bg-white text-charcoal-brown hover:border-carbon-black hover:text-carbon-black transition-all"
                 title={`Switch role to ${userRole === 'freelancer' ? 'Client' : 'Freelancer'}`}
               >
                 ⇄ Switch to {userRole === 'freelancer' ? 'Client' : 'Freelancer'}
@@ -801,7 +959,7 @@
               <button
                 type="button"
                 onClick={() => setCurrentView('auth')}
-                className="text-xs text-dusty-grape hover:text-space-indigo font-semibold ml-1"
+                className="text-xs text-charcoal-brown hover:text-spicy-paprika font-semibold ml-1"
                 title="Log out to start screen"
               >
                 Exit
@@ -810,60 +968,73 @@
           </header>
 
           {/* MAIN CONTAINER */}
-          <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
+          <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+            
             {isWorkspaceOpen ? (
               // ============================================================
               // STEP 4: UNIFIED PROJECT WORKSPACE (CHAT + CALL + SCOPEDESK)
+              // (Call Controls & Quota are strictly located HERE in the chat workspace!)
               // ============================================================
               <div className="flex flex-col gap-4">
-                <div className="flex justify-between items-center bg-white border border-almond-silk p-3.5 rounded-xl">
+                <div className="flex justify-between items-center bg-white border border-silver p-3.5 rounded-2xl shadow-sm">
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setIsWorkspaceOpen(false)}
-                      className="px-3 py-1.5 rounded-lg border border-lilac-ash text-xs font-bold text-space-indigo hover:bg-seashell transition-all"
+                      className="px-3 py-1.5 rounded-xl border border-silver text-xs font-bold text-carbon-black hover:bg-silver/20 transition-all"
                     >
                       ← Back to {portalTab.toUpperCase()}
                     </button>
-                    <span className="text-xs font-bold text-space-indigo">Workspace Room: C35</span>
-                    <span className="text-[10px] bg-space-indigo text-seashell px-2 py-0.5 rounded font-bold uppercase">SOW v{scopeVersion}</span>
+                    <span className="text-xs font-bold text-carbon-black">Project Room: Flagship Contract</span>
+                    <span className="text-[10px] bg-carbon-black text-floral-white px-2 py-0.5 rounded font-bold uppercase">SOW v{scopeVersion}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-dusty-grape font-semibold">Flagship Web Dev Contract</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowSowUploadModal(true)}
+                      className="px-3 py-1.5 rounded-xl border border-silver bg-floral-white hover:bg-silver/30 text-carbon-black text-xs font-bold transition-all flex items-center gap-1.5"
+                    >
+                      <span>📄</span> Upload Amended SOW
+                    </button>
                   </div>
                 </div>
 
                 {/* Split Workspace: Left Chat Box / Right ScopeDesk Drawer */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-[calc(100vh-165px)] min-h-[680px]">
-                  {/* LEFT/CENTER PANE: WhatsApp Style Real-Time Chat (7 Cols) */}
-                  <div className="lg:col-span-7 bg-white border-2 border-dusty-grape rounded-2xl flex flex-col overflow-hidden shadow-md">
-                    {/* Chat Header */}
-                    <div className="bg-space-indigo text-seashell px-5 py-3.5 flex items-center justify-between border-b border-dusty-grape">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-[calc(100vh-175px)] min-h-[680px]">
+                  {/* LEFT PANE: Real-Time Chat (7 Cols) */}
+                  <div className="lg:col-span-7 bg-white border-2 border-silver rounded-2xl flex flex-col overflow-hidden shadow-sm">
+                    {/* Chat Header WITH CALL CONTROLS */}
+                    <div className="bg-carbon-black text-floral-white px-5 py-3.5 flex items-center justify-between border-b border-charcoal-brown">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-almond-silk text-space-indigo font-bold text-sm flex items-center justify-center">
+                        <div className="w-9 h-9 rounded-full bg-spicy-paprika text-white font-bold text-sm flex items-center justify-center">
                           {userRole === 'freelancer' ? 'CA' : 'FD'}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-seashell">
+                            <span className="font-bold text-sm text-floral-white">
                               {userRole === 'freelancer' ? 'Client_A' : 'Freelancer_Dev'}
                             </span>
-                            <span className="w-2 h-2 rounded-full bg-almond-silk inline-block" title="Online" />
+                            <span className="w-2 h-2 rounded-full bg-spicy-paprika inline-block" title="Online" />
                           </div>
-                          <span className="text-[11px] text-almond-silk">Project Room: C35 · Anonymous P2P</span>
+                          <span className="text-[11px] text-silver">Project Peer Chat · Anonymous P2P</span>
                         </div>
                       </div>
 
+                      {/* CALL SECTION IN CHAT (Visible ONLY in Chats!) */}
                       <div className="flex items-center gap-2.5">
-                        <span className="text-xs font-bold bg-dusty-grape text-seashell px-2.5 py-1 rounded-full border border-lilac-ash">
-                          {isSubscribed ? '★ Pro: Unlimited' : `Calls: ${callCount}/5`}
+                        <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
+                          isSubscribed
+                            ? 'bg-spicy-paprika text-white border-spicy-paprika'
+                            : 'bg-charcoal-brown text-floral-white border-silver/40'
+                        }`}>
+                          {isSubscribed ? '★ Pro: Unlimited Calls' : `Calls: ${callCount}/5 Used (${callsLeft} left)`}
                         </span>
 
                         <button
                           type="button"
                           onClick={handleStartCall}
-                          className="px-3.5 py-1.5 rounded-full bg-almond-silk hover:bg-white text-space-indigo font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
+                          className="px-3.5 py-1.5 rounded-full bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
                         >
                           <span>📞</span> [ Start Call ]
                         </button>
@@ -871,118 +1042,146 @@
                     </div>
 
                     {/* Mode Toggle & Redaction Alert */}
-                    <div className="bg-seashell border-b border-almond-silk px-4 py-2 flex items-center justify-between text-xs flex-wrap gap-2">
+                    <div className="bg-floral-white border-b border-silver px-4 py-2 flex items-center justify-between text-xs flex-wrap gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-space-indigo">Meta-AI Engine:</span>
+                        <span className="font-bold text-carbon-black">Meta-AI Engine:</span>
                         <button
                           type="button"
                           onClick={() => setAiMode(aiMode === 'semantic' ? 'deterministic' : 'semantic')}
-                          className="px-2.5 py-0.5 rounded-full bg-space-indigo text-seashell text-[11px] font-bold"
+                          className="px-2.5 py-0.5 rounded-full bg-carbon-black text-floral-white text-[11px] font-bold"
                           title="Toggle between Semantic Parser and Offline Deterministic Rule Engine"
                         >
                           {aiMode === 'semantic' ? 'Mode: AI Semantic Parser' : 'Fallback: Deterministic Rule Engine'}
                         </button>
                       </div>
-                      <span className="text-[11px] text-dusty-grape">Type @AI or click pill below</span>
+                      <span className="text-[11px] text-charcoal-brown font-medium">Type @AI or click pill below</span>
                     </div>
 
                     {redactionNotice && (
-                      <div className="bg-almond-silk text-space-indigo px-4 py-2 text-xs font-semibold border-b border-lilac-ash animate-pulse">
+                      <div className="bg-spicy-paprika/15 text-carbon-black px-4 py-2 text-xs font-semibold border-b border-silver animate-pulse">
                         {redactionNotice}
                       </div>
                     )}
 
-                    {/* Messages Feed */}
+                    {/* Messages Feed - STARTS EMPTY IF NO MESSAGES */}
                     <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 custom-scrollbar bg-white">
-                      {messages.map((m) => {
-                        const isMe = m.sender === anonymousHandle;
-                        const isAi = m.sender === 'Meta_AI';
+                      {messages.length === 0 ? (
+                        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center my-auto">
+                          <div className="w-14 h-14 rounded-full bg-silver/20 flex items-center justify-center text-3xl mb-3 text-charcoal-brown">
+                            💬
+                          </div>
+                          <h4 className="font-serif font-bold text-sm text-carbon-black mb-1">Project Chat is Empty</h4>
+                          <p className="text-xs text-charcoal-brown max-w-sm mb-4 leading-relaxed">
+                            No messages yet. Send a message to coordinate scope, or use <strong className="text-spicy-paprika">@AI</strong> to extract scope changes and estimate variance pricing.
+                          </p>
+                          <div className="flex flex-wrap gap-2 justify-center">
+                            <button
+                              type="button"
+                              onClick={() => handleSendMessage("Hello! I reviewed the baseline SOW and I am ready to begin work on the landing page.")}
+                              className="text-[11px] px-3.5 py-1.5 rounded-full border border-silver bg-floral-white hover:bg-silver/30 text-carbon-black font-semibold transition-all"
+                            >
+                              👋 Say Hello
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => executeMetaAi('Compare project requirements against baseline SOW')}
+                              className="text-[11px] px-3.5 py-1.5 rounded-full bg-carbon-black text-floral-white font-semibold hover:bg-charcoal-brown transition-all"
+                            >
+                              🤖 Run @AI Scope Check
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        messages.map((m) => {
+                          const isMe = m.sender === anonymousHandle;
+                          const isAi = m.sender === 'Meta_AI';
 
-                        if (isAi) {
-                          return (
-                            <div key={m.id} className="max-w-[92%] mx-auto bg-seashell border-2 border-dusty-grape rounded-xl p-3.5 my-1 shadow-sm">
-                              <div className="flex items-center justify-between mb-1.5">
-                                <div className="flex items-center gap-1.5">
-                                  <span>🤖</span>
-                                  <span className="font-bold text-xs text-space-indigo">Meta AI ScopeDesk Assistant</span>
-                                  <span className="text-[10px] bg-space-indigo text-seashell px-1.5 py-0.2 rounded font-bold">Offline Verified</span>
+                          if (isAi) {
+                            return (
+                              <div key={m.id} className="max-w-[92%] mx-auto bg-floral-white border-2 border-silver rounded-2xl p-4 my-1 shadow-sm">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-1.5">
+                                    <span>🤖</span>
+                                    <span className="font-bold text-xs text-carbon-black">Meta-AI Scope Assistant</span>
+                                    <span className="text-[10px] bg-carbon-black text-floral-white px-1.5 py-0.2 rounded font-bold">Verified</span>
+                                  </div>
+                                  <span className="text-[10px] text-charcoal-brown">{m.timestamp}</span>
                                 </div>
-                                <span className="text-[10px] text-dusty-grape">{m.timestamp}</span>
+
+                                <pre className="text-xs text-charcoal-brown font-sans whitespace-pre-wrap leading-relaxed mb-3">
+                                  {m.text}
+                                </pre>
+
+                                {m.quoteData && (
+                                  <div className="bg-white border border-silver rounded-xl p-3 flex items-center justify-between">
+                                    <div>
+                                      <div className="font-bold text-xs text-carbon-black">{m.quoteData.requestId}: {m.quoteData.item}</div>
+                                      <div className="text-[11px] text-charcoal-brown">{m.quoteData.classification} · {m.quoteData.hours}h @ ₹1,000/hr</div>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="font-black text-sm text-spicy-paprika">{money(m.quoteData.price)}</div>
+                                      <span className="text-[10px] text-charcoal-brown">before tax</span>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
+                            );
+                          }
 
-                              <pre className="text-xs text-space-indigo font-sans whitespace-pre-wrap leading-relaxed mb-3">
-                                {m.text}
-                              </pre>
-
-                              {m.quoteData && (
-                                <div className="bg-white border border-almond-silk rounded-lg p-2.5 flex items-center justify-between">
-                                  <div>
-                                    <div className="font-bold text-xs text-space-indigo">{m.quoteData.requestId}: {m.quoteData.item}</div>
-                                    <div className="text-[11px] text-dusty-grape">{m.quoteData.classification} · {m.quoteData.hours}h @ ₹1,000/hr</div>
+                          return (
+                            <div
+                              key={m.id}
+                              className={`flex flex-col max-w-[78%] ${isMe ? 'self-end items-end' : 'self-start items-start'}`}
+                            >
+                              <div
+                                className={`px-4 py-2.5 rounded-2xl text-xs leading-relaxed shadow-sm ${
+                                  isMe
+                                    ? 'bg-carbon-black text-floral-white rounded-br-none'
+                                    : 'bg-floral-white text-carbon-black rounded-bl-none border border-silver'
+                                }`}
+                              >
+                                <div className="text-[10px] font-bold opacity-75 mb-0.5">{m.sender}</div>
+                                <div>{m.text}</div>
+                                {m.redacted && (
+                                  <div className={`text-[10px] mt-1 font-semibold ${isMe ? 'text-silver' : 'text-spicy-paprika'}`}>
+                                    🔒 Masked by privacy filter
                                   </div>
-                                  <div className="text-right">
-                                    <div className="font-black text-sm text-space-indigo">{money(m.quoteData.price)}</div>
-                                    <span className="text-[10px] text-dusty-grape">before tax</span>
-                                  </div>
-                                </div>
-                              )}
+                                )}
+                              </div>
+                              <span className="text-[10px] text-charcoal-brown/70 px-1 mt-0.5">{m.timestamp}</span>
                             </div>
                           );
-                        }
-
-                        return (
-                          <div
-                            key={m.id}
-                            className={`flex flex-col max-w-[78%] ${isMe ? 'self-end items-end' : 'self-start items-start'}`}
-                          >
-                            <div
-                              className={`px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed shadow-sm ${
-                                isMe
-                                  ? 'bg-space-indigo text-seashell rounded-br-none border border-dusty-grape'
-                                  : 'bg-seashell text-space-indigo rounded-bl-none border border-almond-silk'
-                              }`}
-                            >
-                              <div className="text-[10px] font-bold opacity-75 mb-0.5">{m.sender}</div>
-                              <div>{m.text}</div>
-                              {m.redacted && (
-                                <div className={`text-[10px] mt-1 font-semibold ${isMe ? 'text-almond-silk' : 'text-dusty-grape'}`}>
-                                  🔒 Masked by privacy filter
-                                </div>
-                              )}
-                            </div>
-                            <span className="text-[10px] text-dusty-grape px-1 mt-0.5">{m.timestamp}</span>
-                          </div>
-                        );
-                      })}
+                        })
+                      )}
 
                       {isAiThinking && (
-                        <div className="self-center bg-seashell border border-almond-silk px-4 py-1.5 rounded-full text-xs font-semibold text-dusty-grape animate-pulse">
-                          🤖 Meta AI is analyzing chat history against SOW v1...
+                        <div className="self-center bg-floral-white border border-silver px-4 py-1.5 rounded-full text-xs font-semibold text-charcoal-brown animate-pulse">
+                          🤖 Meta-AI is analyzing chat history against SOW v1...
                         </div>
                       )}
                       <div ref={chatEndRef} />
                     </div>
 
                     {/* Floating @AI Prompt Pills */}
-                    <div className="bg-seashell border-t border-almond-silk px-4 py-2 flex items-center gap-2 overflow-x-auto custom-scrollbar">
+                    <div className="bg-floral-white border-t border-silver px-4 py-2 flex items-center gap-2 overflow-x-auto custom-scrollbar">
                       <button
                         type="button"
                         onClick={() => executeMetaAi('Extract scope change requests from chat')}
-                        className="px-3 py-1 rounded-full bg-white border border-lilac-ash text-space-indigo text-xs font-semibold whitespace-nowrap hover:bg-almond-silk transition-all"
+                        className="px-3 py-1 rounded-full bg-white border border-silver text-carbon-black text-xs font-semibold whitespace-nowrap hover:bg-silver/20 transition-all"
                       >
                         ✨ @AI Extract Scope
                       </button>
                       <button
                         type="button"
-                        onClick={() => executeMetaAi('Compare against baseline fixture.json')}
-                        className="px-3 py-1 rounded-full bg-white border border-lilac-ash text-space-indigo text-xs font-semibold whitespace-nowrap hover:bg-almond-silk transition-all"
+                        onClick={() => executeMetaAi('Compare against baseline SOW')}
+                        className="px-3 py-1 rounded-full bg-white border border-silver text-carbon-black text-xs font-semibold whitespace-nowrap hover:bg-silver/20 transition-all"
                       >
                         📋 @AI Compare SOW
                       </button>
                       <button
                         type="button"
                         onClick={() => executeMetaAi('Generate Scope Change Quote for R1')}
-                        className="px-3 py-1 rounded-full bg-white border border-lilac-ash text-space-indigo text-xs font-semibold whitespace-nowrap hover:bg-almond-silk transition-all"
+                        className="px-3 py-1 rounded-full bg-white border border-silver text-carbon-black text-xs font-semibold whitespace-nowrap hover:bg-silver/20 transition-all"
                       >
                         💰 @AI Quote R1
                       </button>
@@ -991,12 +1190,12 @@
                     {/* Message Input */}
                     <form
                       onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
-                      className="p-3 bg-white border-t border-almond-silk flex items-center gap-2"
+                      className="p-3 bg-white border-t border-silver flex items-center gap-2"
                     >
                       <button
                         type="button"
                         onClick={() => setChatInput(prev => prev ? `@AI ${prev}` : '@AI ')}
-                        className="bg-space-indigo hover:bg-dusty-grape text-seashell px-3 py-2 rounded-xl text-xs font-bold transition-all"
+                        className="bg-carbon-black hover:bg-charcoal-brown text-floral-white px-3 py-2 rounded-xl text-xs font-bold transition-all"
                         title="Insert @AI prompt token"
                       >
                         🤖 @AI
@@ -1007,70 +1206,70 @@
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         placeholder="Type message or test PII filter (e.g. test@example.com or 9876543210)..."
-                        className="flex-1 px-4 py-2 rounded-xl border border-lilac-ash bg-seashell text-xs text-space-indigo focus:outline-none focus:border-space-indigo font-medium"
+                        className="flex-1 px-4 py-2 rounded-xl border border-silver bg-floral-white text-xs text-carbon-black focus:outline-none focus:border-carbon-black font-medium"
                       />
 
                       <button
                         type="submit"
-                        className="bg-space-indigo hover:bg-dusty-grape text-seashell px-5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm"
+                        className="bg-spicy-paprika hover:bg-[#d14d1b] text-white px-5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm"
                       >
                         Send
                       </button>
                     </form>
                   </div>
 
-                  {/* RIGHT PANE: Interactive C35 Scope Change Desk Drawer (5 Cols) */}
-                  <div className="lg:col-span-5 bg-white border-2 border-lilac-ash rounded-2xl p-5 flex flex-col gap-4 overflow-y-auto custom-scrollbar shadow-md">
+                  {/* RIGHT PANE: Interactive Scope Change Desk Drawer (5 Cols) */}
+                  <div className="lg:col-span-5 bg-white border-2 border-silver rounded-2xl p-5 flex flex-col gap-4 overflow-y-auto custom-scrollbar shadow-sm">
                     <div className="flex justify-between items-start">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[10px] bg-space-indigo text-seashell px-2 py-0.5 rounded font-bold uppercase">C35 Engine</span>
-                          <span className="text-xs font-bold text-space-indigo">SOW v{scopeVersion}</span>
+                          <span className="text-[10px] bg-carbon-black text-floral-white px-2 py-0.5 rounded font-bold uppercase">Scope Engine</span>
+                          <span className="text-xs font-bold text-carbon-black">SOW v{scopeVersion}</span>
                         </div>
-                        <h2 className="font-serif text-lg font-bold text-space-indigo">Scope Change Desk</h2>
+                        <h2 className="font-serif text-lg font-bold text-carbon-black">Scope Change Desk</h2>
                       </div>
 
                       <button
                         type="button"
                         onClick={handleExportEvidenceJson}
-                        className="px-2.5 py-1.5 rounded-lg border border-lilac-ash bg-seashell hover:bg-almond-silk text-space-indigo text-xs font-bold transition-all flex items-center gap-1"
+                        className="px-2.5 py-1.5 rounded-xl border border-silver bg-floral-white hover:bg-silver/30 text-carbon-black text-xs font-bold transition-all flex items-center gap-1"
                         title="Download complete versioned evidence JSON package"
                       >
                         <span>📥</span> Export JSON
                       </button>
                     </div>
 
-                    {/* Live Metrics Grid from fixture.json */}
-                    <div className="bg-seashell border border-almond-silk rounded-xl p-3.5">
+                    {/* Live Metrics Grid from fixture */}
+                    <div className="bg-floral-white border border-silver rounded-xl p-3.5">
                       <div className="grid grid-cols-3 gap-2 text-center mb-3">
-                        <div className="p-2 bg-white rounded-lg border border-almond-silk">
-                          <div className="text-[10px] text-dusty-grape font-semibold">Rate</div>
-                          <div className="text-sm font-bold text-space-indigo">{money(FIXTURE_DATA.ratePerHour)}/hr</div>
-                          <div className="text-[9px] text-dusty-grape">before tax</div>
+                        <div className="p-2 bg-white rounded-lg border border-silver/60">
+                          <div className="text-[10px] text-charcoal-brown font-semibold">Rate</div>
+                          <div className="text-sm font-bold text-carbon-black">{money(FIXTURE_DATA.ratePerHour)}/hr</div>
+                          <div className="text-[9px] text-charcoal-brown">before tax</div>
                         </div>
-                        <div className="p-2 bg-white rounded-lg border border-almond-silk">
-                          <div className="text-[10px] text-dusty-grape font-semibold">Capacity Left</div>
-                          <div className={`text-sm font-black ${remainingHours <= 2 ? 'text-space-indigo' : 'text-dusty-grape'}`}>
+                        <div className="p-2 bg-white rounded-lg border border-silver/60">
+                          <div className="text-[10px] text-charcoal-brown font-semibold">Capacity Left</div>
+                          <div className={`text-sm font-black ${remainingHours <= 2 ? 'text-spicy-paprika' : 'text-carbon-black'}`}>
                             {remainingHours}h / 10h
                           </div>
-                          <div className="text-[9px] text-dusty-grape">baseline capped</div>
+                          <div className="text-[9px] text-charcoal-brown">baseline cap</div>
                         </div>
-                        <div className="p-2 bg-white rounded-lg border border-almond-silk">
-                          <div className="text-[10px] text-dusty-grape font-semibold">Approved Extra</div>
-                          <div className="text-sm font-bold text-space-indigo">{money(approvedTotalValue)}</div>
-                          <div className="text-[9px] text-dusty-grape">{committedHours}h committed</div>
+                        <div className="p-2 bg-white rounded-lg border border-silver/60">
+                          <div className="text-[10px] text-charcoal-brown font-semibold">Approved Extra</div>
+                          <div className="text-sm font-bold text-spicy-paprika">{money(approvedTotalValue)}</div>
+                          <div className="text-[9px] text-charcoal-brown">{committedHours}h committed</div>
                         </div>
                       </div>
 
                       {/* Progress Bar */}
                       <div>
-                        <div className="flex justify-between text-[11px] font-bold text-space-indigo mb-1">
+                        <div className="flex justify-between text-[11px] font-bold text-carbon-black mb-1">
                           <span>Committed Effort: {committedHours}h</span>
                           <span>Ceiling: 10h</span>
                         </div>
-                        <div className="w-full h-2.5 bg-almond-silk rounded-full overflow-hidden">
+                        <div className="w-full h-2.5 bg-silver/40 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-space-indigo transition-all duration-300"
+                            className="h-full bg-spicy-paprika transition-all duration-300"
                             style={{ width: `${Math.min(100, (committedHours / FIXTURE_DATA.availableHours) * 100)}%` }}
                           />
                         </div>
@@ -1079,15 +1278,15 @@
 
                     {/* Baseline SOW Scope Boundaries */}
                     <div className="text-xs">
-                      <div className="font-bold text-space-indigo mb-1.5">SOW v1 Scope Boundaries:</div>
+                      <div className="font-bold text-carbon-black mb-1.5">SOW v1 Scope Boundaries:</div>
                       <div className="flex flex-wrap gap-1.5">
                         {FIXTURE_DATA.scope.included.map(item => (
-                          <span key={item} className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-seashell text-space-indigo border border-lilac-ash">
+                          <span key={item} className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-white text-carbon-black border border-silver">
                             ✓ In: {item}
                           </span>
                         ))}
                         {FIXTURE_DATA.scope.excluded.map(item => (
-                          <span key={item} className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-almond-silk text-space-indigo border border-space-indigo">
+                          <span key={item} className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-spicy-paprika/15 text-carbon-black border border-spicy-paprika">
                             ✕ Out: {item}
                           </span>
                         ))}
@@ -1095,8 +1294,8 @@
                     </div>
 
                     {/* Pre-loaded & Imported Requests List */}
-                    <div className="flex items-center justify-between pt-2 border-t border-almond-silk">
-                      <h3 className="text-xs font-bold text-space-indigo uppercase tracking-wider">
+                    <div className="flex items-center justify-between pt-2 border-t border-silver">
+                      <h3 className="text-xs font-bold text-carbon-black uppercase tracking-wider">
                         Change Requests ({requests.length})
                       </h3>
                       <div className="flex gap-1.5">
@@ -1106,7 +1305,7 @@
                             { id: 'R1', text: 'Add payment checkout', hours: 6 },
                             { id: 'R2', text: 'Fix our broken contact form', hours: 2, reason: 'defect rework' }
                           ])}
-                          className="px-2 py-1 rounded bg-seashell hover:bg-almond-silk border border-lilac-ash text-[11px] font-bold text-space-indigo transition-all"
+                          className="px-2 py-1 rounded bg-floral-white hover:bg-silver/30 border border-silver text-[11px] font-bold text-carbon-black transition-all"
                           title="Verify deduplication hash blocks re-importing R1/R2"
                         >
                           🔄 Dedup Test
@@ -1116,7 +1315,7 @@
                           onClick={() => handleImportWithDedup([
                             { id: 'R3', text: 'Custom responsive analytics widget', hours: 3 }
                           ])}
-                          className="px-2 py-1 rounded bg-seashell hover:bg-almond-silk border border-lilac-ash text-[11px] font-bold text-space-indigo transition-all"
+                          className="px-2 py-1 rounded bg-floral-white hover:bg-silver/30 border border-silver text-[11px] font-bold text-carbon-black transition-all"
                         >
                           + Add R3
                         </button>
@@ -1135,37 +1334,37 @@
                             key={r.id}
                             className={`p-3.5 rounded-xl border transition-all ${
                               isAppr
-                                ? 'bg-seashell border-space-indigo shadow-sm'
+                                ? 'bg-floral-white border-carbon-black shadow-sm'
                                 : isRej
-                                ? 'bg-white border-almond-silk opacity-75'
-                                : 'bg-white border-lilac-ash'
+                                ? 'bg-white border-silver/60 opacity-70'
+                                : 'bg-white border-silver'
                             }`}
                           >
                             <div className="flex justify-between items-start mb-1.5">
                               <div>
-                                <span className="font-extrabold text-xs text-space-indigo mr-1.5">{r.id}:</span>
-                                <span className="font-bold text-xs text-space-indigo">{r.text}</span>
+                                <span className="font-extrabold text-xs text-carbon-black mr-1.5">{r.id}:</span>
+                                <span className="font-bold text-xs text-carbon-black">{r.text}</span>
                               </div>
                               <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase ${
-                                isAppr ? 'bg-space-indigo text-seashell' : isRej ? 'bg-almond-silk text-space-indigo' : isClar ? 'bg-seashell text-dusty-grape border border-lilac-ash' : 'bg-seashell text-space-indigo'
+                                isAppr ? 'bg-carbon-black text-floral-white' : isRej ? 'bg-silver text-carbon-black' : isClar ? 'bg-spicy-paprika text-white' : 'bg-silver/30 text-carbon-black'
                               }`}>
                                 {r.status} (v{r.version})
                               </span>
                             </div>
 
                             {r.anomalyFlag && (
-                              <div className="text-[11px] font-bold text-space-indigo bg-almond-silk px-2 py-1 rounded-md mb-2 border border-lilac-ash">
+                              <div className="text-[11px] font-bold text-spicy-paprika bg-spicy-paprika/10 px-2 py-1 rounded-md mb-2 border border-spicy-paprika/30">
                                 ⚡ {r.anomalyFlag}
                               </div>
                             )}
 
                             {r.reason && (
-                              <div className="text-xs text-dusty-grape italic mb-2">
+                              <div className="text-xs text-charcoal-brown italic mb-2">
                                 Note: &quot;{r.reason}&quot;
                               </div>
                             )}
 
-                            <div className="flex items-center justify-between bg-seashell p-2 rounded-lg text-xs font-semibold text-space-indigo mb-2.5">
+                            <div className="flex items-center justify-between bg-floral-white p-2 rounded-lg text-xs font-semibold text-carbon-black mb-2.5">
                               <span>Effort: {r.hours !== null ? `${r.hours} hours` : 'unknown'}</span>
                               <span className="font-bold">
                                 Cost: {money(r.billableTotal)} {r.classification === 'defect_rework' ? '(Defect ₹0)' : ''}
@@ -1178,27 +1377,27 @@
                                 <button
                                   type="button"
                                   onClick={() => setClarifyModalRequest(r)}
-                                  className="px-2.5 py-1 rounded-lg border border-lilac-ash text-xs font-semibold text-space-indigo hover:bg-seashell"
+                                  className="px-2.5 py-1 rounded-lg border border-silver text-xs font-semibold text-charcoal-brown hover:bg-silver/20"
                                 >
                                   [ Clarify ]
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => setRejectionModalRequest(r)}
-                                  className="px-2.5 py-1 rounded-lg border border-space-indigo text-xs font-bold text-space-indigo hover:bg-almond-silk"
+                                  className="px-2.5 py-1 rounded-lg border border-charcoal-brown text-xs font-bold text-carbon-black hover:bg-silver/30"
                                 >
                                   [ Reject ]
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => handleApprove(r)}
-                                  className="px-3 py-1 rounded-lg bg-space-indigo hover:bg-dusty-grape text-seashell text-xs font-bold transition-all shadow-sm"
+                                  className="px-3 py-1 rounded-lg bg-spicy-paprika hover:bg-[#d14d1b] text-white text-xs font-bold transition-all shadow-sm"
                                 >
                                   ✓ [ Approve ]
                                 </button>
                               </div>
                             ) : (
-                              <div className="text-[11px] text-dusty-grape text-right font-medium">
+                              <div className="text-[11px] text-charcoal-brown text-right font-medium">
                                 {isAppr ? `✓ Committed into SOW v${r.version}. Remaining capacity: ${remainingHours}h` : `✕ Rejected (v${r.version}): 0h committed, ₹0 billed.`}
                               </div>
                             )}
@@ -1211,401 +1410,485 @@
               </div>
             ) : (
               // ============================================================
-              // STEP 2 & 3: MAIN FREELANCER / CLIENT PORTAL & DRILL-DOWN FLOW
+              // STEP 2 & 3: 3-COLUMN PORTAL (LEFT SIDEBAR + CENTER + RIGHT SIDEBAR)
+              // The Sidebars remain beside Dashboard, Jobs, and Profile!
               // ============================================================
-              <div className="flex flex-col gap-6">
-                {/* 3-Column Portal View */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  {/* LEFT SIDEBAR: Task List Panel (3 Cols) */}
-                  <aside className="lg:col-span-3 bg-white border border-almond-silk rounded-2xl p-5 shadow-sm flex flex-col gap-5">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-lg">📋</span>
-                        <h3 className="font-serif font-bold text-sm text-space-indigo">Task List Panel</h3>
-                      </div>
-                      <p className="text-xs text-dusty-grape">Committed work items & milestones</p>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                {/* 1. LEFT SIDEBAR: Task List Panel (3 Cols) */}
+                <aside className="lg:col-span-3 bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col gap-5 sticky top-20">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">📋</span>
+                      <h3 className="font-serif font-bold text-sm text-carbon-black">Task List Panel</h3>
                     </div>
+                    <p className="text-xs text-charcoal-brown">Committed work items & capacity</p>
+                  </div>
 
-                    {/* Effort Capacity Widget */}
-                    <div className="bg-seashell border border-lilac-ash rounded-xl p-3.5">
-                      <div className="flex justify-between items-baseline mb-2">
-                        <span className="text-[11px] font-bold text-space-indigo uppercase">Remaining Effort</span>
-                        <span className={`text-base font-black ${remainingHours <= 2 ? 'text-space-indigo' : 'text-dusty-grape'}`}>
-                          {remainingHours}h / 10h
-                        </span>
-                      </div>
-                      <div className="w-full h-2 bg-almond-silk rounded-full overflow-hidden mb-2">
-                        <div
-                          className="h-full bg-space-indigo transition-all duration-300"
-                          style={{ width: `${Math.min(100, (committedHours / 10) * 100)}%` }}
-                        />
-                      </div>
-                      <div className="flex justify-between text-[10px] text-dusty-grape font-medium">
-                        <span>Rate: ₹1,000/hr</span>
-                        <span>10h baseline ceiling</span>
-                      </div>
+                  {/* Effort Capacity Widget */}
+                  <div className="bg-floral-white border border-silver rounded-xl p-3.5">
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="text-[11px] font-bold text-carbon-black uppercase">Remaining Capacity</span>
+                      <span className={`text-base font-black ${remainingHours <= 2 ? 'text-spicy-paprika' : 'text-carbon-black'}`}>
+                        {remainingHours}h / 10h
+                      </span>
                     </div>
-
-                    {/* Committed Checklist */}
-                    <div>
-                      <div className="text-xs font-bold text-space-indigo mb-2">Committed Work Items:</div>
-                      <div className="flex flex-col gap-2">
-                        {tasks.map(t => (
-                          <label key={t.id} className="flex items-start gap-2.5 p-2 rounded-lg bg-seashell border border-almond-silk text-xs cursor-pointer hover:bg-almond-silk transition-all">
-                            <input
-                              type="checkbox"
-                              checked={t.completed}
-                              onChange={() => setTasks(prev => prev.map(item => item.id === t.id ? { ...item, completed: !item.completed } : item))}
-                              className="mt-0.5 cursor-pointer"
-                            />
-                            <div className="flex-1">
-                              <span className={`font-semibold ${t.completed ? 'line-through text-dusty-grape' : 'text-space-indigo'}`}>
-                                {t.label}
-                              </span>
-                              {t.isScopeChange && (
-                                <div className="text-[10px] text-dusty-grape font-bold mt-0.5">⚡ Scope Change (+{t.hours}h)</div>
-                              )}
-                            </div>
-                          </label>
-                        ))}
-                      </div>
+                    <div className="w-full h-2 bg-silver/40 rounded-full overflow-hidden mb-2">
+                      <div
+                        className="h-full bg-spicy-paprika transition-all duration-300"
+                        style={{ width: `${Math.min(100, (committedHours / 10) * 100)}%` }}
+                      />
                     </div>
-
-                    {/* Active Milestones */}
-                    <div className="border-t border-almond-silk pt-3 text-xs">
-                      <div className="font-bold text-space-indigo mb-2">Active Milestones:</div>
-                      <div className="flex flex-col gap-1.5 text-dusty-grape">
-                        <div className="flex items-center gap-1.5 font-medium">
-                          <span className="text-space-indigo">✓</span> M1: SOW & Wireframes (Done)
-                        </div>
-                        <div className="flex items-center gap-1.5 font-bold text-space-indigo">
-                          <span>▶</span> M2: Contact Form Integration (Active)
-                        </div>
-                        <div className="flex items-center gap-1.5 opacity-70">
-                          <span>⏳</span> M3: Payment Checkout (Pending R1)
-                        </div>
-                      </div>
+                    <div className="flex justify-between text-[10px] text-charcoal-brown font-medium">
+                      <span>Rate: ₹1,000/hr</span>
+                      <span>10h baseline ceiling</span>
                     </div>
-                  </aside>
+                  </div>
 
-                  {/* CENTER CONTENT AREA (6 Cols) */}
-                  <main className="lg:col-span-6 flex flex-col gap-5">
-                    {portalTab === 'dashboard' ? (
-                      <>
-                        {/* Welcome Banner */}
-                        <div className="bg-white border border-almond-silk rounded-2xl p-6 shadow-sm">
-                          <div className="flex justify-between items-start mb-3">
-                            <div>
-                              <h1 className="font-serif text-2xl font-bold text-space-indigo mb-1">
-                                Welcome back, {anonymousHandle}
-                              </h1>
-                              <p className="text-xs text-dusty-grape">
-                                Case C35 Project Workspace is active. All communications are privacy-guarded.
-                              </p>
-                            </div>
-                            <span className="text-[10px] bg-space-indigo text-seashell px-2.5 py-1 rounded font-bold uppercase">
-                              Platform Verified
+                  {/* Committed Work Checklist */}
+                  <div>
+                    <div className="text-xs font-bold text-carbon-black mb-2">Committed Deliverables:</div>
+                    <div className="flex flex-col gap-2">
+                      {tasks.map(t => (
+                        <label key={t.id} className="flex items-start gap-2.5 p-2 rounded-lg bg-floral-white border border-silver/70 text-xs cursor-pointer hover:bg-silver/20 transition-all">
+                          <input
+                            type="checkbox"
+                            checked={t.completed}
+                            onChange={() => setTasks(prev => prev.map(item => item.id === t.id ? { ...item, completed: !item.completed } : item))}
+                            className="mt-0.5 cursor-pointer accent-[#EB5E28]"
+                          />
+                          <div className="flex-1">
+                            <span className={`font-semibold ${t.completed ? 'line-through text-charcoal-brown/60' : 'text-carbon-black'}`}>
+                              {t.label}
                             </span>
+                            {t.isScopeChange && (
+                              <div className="text-[10px] text-spicy-paprika font-bold mt-0.5">⚡ Scope Change (+{t.hours}h)</div>
+                            )}
                           </div>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
 
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4">
-                            <div className="bg-seashell border border-almond-silk rounded-xl p-3">
-                              <div className="text-[10px] text-dusty-grape font-bold uppercase">Active Case</div>
-                              <div className="text-base font-black text-space-indigo">C35 Flagship</div>
-                              <div className="text-[10px] text-dusty-grape">Web Development</div>
-                            </div>
-                            <div className="bg-seashell border border-almond-silk rounded-xl p-3">
-                              <div className="text-[10px] text-dusty-grape font-bold uppercase">Hourly Rate</div>
-                              <div className="text-base font-black text-space-indigo">₹1,000/hr</div>
-                              <div className="text-[10px] text-dusty-grape">before taxes</div>
-                            </div>
-                            <div className="bg-seashell border border-almond-silk rounded-xl p-3">
-                              <div className="text-[10px] text-dusty-grape font-bold uppercase">Capacity</div>
-                              <div className="text-base font-black text-space-indigo">{remainingHours}h left</div>
-                              <div className="text-[10px] text-dusty-grape">of 10h baseline</div>
-                            </div>
-                            <div className="bg-seashell border border-almond-silk rounded-xl p-3">
-                              <div className="text-[10px] text-dusty-grape font-bold uppercase">WebRTC Calls</div>
-                              <div className="text-base font-black text-space-indigo">{isSubscribed ? 'Unlimited' : `${callCount}/5`}</div>
-                              <div className="text-[10px] text-dusty-grape">{isSubscribed ? 'Pro Seat' : 'Free Audio'}</div>
-                            </div>
+                  {/* Active Milestones */}
+                  <div className="border-t border-silver pt-3 text-xs">
+                    <div className="font-bold text-carbon-black mb-2">Active Milestones:</div>
+                    <div className="flex flex-col gap-1.5 text-charcoal-brown">
+                      <div className="flex items-center gap-1.5 font-medium">
+                        <span className="text-carbon-black font-bold">✓</span> M1: SOW & Wireframes (Done)
+                      </div>
+                      <div className="flex items-center gap-1.5 font-bold text-spicy-paprika">
+                        <span>▶</span> M2: Contact Form Integration (Active)
+                      </div>
+                      <div className="flex items-center gap-1.5 opacity-70">
+                        <span>⏳</span> M3: Payment Checkout (Pending Approval)
+                      </div>
+                    </div>
+                  </div>
+                </aside>
+
+                {/* 2. CENTER CONTENT AREA (6 Cols) - Changes based on portalTab */}
+                <main className="lg:col-span-6 flex flex-col gap-5">
+                  {portalTab === 'dashboard' && (
+                    <>
+                      {/* Welcome Banner */}
+                      <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h1 className="font-serif text-2xl font-bold text-carbon-black mb-1">
+                              Welcome back, {anonymousHandle}
+                            </h1>
+                            <p className="text-xs text-charcoal-brown">
+                              Project Workspace is active. All communications and calls are privacy-guarded.
+                            </p>
                           </div>
+                          <span className="text-[10px] bg-carbon-black text-floral-white px-2.5 py-1 rounded font-bold uppercase">
+                            Platform Verified
+                          </span>
                         </div>
 
-                        {/* Flagship Case C35 Card */}
-                        <div className="bg-white border-2 border-dusty-grape rounded-2xl p-6 shadow-md">
-                          <div className="flex justify-between items-start mb-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4">
+                          <div className="bg-floral-white border border-silver/70 rounded-xl p-3">
+                            <div className="text-[10px] text-charcoal-brown font-bold uppercase">Active Contract</div>
+                            <div className="text-sm font-black text-carbon-black">Landing Page</div>
+                            <div className="text-[10px] text-charcoal-brown">Web Development</div>
+                          </div>
+                          <div className="bg-floral-white border border-silver/70 rounded-xl p-3">
+                            <div className="text-[10px] text-charcoal-brown font-bold uppercase">Hourly Rate</div>
+                            <div className="text-sm font-black text-carbon-black">₹1,000/hr</div>
+                            <div className="text-[10px] text-charcoal-brown">before taxes</div>
+                          </div>
+                          <div className="bg-floral-white border border-silver/70 rounded-xl p-3">
+                            <div className="text-[10px] text-charcoal-brown font-bold uppercase">Capacity</div>
+                            <div className="text-sm font-black text-spicy-paprika">{remainingHours}h left</div>
+                            <div className="text-[10px] text-charcoal-brown">of 10h baseline</div>
+                          </div>
+                          <div className="bg-floral-white border border-silver/70 rounded-xl p-3">
+                            <div className="text-[10px] text-charcoal-brown font-bold uppercase">Calls Used</div>
+                            <div className="text-sm font-black text-carbon-black">{isSubscribed ? 'Unlimited' : `${callCount}/5`}</div>
+                            <div className="text-[10px] text-charcoal-brown">{isSubscribed ? 'Pro Seat' : `${callsLeft} free left`}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Flagship Active Project Card */}
+                      <div className="bg-white border-2 border-silver rounded-2xl p-6 shadow-sm">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[10px] bg-carbon-black text-floral-white px-2 py-0.5 rounded font-bold uppercase">Flagship Contract</span>
+                              <span className="text-xs text-charcoal-brown font-semibold">Client: Client_A · Baseline SOW v1</span>
+                            </div>
+                            <h2 className="font-serif text-xl font-bold text-carbon-black">
+                              Landing page for a small shop
+                            </h2>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setIsWorkspaceOpen(true)}
+                            className="px-4 py-2 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
+                          >
+                            <span>🚀</span> [ Open Project Workspace ]
+                          </button>
+                        </div>
+
+                        <p className="text-xs text-charcoal-brown leading-relaxed mb-4">
+                          Develop a responsive, high-converting landing page with a validated contact form. Baseline capacity ceiling of 10 hours at ₹1,000/hr before tax. Features browser-native WebRTC calls, Meta-AI assistant, and ScopeDesk variance pricing.
+                        </p>
+
+                        <div className="bg-floral-white border border-silver rounded-xl p-3 flex justify-between items-center text-xs">
+                          <div>
+                            <strong className="text-carbon-black">Scope In:</strong> 1 landing page, contact form | <strong className="text-carbon-black">Scope Out:</strong> payment checkout
+                          </div>
+                          <span className="font-bold text-spicy-paprika">Budget: ₹10,000 (10h @ ₹1,000/hr)</span>
+                        </div>
+                      </div>
+
+                      {/* Pending Scope Desk Actions */}
+                      <div className="bg-white border border-silver rounded-2xl p-5 shadow-sm">
+                        <h3 className="font-serif font-bold text-sm text-carbon-black mb-3">
+                          Pending Scope Desk Actions
+                        </h3>
+                        <div className="flex flex-col gap-2.5">
+                          <div className="p-3 rounded-xl bg-floral-white border border-silver flex items-center justify-between">
                             <div>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-[10px] bg-space-indigo text-seashell px-2 py-0.5 rounded font-bold uppercase">Flagship Contract</span>
-                                <span className="text-xs text-dusty-grape font-semibold">Client: Client_A · Baseline SOW v1</span>
-                              </div>
-                              <h2 className="font-serif text-xl font-bold text-space-indigo">
-                                Landing page for a small shop (Case C35)
-                              </h2>
+                              <div className="font-bold text-xs text-carbon-black">Request R1: &quot;Add payment checkout&quot; (6h)</div>
+                              <div className="text-[11px] text-charcoal-brown">Explicit Exclusion Override · Estimated Quote: {money(6000)} before tax</div>
                             </div>
                             <button
                               type="button"
                               onClick={() => setIsWorkspaceOpen(true)}
-                              className="px-4 py-2 rounded-xl bg-space-indigo hover:bg-dusty-grape text-seashell font-bold text-xs shadow-md transition-all flex items-center gap-1.5"
+                              className="px-3 py-1.5 rounded-lg bg-carbon-black hover:bg-charcoal-brown text-floral-white text-xs font-bold transition-all"
                             >
-                              <span>🚀</span> [ Open Project Workspace ]
+                              Review →
                             </button>
                           </div>
 
-                          <p className="text-xs text-dusty-grape leading-relaxed mb-4">
-                            High-converting landing page with a validated contact form. Strict 10-hour capacity ceiling. Features browser-native WebRTC calls, WhatsApp Meta-AI assistant, and ScopeDesk variance pricing.
-                          </p>
-
-                          <div className="bg-seashell border border-almond-silk rounded-xl p-3 flex justify-between items-center text-xs">
+                          <div className="p-3 rounded-xl bg-floral-white border border-silver flex items-center justify-between">
                             <div>
-                              <strong className="text-space-indigo">Scope In:</strong> 1 landing page, contact form | <strong className="text-space-indigo">Scope Out:</strong> payment checkout
+                              <div className="font-bold text-xs text-carbon-black">Request R2: &quot;Fix our broken contact form&quot; (2h)</div>
+                              <div className="text-[11px] text-charcoal-brown">Internal Defect Rework · Billable Quote: ₹0 (Effort logged, price 0)</div>
                             </div>
-                            <span className="font-bold text-space-indigo">Budget: ₹10,000 (10h @ ₹1,000/hr)</span>
+                            <button
+                              type="button"
+                              onClick={() => setIsWorkspaceOpen(true)}
+                              className="px-3 py-1.5 rounded-lg bg-carbon-black hover:bg-charcoal-brown text-floral-white text-xs font-bold transition-all"
+                            >
+                              Review →
+                            </button>
                           </div>
-                        </div>
-
-                        {/* Pending Scope Desk Actions */}
-                        <div className="bg-white border border-almond-silk rounded-2xl p-5 shadow-sm">
-                          <h3 className="font-serif font-bold text-sm text-space-indigo mb-3">
-                            Pending Scope Desk Actions
-                          </h3>
-                          <div className="flex flex-col gap-2.5">
-                            <div className="p-3 rounded-xl bg-seashell border border-almond-silk flex items-center justify-between">
-                              <div>
-                                <div className="font-bold text-xs text-space-indigo">Request R1: &quot;Add payment checkout&quot; (6h)</div>
-                                <div className="text-[11px] text-dusty-grape">Explicit Exclusion Override · Estimated Quote: {money(6000)} before tax</div>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => setIsWorkspaceOpen(true)}
-                                className="px-3 py-1.5 rounded-lg bg-space-indigo hover:bg-dusty-grape text-seashell text-xs font-bold transition-all"
-                              >
-                                Review →
-                              </button>
-                            </div>
-
-                            <div className="p-3 rounded-xl bg-seashell border border-almond-silk flex items-center justify-between">
-                              <div>
-                                <div className="font-bold text-xs text-space-indigo">Request R2: &quot;Fix our broken contact form&quot; (2h)</div>
-                                <div className="text-[11px] text-dusty-grape">Internal Defect Rework · Billable Quote: ₹0 (Effort logged, price 0)</div>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => setIsWorkspaceOpen(true)}
-                                className="px-3 py-1.5 rounded-lg bg-space-indigo hover:bg-dusty-grape text-seashell text-xs font-bold transition-all"
-                              >
-                                Review →
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    ) : portalTab === 'jobs' ? (
-                      /* STEP 3: JOBS TAB DRILL-DOWN FLOW */
-                      <div className="bg-white border border-almond-silk rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-                        <div>
-                          <h2 className="font-serif text-xl font-bold text-space-indigo mb-1">
-                            Freelancer Job Discovery Flow
-                          </h2>
-                          <p className="text-xs text-dusty-grape">
-                            Filter by domain categories, verify baseline scope and exclusions, then accept work.
-                          </p>
-                        </div>
-
-                        {/* 1. Sub-Navigation Tabs */}
-                        <div className="flex bg-seashell p-1 rounded-xl border border-almond-silk gap-1">
-                          <button
-                            type="button"
-                            className="flex-1 py-2 rounded-lg text-xs font-bold text-space-indigo hover:bg-almond-silk transition-all"
-                          >
-                            👁️ Recently Viewed
-                          </button>
-                          <button
-                            type="button"
-                            className="flex-1 py-2 rounded-lg text-xs font-bold bg-space-indigo text-seashell shadow-sm transition-all"
-                          >
-                            🔍 Find New Jobs
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setIsWorkspaceOpen(true)}
-                            className="flex-1 py-2 rounded-lg text-xs font-bold text-space-indigo hover:bg-almond-silk transition-all"
-                          >
-                            💼 Already Working (C35)
-                          </button>
-                        </div>
-
-                        {/* 2. Domain Filter Grid */}
-                        <div>
-                          <div className="text-xs font-bold text-space-indigo uppercase tracking-wider mb-2">Domain Categories</div>
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                            <div className="p-3 rounded-xl border-2 border-space-indigo bg-seashell flex flex-col items-center text-center cursor-pointer">
-                              <span className="text-2xl mb-1">🌐</span>
-                              <span className="font-bold text-xs text-space-indigo">Web Development</span>
-                              <span className="text-[10px] text-dusty-grape">Flagship C35</span>
-                            </div>
-                            <div className="p-3 rounded-xl border border-almond-silk bg-white flex flex-col items-center text-center cursor-pointer hover:border-lilac-ash">
-                              <span className="text-2xl mb-1">🎨</span>
-                              <span className="font-bold text-xs text-space-indigo">UI/UX Design</span>
-                              <span className="text-[10px] text-dusty-grape">1 open job</span>
-                            </div>
-                            <div className="p-3 rounded-xl border border-almond-silk bg-white flex flex-col items-center text-center cursor-pointer hover:border-lilac-ash">
-                              <span className="text-2xl mb-1">🤖</span>
-                              <span className="font-bold text-xs text-space-indigo">AI/ML & Data</span>
-                              <span className="text-[10px] text-dusty-grape">1 open job</span>
-                            </div>
-                            <div className="p-3 rounded-xl border border-almond-silk bg-white flex flex-col items-center text-center cursor-pointer hover:border-lilac-ash">
-                              <span className="text-2xl mb-1">🛍️</span>
-                              <span className="font-bold text-xs text-space-indigo">E-Commerce</span>
-                              <span className="text-[10px] text-dusty-grape">1 open job</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* 3. Job Listings & Detail View */}
-                        <div className="border border-almond-silk rounded-xl p-5 bg-seashell flex flex-col gap-3.5">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <div className="text-[10px] font-bold text-dusty-grape uppercase">Flagship Contract (Case C35)</div>
-                              <h3 className="font-serif text-base font-bold text-space-indigo">
-                                Landing page for a small shop
-                              </h3>
-                              <span className="text-xs text-dusty-grape">Client: Client_A · ₹1,000/hr · 10h baseline</span>
-                            </div>
-                            <span className="text-[10px] bg-space-indigo text-seashell px-2 py-0.5 rounded font-bold uppercase">Open For Acceptance</span>
-                          </div>
-
-                          <p className="text-xs text-dusty-grape leading-relaxed">
-                            Develop a responsive, high-converting landing page with a validated contact form. Baseline capacity ceiling of 10 hours at ₹1,000/hr before tax.
-                          </p>
-
-                          {/* Baseline Scope & Exclusions Breakdown */}
-                          <div className="bg-white border border-almond-silk rounded-lg p-3 text-xs grid grid-cols-2 gap-3">
-                            <div>
-                              <div className="font-bold text-space-indigo mb-1">✅ INCLUDED SCOPE:</div>
-                              <ul className="list-disc pl-4 text-dusty-grape text-[11px] space-y-0.5">
-                                <li><strong>one landing page</strong></li>
-                                <li><strong>contact form</strong></li>
-                              </ul>
-                            </div>
-                            <div>
-                              <div className="font-bold text-space-indigo mb-1">🚫 EXCLUDED SCOPE:</div>
-                              <ul className="list-disc pl-4 text-dusty-grape text-[11px] space-y-0.5">
-                                <li className="line-through">payment checkout</li>
-                                <li className="text-[10px] text-dusty-grape font-medium">(Triggers ScopeDesk R1 quote @ ₹1,000/hr)</li>
-                              </ul>
-                            </div>
-                          </div>
-
-                          {/* Required Skills Badges */}
-                          <div>
-                            <div className="text-[11px] font-bold text-dusty-grape mb-1.5">Required Skills Badges:</div>
-                            <div className="flex flex-wrap gap-1.5">
-                              {['React', 'Node.js', 'WebRTC', 'UI Design', 'ScopeDesk'].map(s => (
-                                <span key={s} className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-almond-silk text-space-indigo">
-                                  {s}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Primary CTA */}
-                          <button
-                            type="button"
-                            onClick={() => setIsWorkspaceOpen(true)}
-                            className="w-full py-3 rounded-xl bg-space-indigo hover:bg-dusty-grape text-seashell font-bold text-xs uppercase tracking-wide shadow-md transition-all flex items-center justify-center gap-2 mt-2"
-                          >
-                            <span>🚀</span> [ Accept Job / Open Project Workspace ]
-                          </button>
                         </div>
                       </div>
-                    ) : (
-                      /* Profile View */
-                      <div className="bg-white border border-almond-silk rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-                        <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 rounded-full bg-space-indigo text-seashell font-black text-xl flex items-center justify-center">
-                            FD
+                    </>
+                  )}
+
+                  {portalTab === 'jobs' && (
+                    /* DYNAMIC & WORKING JOBS TAB DRILL-DOWN FLOW */
+                    <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-5">
+                      <div>
+                        <h2 className="font-serif text-xl font-bold text-carbon-black mb-1">
+                          Freelancer Job Discovery Flow
+                        </h2>
+                        <p className="text-xs text-charcoal-brown">
+                          Explore domain categories, inspect baseline scope and exclusions, and accept work.
+                        </p>
+                      </div>
+
+                      {/* 1. Sub-Navigation Tabs (WORKING & INTERACTIVE) */}
+                      <div className="flex bg-floral-white p-1 rounded-xl border border-silver gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setJobSubTab('recent')}
+                          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                            jobSubTab === 'recent'
+                              ? 'bg-carbon-black text-floral-white shadow-sm'
+                              : 'text-charcoal-brown hover:bg-silver/20'
+                          }`}
+                        >
+                          👁️ Recently Viewed ({JOBS_CATALOG.filter(j => j.isRecent).length})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setJobSubTab('find')}
+                          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                            jobSubTab === 'find'
+                              ? 'bg-carbon-black text-floral-white shadow-sm'
+                              : 'text-charcoal-brown hover:bg-silver/20'
+                          }`}
+                        >
+                          🔍 Find New Jobs ({JOBS_CATALOG.length})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setJobSubTab('working')}
+                          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                            jobSubTab === 'working'
+                              ? 'bg-carbon-black text-floral-white shadow-sm'
+                              : 'text-charcoal-brown hover:bg-silver/20'
+                          }`}
+                        >
+                          💼 Active Projects ({JOBS_CATALOG.filter(j => j.isActive).length})
+                        </button>
+                      </div>
+
+                      {/* 2. Domain Filter Grid (WORKING & INTERACTIVE) */}
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-bold text-carbon-black uppercase tracking-wider">
+                            Domain Categories
+                          </span>
+                          {selectedDomain !== 'all' && (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedDomain('all')}
+                              className="text-[11px] text-spicy-paprika font-bold hover:underline"
+                            >
+                              Show All Domains
+                            </button>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                          {domainCategories.map(cat => {
+                            const isSelected = selectedDomain === cat.id;
+                            return (
+                              <button
+                                key={cat.id}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedDomain(cat.id);
+                                  // Auto-select the first job of the domain
+                                  const match = JOBS_CATALOG.find(j => cat.id === 'all' || j.domain === cat.id);
+                                  if (match) setSelectedJobId(match.id);
+                                }}
+                                className={`p-3 rounded-xl border-2 flex flex-col items-center text-center transition-all ${
+                                  isSelected
+                                    ? 'border-spicy-paprika bg-floral-white shadow-sm'
+                                    : 'border-silver/60 bg-white hover:border-silver'
+                                }`}
+                              >
+                                <span className="text-2xl mb-1">{cat.icon}</span>
+                                <span className={`font-bold text-xs ${isSelected ? 'text-carbon-black' : 'text-charcoal-brown'}`}>
+                                  {cat.label}
+                                </span>
+                                <span className="text-[10px] text-charcoal-brown/70">{cat.count} listings</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* 3. Filtered Jobs Listing Selector */}
+                      <div>
+                        <div className="text-xs font-bold text-carbon-black uppercase tracking-wider mb-2">
+                          Matching Jobs ({filteredJobs.length})
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-52 overflow-y-auto custom-scrollbar p-1">
+                          {filteredJobs.map(job => {
+                            const isSelected = selectedJobId === job.id;
+                            return (
+                              <div
+                                key={job.id}
+                                onClick={() => setSelectedJobId(job.id)}
+                                className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                                  isSelected
+                                    ? 'border-carbon-black bg-floral-white shadow-sm'
+                                    : 'border-silver/60 bg-white hover:border-silver'
+                                }`}
+                              >
+                                <div className="flex justify-between items-start mb-1">
+                                  <span className="font-bold text-xs text-carbon-black line-clamp-1">{job.title}</span>
+                                  {job.isFlagship && (
+                                    <span className="text-[9px] bg-carbon-black text-floral-white px-1.5 py-0.5 rounded font-bold uppercase ml-1 shrink-0">
+                                      Flagship
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex justify-between items-center text-[11px] text-charcoal-brown">
+                                  <span>{job.clientHandle}</span>
+                                  <span className="font-bold text-spicy-paprika">{money(job.hourlyRate)}/hr</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* 4. Selected Job Detailed Drill-Down View */}
+                      <div className="border border-silver rounded-2xl p-5 bg-floral-white flex flex-col gap-3.5">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="text-[10px] font-bold text-charcoal-brown uppercase">
+                              {currentSelectedJob.categoryName} · {currentSelectedJob.clientHandle}
+                            </div>
+                            <h3 className="font-serif text-lg font-bold text-carbon-black">
+                              {currentSelectedJob.title}
+                            </h3>
+                            <span className="text-xs text-charcoal-brown">
+                              Rate: {money(currentSelectedJob.hourlyRate)}/hr · Baseline Capacity: {currentSelectedJob.availableHours}h ({money(currentSelectedJob.budget)} budget before tax)
+                            </span>
+                          </div>
+                          <span className="text-[10px] bg-carbon-black text-floral-white px-2 py-0.5 rounded font-bold uppercase">
+                            Open For Acceptance
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-charcoal-brown leading-relaxed">
+                          {currentSelectedJob.description}
+                        </p>
+
+                        {/* Baseline Scope & Exclusions Breakdown */}
+                        <div className="bg-white border border-silver rounded-xl p-3.5 text-xs grid grid-cols-2 gap-3">
+                          <div>
+                            <div className="font-bold text-carbon-black mb-1">✅ INCLUDED SCOPE:</div>
+                            <ul className="list-disc pl-4 text-charcoal-brown text-[11px] space-y-0.5">
+                              {currentSelectedJob.includedScope.map(inc => (
+                                <li key={inc}><strong>{inc}</strong></li>
+                              ))}
+                            </ul>
                           </div>
                           <div>
-                            <h2 className="font-serif text-xl font-bold text-space-indigo">{anonymousHandle}</h2>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px] bg-almond-silk text-space-indigo px-2 py-0.5 rounded font-bold uppercase">Case C35 Verified</span>
-                              <span className="text-xs text-dusty-grape">🔒 Privacy-Guarded Identity</span>
-                            </div>
+                            <div className="font-bold text-carbon-black mb-1">🚫 EXCLUDED SCOPE:</div>
+                            <ul className="list-disc pl-4 text-charcoal-brown text-[11px] space-y-0.5">
+                              {currentSelectedJob.excludedScope.map(exc => (
+                                <li key={exc} className="line-through">{exc}</li>
+                              ))}
+                              <li className="text-[10px] text-spicy-paprika font-medium not-italic">
+                                (Extra requests trigger ScopeDesk quotes before tax)
+                              </li>
+                            </ul>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-3 text-center">
-                          <div className="p-3 bg-seashell rounded-xl border border-almond-silk">
-                            <div className="text-[10px] text-dusty-grape font-bold">Hourly Rate</div>
-                            <div className="text-base font-bold text-space-indigo">₹1,000 / hr</div>
-                            <div className="text-[10px] text-dusty-grape">before tax</div>
-                          </div>
-                          <div className="p-3 bg-seashell rounded-xl border border-almond-silk">
-                            <div className="text-[10px] text-dusty-grape font-bold">Weekly Capacity</div>
-                            <div className="text-base font-bold text-space-indigo">10 Hours</div>
-                            <div className="text-[10px] text-dusty-grape">baseline capped</div>
-                          </div>
-                          <div className="p-3 bg-seashell rounded-xl border border-almond-silk">
-                            <div className="text-[10px] text-dusty-grape font-bold">Rating</div>
-                            <div className="text-base font-bold text-space-indigo">4.9 ★</div>
-                            <div className="text-[10px] text-dusty-grape">14 completed</div>
-                          </div>
-                        </div>
-
+                        {/* Required Skills Badges */}
                         <div>
-                          <div className="text-xs font-bold text-space-indigo mb-2">Verified Competencies:</div>
+                          <div className="text-[11px] font-bold text-charcoal-brown mb-1.5">Required Skills Badges:</div>
                           <div className="flex flex-wrap gap-1.5">
-                            {['React & Next.js', 'WebRTC Peer Calls', 'Scope Negotiation', 'Contact Redaction', 'SOW Variance Pricing', 'Offline Meta-AI Engine'].map(badge => (
-                              <span key={badge} className="px-2.5 py-1 rounded-full text-xs font-semibold bg-seashell text-space-indigo border border-lilac-ash">
-                                {badge}
+                            {currentSelectedJob.skills.map(s => (
+                              <span key={s} className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-silver/30 text-carbon-black border border-silver">
+                                {s}
                               </span>
                             ))}
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </main>
 
-                  {/* RIGHT SIDEBAR: Notifications Panel (3 Cols) */}
-                  <aside className="lg:col-span-3 bg-white border border-almond-silk rounded-2xl p-5 shadow-sm flex flex-col gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-lg">🔔</span>
-                        <h3 className="font-serif font-bold text-sm text-space-indigo">Notifications Panel</h3>
-                      </div>
-                      <p className="text-xs text-dusty-grape">Real-time workspace alerts</p>
-                    </div>
-
-                    <div className="flex flex-col gap-2.5">
-                      {notifications.map(n => (
-                        <div
-                          key={n.id}
-                          className={`p-3 rounded-xl border text-xs flex flex-col gap-1 transition-all ${
-                            n.urgent ? 'bg-seashell border-space-indigo shadow-sm' : 'bg-white border-almond-silk'
-                          }`}
+                        {/* Primary CTA */}
+                        <button
+                          type="button"
+                          onClick={() => setIsWorkspaceOpen(true)}
+                          className="w-full py-3 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs uppercase tracking-wide shadow-md transition-all flex items-center justify-center gap-2 mt-2"
                         >
-                          <div className="flex justify-between items-center">
-                            <span className="font-bold text-space-indigo flex items-center gap-1.5">
-                              <span>{n.icon}</span> {n.title}
-                            </span>
-                            <span className="text-[10px] text-dusty-grape">{n.time}</span>
-                          </div>
-                          <p className="text-dusty-grape leading-relaxed text-[11px]">{n.desc}</p>
-                        </div>
-                      ))}
+                          <span>🚀</span> [ Accept Job / Open Project Workspace ]
+                        </button>
+                      </div>
                     </div>
+                  )}
 
-                    <button
-                      type="button"
-                      onClick={() => setIsWorkspaceOpen(true)}
-                      className="w-full py-2.5 rounded-xl bg-space-indigo hover:bg-dusty-grape text-seashell font-bold text-xs uppercase tracking-wide transition-all mt-2 shadow-sm"
-                    >
-                      🚀 Open Workspace C35
-                    </button>
-                  </aside>
-                </div>
+                  {portalTab === 'profile' && (
+                    /* PROFILE VIEW */
+                    <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-full bg-carbon-black text-floral-white font-black text-xl flex items-center justify-center shadow-sm">
+                          {anonymousHandle.slice(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <h2 className="font-serif text-xl font-bold text-carbon-black">{anonymousHandle}</h2>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] bg-silver/40 text-carbon-black px-2 py-0.5 rounded font-bold uppercase">
+                              Platform Verified
+                            </span>
+                            <span className="text-xs text-charcoal-brown">🔒 Privacy-Guarded Identity</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-3 text-center">
+                        <div className="p-3 bg-floral-white rounded-xl border border-silver">
+                          <div className="text-[10px] text-charcoal-brown font-bold">Standard Rate</div>
+                          <div className="text-base font-bold text-carbon-black">₹1,000 / hr</div>
+                          <div className="text-[10px] text-charcoal-brown">before tax</div>
+                        </div>
+                        <div className="p-3 bg-floral-white rounded-xl border border-silver">
+                          <div className="text-[10px] text-charcoal-brown font-bold">Weekly Capacity</div>
+                          <div className="text-base font-bold text-carbon-black">10 Hours</div>
+                          <div className="text-[10px] text-charcoal-brown">baseline capped</div>
+                        </div>
+                        <div className="p-3 bg-floral-white rounded-xl border border-silver">
+                          <div className="text-[10px] text-charcoal-brown font-bold">Rating</div>
+                          <div className="text-base font-bold text-spicy-paprika">4.9 ★</div>
+                          <div className="text-[10px] text-charcoal-brown">14 projects</div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-xs font-bold text-carbon-black mb-2">Verified Competencies:</div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {['React & Next.js', 'WebRTC Peer Calls', 'Scope Negotiation', 'Contact Redaction', 'SOW Variance Pricing', 'Offline Meta-AI Engine'].map(badge => (
+                            <span key={badge} className="px-2.5 py-1 rounded-full text-xs font-semibold bg-floral-white text-carbon-black border border-silver">
+                              {badge}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </main>
+
+                {/* 3. RIGHT SIDEBAR: Notifications Panel (3 Cols) */}
+                <aside className="lg:col-span-3 bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col gap-4 sticky top-20">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">🔔</span>
+                      <h3 className="font-serif font-bold text-sm text-carbon-black">Notifications Panel</h3>
+                    </div>
+                    <p className="text-xs text-charcoal-brown">Real-time workspace alerts</p>
+                  </div>
+
+                  <div className="flex flex-col gap-2.5">
+                    {notifications.map(n => (
+                      <div
+                        key={n.id}
+                        className={`p-3 rounded-xl border text-xs flex flex-col gap-1 transition-all ${
+                          n.urgent ? 'bg-floral-white border-carbon-black shadow-sm' : 'bg-white border-silver/60'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-carbon-black flex items-center gap-1.5">
+                            <span>{n.icon}</span> {n.title}
+                          </span>
+                          <span className="text-[10px] text-charcoal-brown">{n.time}</span>
+                        </div>
+                        <p className="text-charcoal-brown leading-relaxed text-[11px]">{n.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsWorkspaceOpen(true)}
+                    className="w-full py-2.5 rounded-xl bg-carbon-black hover:bg-charcoal-brown text-floral-white font-bold text-xs uppercase tracking-wide transition-all mt-2 shadow-sm"
+                  >
+                    🚀 Open Project Workspace
+                  </button>
+                </aside>
               </div>
             )}
           </div>
@@ -1614,37 +1897,39 @@
               MODAL 1: In-App WebRTC Peer-to-Peer Call Modal
              ============================================================ */}
           {isCallActive && (
-            <div className="fixed inset-0 z-50 bg-space-indigo/70 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white border-2 border-space-indigo rounded-2xl max-w-lg w-full p-6 shadow-2xl text-center flex flex-col gap-4">
+            <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white border-2 border-silver rounded-2xl max-w-lg w-full p-6 shadow-2xl text-center flex flex-col gap-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-space-indigo animate-ping inline-block" />
-                    <span className="font-bold text-sm text-space-indigo">WebRTC Room: projectFor(C35)</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-spicy-paprika animate-ping inline-block" />
+                    <span className="font-bold text-sm text-carbon-black">WebRTC Room: Project Workspace</span>
                   </div>
-                  <span className="text-[10px] bg-space-indigo text-seashell px-2.5 py-0.5 rounded-full font-bold uppercase">
+                  <span className="text-[10px] bg-carbon-black text-floral-white px-2.5 py-0.5 rounded-full font-bold uppercase">
                     {isVideoActive ? 'HD Video Active' : 'Audio-Only Call'}
                   </span>
                 </div>
 
                 {/* Call Stage */}
                 {isVideoActive ? (
-                  <div className="h-52 bg-space-indigo rounded-xl flex flex-col items-center justify-center text-seashell p-4 border border-dusty-grape">
+                  <div className="h-52 bg-carbon-black rounded-xl flex flex-col items-center justify-center text-floral-white p-4 border border-charcoal-brown">
                     <span className="text-5xl mb-2">📹</span>
                     <div className="font-bold text-sm">HD Peer-to-Peer Video Stream Active</div>
-                    <div className="text-xs text-almond-silk mt-1">Encrypted WebRTC between Freelancer_Dev and Client_A</div>
+                    <div className="text-xs text-silver mt-1">Encrypted WebRTC between Freelancer_Dev and Client_A</div>
                   </div>
                 ) : (
-                  <div className="h-44 bg-seashell rounded-xl border border-lilac-ash flex flex-col items-center justify-center p-4">
-                    <div className="w-16 h-16 rounded-full bg-space-indigo text-seashell font-black text-2xl flex items-center justify-center mb-2 shadow-md">
-                      CA
+                  <div className="h-44 bg-floral-white rounded-xl border border-silver flex flex-col items-center justify-center p-4">
+                    <div className="w-16 h-16 rounded-full bg-spicy-paprika text-white font-black text-2xl flex items-center justify-center mb-2 shadow-md">
+                      {userRole === 'freelancer' ? 'CA' : 'FD'}
                     </div>
-                    <div className="font-bold text-sm text-space-indigo">Connected to Client_A</div>
+                    <div className="font-bold text-sm text-carbon-black">
+                      Connected to {userRole === 'freelancer' ? 'Client_A' : 'Freelancer_Dev'}
+                    </div>
                     {/* Animated Audio Waveform */}
                     <div className="flex items-center gap-1.5 mt-3">
                       {[18, 36, 14, 28, 42, 16, 32, 20].map((h, i) => (
                         <div
                           key={i}
-                          className="w-1.5 bg-dusty-grape rounded-full wave-bar"
+                          className="w-1.5 bg-carbon-black rounded-full wave-bar"
                           style={{
                             height: isMuted ? '4px' : `${h}px`,
                             animationDelay: `${i * 0.15}s`
@@ -1656,7 +1941,7 @@
                 )}
 
                 {/* Duration */}
-                <div className="text-sm font-bold text-space-indigo">
+                <div className="text-sm font-bold text-carbon-black">
                   Call Duration: {Math.floor(callTimer / 60)}:{(callTimer % 60).toString().padStart(2, '0')}
                 </div>
 
@@ -1665,7 +1950,7 @@
                   <button
                     type="button"
                     onClick={() => setIsMuted(!isMuted)}
-                    className="px-4 py-2 rounded-full border border-lilac-ash bg-seashell text-space-indigo font-bold text-xs hover:bg-almond-silk transition-all"
+                    className="px-4 py-2 rounded-full border border-silver bg-floral-white text-carbon-black font-bold text-xs hover:bg-silver/30 transition-all"
                   >
                     {isMuted ? '🔇 Unmute Mic' : '🎤 Mute Mic'}
                   </button>
@@ -1675,7 +1960,7 @@
                     <button
                       type="button"
                       onClick={() => setIsVideoActive(!isVideoActive)}
-                      className="px-4 py-2 rounded-full bg-space-indigo text-seashell font-bold text-xs hover:bg-dusty-grape transition-all"
+                      className="px-4 py-2 rounded-full bg-carbon-black text-floral-white font-bold text-xs hover:bg-charcoal-brown transition-all"
                     >
                       {isVideoActive ? '📷 Turn Camera Off' : '📹 Turn Camera On'}
                     </button>
@@ -1684,7 +1969,7 @@
                       type="button"
                       disabled
                       title="Video calling is a Pro Subscription feature. Free tier includes 5 audio-only calls."
-                      className="px-4 py-2 rounded-full border border-lilac-ash bg-seashell text-dusty-grape font-bold text-xs opacity-60 cursor-not-allowed"
+                      className="px-4 py-2 rounded-full border border-silver bg-floral-white text-charcoal-brown/50 font-bold text-xs opacity-60 cursor-not-allowed"
                     >
                       🔒 Video (Pro Only)
                     </button>
@@ -1693,24 +1978,24 @@
                   <button
                     type="button"
                     onClick={() => handleEndCall(false)}
-                    className="px-5 py-2 rounded-full bg-space-indigo hover:bg-dusty-grape text-white font-bold text-xs shadow-md transition-all"
+                    className="px-5 py-2 rounded-full bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-md transition-all"
                   >
                     🔴 End Call
                   </button>
                 </div>
 
-                {/* Evaluator Fast-Forward Testing Button */}
-                <div className="bg-seashell border border-dashed border-dusty-grape rounded-xl p-2.5 mt-2">
+                {/* Simulated Call Fast-Forward for Evaluation */}
+                <div className="bg-floral-white border border-dashed border-silver rounded-xl p-2.5 mt-2">
                   <button
                     type="button"
                     onClick={() => handleEndCall(true)}
-                    className="px-3 py-1 rounded-lg bg-white border border-lilac-ash text-space-indigo font-extrabold text-xs hover:bg-almond-silk shadow-sm transition-all"
-                    title="Simulate call end to quickly test calls 1 through 6 during grading"
+                    className="px-3 py-1 rounded-lg bg-white border border-silver text-carbon-black font-extrabold text-xs hover:bg-silver/20 shadow-sm transition-all"
+                    title="Simulate call end to test calls 1 through 6"
                   >
                     ⚡ [ Simulate Call End (+1 Call Count) ]
                   </button>
-                  <div className="text-[10px] text-dusty-grape mt-1">
-                    Increment call count quickly to evaluate the 6th call paywall gate.
+                  <div className="text-[10px] text-charcoal-brown mt-1">
+                    Calls used: {callCount}/5 ({callsLeft} free left). Triggers paywall on 6th call.
                   </div>
                 </div>
               </div>
@@ -1721,44 +2006,43 @@
               MODAL 2: 6th Call Paywall & Per-Seat Subscription Modal
              ============================================================ */}
           {showPaywallModal && (
-            <div className="fixed inset-0 z-50 bg-space-indigo/70 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white border-2 border-space-indigo rounded-2xl max-w-lg w-full p-7 shadow-2xl flex flex-col gap-5">
+            <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white border-2 border-silver rounded-2xl max-w-lg w-full p-7 shadow-2xl flex flex-col gap-5">
                 <div className="text-center">
                   <span className="text-4xl block mb-2">🔒</span>
-                  <h2 className="font-serif text-xl font-bold text-space-indigo mb-1">
+                  <h2 className="font-serif text-xl font-bold text-carbon-black mb-1">
                     You&apos;ve used all 5 Free Audio Calls on this workspace.
                   </h2>
-                  <p className="text-xs text-dusty-grape">
+                  <p className="text-xs text-charcoal-brown">
                     Upgrade to the Per-Seat Pro Agency Plan to unlock unlimited audio calls and HD video calling.
                   </p>
                 </div>
 
-                {/* MBA Unit Economics & Plan Details Box */}
-                <div className="bg-seashell border border-almond-silk rounded-xl p-4 flex flex-col gap-3">
+                {/* Plan Details Box */}
+                <div className="bg-floral-white border border-silver rounded-xl p-4 flex flex-col gap-3">
                   <div className="flex justify-between items-baseline">
                     <div>
-                      <div className="font-bold text-sm text-space-indigo">Pro Agency Seat Plan</div>
-                      <span className="text-[10px] text-dusty-grape">Billed monthly · Cancel anytime</span>
+                      <div className="font-bold text-sm text-carbon-black">Pro Agency Seat Plan</div>
+                      <span className="text-[10px] text-charcoal-brown">Billed monthly · Cancel anytime</span>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-black text-space-indigo">₹499</div>
-                      <span className="text-[10px] text-dusty-grape">/ seat / month</span>
+                      <div className="text-2xl font-black text-spicy-paprika">₹499</div>
+                      <span className="text-[10px] text-charcoal-brown">/ seat / month</span>
                     </div>
                   </div>
 
-                  {/* MBA Analysis */}
-                  <div className="bg-white border border-lilac-ash rounded-lg p-3 text-xs leading-relaxed text-dusty-grape">
-                    <div className="font-bold text-space-indigo mb-1">📊 MBA Unit Economics Analysis:</div>
+                  <div className="bg-white border border-silver rounded-lg p-3 text-xs leading-relaxed text-charcoal-brown">
+                    <div className="font-bold text-carbon-black mb-1">📊 Unit Economics & ROI:</div>
                     <div>• <strong>Near-Zero Cost-to-Serve:</strong> Browser P2P WebRTC uses ephemeral signaling (~₹0.08 per call bandwidth).</div>
-                    <div>• <strong>High Agency ROI:</strong> ScopeDesk recovers over ₹6,000 per caught scope leak (e.g. Case C35 R1 checkout).</div>
+                    <div>• <strong>High Agency ROI:</strong> ScopeDesk recovers over ₹6,000 per caught scope leak.</div>
                     <div>• <strong>Gross Margin:</strong> 98.4% SaaS margin per agency seat.</div>
                   </div>
 
-                  <div className="text-xs text-space-indigo space-y-1 font-medium">
+                  <div className="text-xs text-carbon-black space-y-1 font-medium">
                     <div className="font-bold">Unlocked Features:</div>
                     <div>✓ Unlimited Audio Calls across all project workspaces</div>
                     <div>✓ HD Peer-to-Peer Video Calling Toggle Unlocked</div>
-                    <div>✓ Unlimited WhatsApp Meta-AI Scope Extractions</div>
+                    <div>✓ Unlimited Meta-AI Scope Extractions</div>
                     <div>✓ Tamper-Proof Versioned Evidence Export</div>
                   </div>
                 </div>
@@ -1767,16 +2051,16 @@
                   <button
                     type="button"
                     onClick={() => setShowPaywallModal(false)}
-                    className="flex-1 py-2.5 rounded-xl border border-lilac-ash text-xs font-bold text-space-indigo hover:bg-seashell"
+                    className="flex-1 py-2.5 rounded-xl border border-silver text-xs font-bold text-carbon-black hover:bg-silver/20"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={handleUpgradeProSeat}
-                    className="flex-[1.5] py-2.5 rounded-xl bg-space-indigo hover:bg-dusty-grape text-seashell font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
+                    className="flex-[1.5] py-2.5 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
                   >
-                    ★ [ Upgrade Seat Now (Instant Demo Unlock) ]
+                    ★ [ Upgrade Seat Now (Instant Unlock) ]
                   </button>
                 </div>
               </div>
@@ -1787,12 +2071,12 @@
               MODAL 3: Rejection Reason Dialog
              ============================================================ */}
           {rejectionModalRequest && (
-            <div className="fixed inset-0 z-50 bg-space-indigo/60 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white border border-space-indigo rounded-2xl max-w-md w-full p-5 shadow-2xl flex flex-col gap-3">
-                <h3 className="font-serif font-bold text-base text-space-indigo">
+            <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white border-2 border-silver rounded-2xl max-w-md w-full p-5 shadow-2xl flex flex-col gap-3">
+                <h3 className="font-serif font-bold text-base text-carbon-black">
                   Reject Scope Request ({rejectionModalRequest.id})
                 </h3>
-                <p className="text-xs text-dusty-grape">
+                <p className="text-xs text-charcoal-brown">
                   Enter rejection rationale. Rejected requests advance version to v{scopeVersion + 1} and will never be added to committed hours or billed.
                 </p>
                 <textarea
@@ -1800,20 +2084,20 @@
                   value={rejectionReasonInput}
                   onChange={(e) => setRejectionReasonInput(e.target.value)}
                   placeholder="e.g. Out of scope for current sprint. Can be revisited in Phase 2."
-                  className="w-full p-2.5 border border-lilac-ash rounded-xl text-xs bg-seashell text-space-indigo focus:outline-none focus:border-space-indigo"
+                  className="w-full p-2.5 border border-silver rounded-xl text-xs bg-floral-white text-carbon-black focus:outline-none focus:border-carbon-black"
                 />
                 <div className="flex gap-2 justify-end">
                   <button
                     type="button"
                     onClick={() => setRejectionModalRequest(null)}
-                    className="px-3 py-1.5 rounded-lg border border-lilac-ash text-xs font-semibold text-space-indigo hover:bg-seashell"
+                    className="px-3 py-1.5 rounded-lg border border-silver text-xs font-semibold text-carbon-black hover:bg-silver/20"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={handleRejectSubmit}
-                    className="px-4 py-1.5 rounded-lg bg-space-indigo text-seashell text-xs font-bold hover:bg-dusty-grape"
+                    className="px-4 py-1.5 rounded-lg bg-spicy-paprika text-white text-xs font-bold hover:bg-[#d14d1b]"
                   >
                     Confirm Rejection (0h / ₹0)
                   </button>
@@ -1826,12 +2110,12 @@
               MODAL 4: Clarification Notes Dialog
              ============================================================ */}
           {clarifyModalRequest && (
-            <div className="fixed inset-0 z-50 bg-space-indigo/60 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white border border-space-indigo rounded-2xl max-w-md w-full p-5 shadow-2xl flex flex-col gap-3">
-                <h3 className="font-serif font-bold text-base text-space-indigo">
+            <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white border-2 border-silver rounded-2xl max-w-md w-full p-5 shadow-2xl flex flex-col gap-3">
+                <h3 className="font-serif font-bold text-base text-carbon-black">
                   Request Clarification ({clarifyModalRequest.id})
                 </h3>
-                <p className="text-xs text-dusty-grape">
+                <p className="text-xs text-charcoal-brown">
                   Specify questions or missing technical requirements before an estimate can be provided.
                 </p>
                 <textarea
@@ -1839,22 +2123,114 @@
                   value={clarifyNotesInput}
                   onChange={(e) => setClarifyNotesInput(e.target.value)}
                   placeholder="e.g. Please clarify payment gateway provider and webhook endpoints."
-                  className="w-full p-2.5 border border-lilac-ash rounded-xl text-xs bg-seashell text-space-indigo focus:outline-none focus:border-space-indigo"
+                  className="w-full p-2.5 border border-silver rounded-xl text-xs bg-floral-white text-carbon-black focus:outline-none focus:border-carbon-black"
                 />
                 <div className="flex gap-2 justify-end">
                   <button
                     type="button"
                     onClick={() => setClarifyModalRequest(null)}
-                    className="px-3 py-1.5 rounded-lg border border-lilac-ash text-xs font-semibold text-space-indigo hover:bg-seashell"
+                    className="px-3 py-1.5 rounded-lg border border-silver text-xs font-semibold text-carbon-black hover:bg-silver/20"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={handleClarifySubmit}
-                    className="px-4 py-1.5 rounded-lg bg-space-indigo text-seashell text-xs font-bold hover:bg-dusty-grape"
+                    className="px-4 py-1.5 rounded-lg bg-carbon-black text-floral-white text-xs font-bold hover:bg-charcoal-brown"
                   >
                     Send Clarification
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================
+              MODAL 5: SOW Upload & Comparison Dialog (.pdf, .md, .txt)
+             ============================================================ */}
+          {showSowUploadModal && (
+            <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white border-2 border-silver rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-serif font-bold text-base text-carbon-black">
+                    Upload Amended SOW
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => { setShowSowUploadModal(false); setUploadDiffResult(null); }}
+                    className="text-charcoal-brown hover:text-carbon-black font-bold text-sm"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <p className="text-xs text-charcoal-brown">
+                  Upload an amended Statement of Work (.pdf, .md, or .txt). The engine compares it against baseline SOW v1 and prices any detected scope additions.
+                </p>
+
+                <div className="border-2 border-dashed border-silver rounded-xl p-6 text-center bg-floral-white">
+                  <input
+                    type="file"
+                    id="sowFileInput"
+                    accept=".pdf,.md,.txt"
+                    onChange={handleSowFileUpload}
+                    className="hidden"
+                  />
+                  <label htmlFor="sowFileInput" className="cursor-pointer flex flex-col items-center">
+                    <span className="text-3xl mb-1">📄</span>
+                    <span className="text-xs font-bold text-carbon-black">
+                      {uploadedFileName ? `Selected: ${uploadedFileName}` : 'Click to select .pdf, .md, or .txt file'}
+                    </span>
+                    <span className="text-[10px] text-charcoal-brown mt-1">Maximum size 5 MB</span>
+                  </label>
+                </div>
+
+                {uploadDiffResult && (
+                  <div className="bg-floral-white border border-silver rounded-xl p-4 flex flex-col gap-2.5">
+                    <div className="font-bold text-xs text-carbon-black flex justify-between">
+                      <span>Comparison vs. {uploadDiffResult.comparedAgainst}:</span>
+                      <span className="text-spicy-paprika">+{uploadDiffResult.totalDeltaHours}h ({money(uploadDiffResult.totalBillableIncrease)})</span>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      {uploadDiffResult.detectedChanges.map((change) => (
+                        <div key={change.id} className="p-2 bg-white rounded-lg border border-silver/60 flex justify-between text-xs">
+                          <div>
+                            <div className="font-semibold text-carbon-black">{change.label}</div>
+                            <span className="text-[10px] text-charcoal-brown">{change.classification}</span>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-bold text-spicy-paprika">{money(change.price)}</div>
+                            <span className="text-[10px] text-charcoal-brown">{change.deltaHours} hrs</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleImportWithDedup([
+                          { id: 'SOW_DIFF_1', text: 'Payment Checkout Integration', hours: 6 }
+                        ]);
+                        setShowSowUploadModal(false);
+                        setUploadDiffResult(null);
+                        showToast('✓ SOW Diff items imported into ScopeDesk!');
+                      }}
+                      className="w-full py-2 bg-spicy-paprika text-white font-bold text-xs rounded-lg mt-1 hover:bg-[#d14d1b]"
+                    >
+                      Import Items into ScopeDesk →
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => { setShowSowUploadModal(false); setUploadDiffResult(null); }}
+                    className="px-4 py-1.5 rounded-lg border border-silver text-xs font-semibold text-carbon-black hover:bg-silver/20"
+                  >
+                    Close
                   </button>
                 </div>
               </div>
@@ -1864,7 +2240,7 @@
       );
     }
 
-    // Mount the React Application
+    // Mount Application
     const rootElement = document.getElementById('root');
     const root = ReactDOM.createRoot(rootElement);
     root.render(<App />);

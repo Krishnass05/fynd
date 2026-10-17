@@ -1,39 +1,46 @@
 /* Theme: Fynd ScopeDesk
    Palette strictly restricted to the 5 designated colors:
-     ~Space Indigo: #22223B (Dark enigmatic blue-black)
-     ~Dusty Grape:  #4A4E69 (Smoky grape elegance)
-     ~Lilac Ash:    #9A8C98 (Serene subdued purple-grey)
-     ~Almond Silk:  #C9ADA7 (Warm gentle beige-pink)
-     ~Seashell:     #F2E9E4 (Delicate tranquil off-white)
+     Floral White:    #FFFCF2 (Luxurious misty off-white canvas)
+     ~Silver:         #CCC5B9 (Lustrous metallic sheen, soft borders & dividers)
+     ~Charcoal Brown: #403D39 (Cool deep earth, dark headers, secondary text)
+     ~Carbon Black:   #252422 (Matte intensity, dark buttons & primary accents)
+     ~Spicy Paprika:  #EB5E28 (Lively zesty hue, CTAs, notifications, highlights)
 */
 :root {
-  --space-indigo: #22223B;
-  --dusty-grape:  #4A4E69;
-  --lilac-ash:    #9A8C98;
-  --almond-silk:  #C9ADA7;
-  --seashell:     #F2E9E4;
+  --floral-white:   #FFFCF2;
+  --silver:         #CCC5B9;
+  --charcoal-brown: #403D39;
+  --carbon-black:   #252422;
+  --spicy-paprika:  #EB5E28;
+
+  /* Backward-compatible token mappings */
+  --space-indigo: #252422;
+  --dusty-grape:  #403D39;
+  --lilac-ash:    #CCC5B9;
+  --almond-silk:  #CCC5B9;
+  --seashell:     #FFFCF2;
 
   --radius: 0.75rem;
-  --bg: #F2E9E4;
+  --bg: #FFFCF2;
   --card: #FFFFFF;
-  --card-alt: #F2E9E4;
-  --ink: #22223B;
-  --ink-strong: #22223B;
-  --muted: #4A4E69;
-  --line: #C9ADA7;
-  --border: #9A8C98;
+  --card-alt: #FFFCF2;
+  --ink: #252422;
+  --ink-strong: #252422;
+  --muted: #403D39;
+  --line: #CCC5B9;
+  --border: #CCC5B9;
 
-  --brand: #4A4E69;
-  --brand-strong: #22223B;
-  --brand-soft: #C9ADA7;
-  --accent: #9A8C98;
+  --brand: #EB5E28;
+  --brand-strong: #252422;
+  --brand-soft: #CCC5B9;
+  --accent: #EB5E28;
 
-  --ok: #22223B;
-  --okbg: #C9ADA7;
-  --bad: #22223B;
-  --badbg: #C9ADA7;
-  --warn: #4A4E69;
-  --warnbg: #F2E9E4;
+  --ok: #252422;
+  --okbg: #CCC5B9;
+  --bad: #EB5E28;
+  --badbg: #FFFCF2;
+  --warn: #403D39;
+  --warnbg: #FFFCF2;
 }
 
 * { box-sizing: border-box; }

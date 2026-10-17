@@ -34,9 +34,9 @@ export interface JobItem {
 
 const JOBS_CATALOG: JobItem[] = [
   {
-    id: 'J_C35_FLAGSHIP',
+    id: 'J_FLAGSHIP',
     projectId: 'P1',
-    title: 'Landing page for a small shop (Case C35 Flagship)',
+    title: 'Landing page for a small shop (Flagship Contract)',
     domain: 'web',
     categoryName: 'Web Development',
     clientHandle: 'Client_A',
@@ -128,7 +128,7 @@ interface JobsDrillDownProps {
 export default function JobsDrillDown({ onOpenWorkspace }: JobsDrillDownProps) {
   const [subTab, setSubTab] = useState<JobSubTab>('find');
   const [selectedDomain, setSelectedDomain] = useState<DomainCategory>('web');
-  const [selectedJobId, setSelectedJobId] = useState<string>('J_C35_FLAGSHIP');
+  const [selectedJobId, setSelectedJobId] = useState<string>('J_FLAGSHIP');
 
   // Filter jobs based on subTab & domain
   const domainJobs = JOBS_CATALOG.filter((j) => {

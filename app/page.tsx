@@ -43,12 +43,9 @@ export default function Home() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="brand" style={{ fontSize: 24 }}>Fynd ScopeDesk</span>
-            <span style={{ fontSize: 11, background: 'var(--space-indigo)', color: 'var(--seashell)', padding: '3px 8px', borderRadius: 4, fontWeight: 700 }}>
-              CASE C35
-            </span>
           </div>
           <Link href="/demo" style={{ fontSize: 13, color: 'var(--dusty-grape)', fontWeight: 600 }}>
-            Run Case C35 Automated Checks →
+            Run Automated Checks →
           </Link>
         </div>
 
@@ -212,8 +209,8 @@ export default function Home() {
                 justifyContent: 'center',
                 padding: '12px 20px',
                 fontSize: 15,
-                background: 'var(--space-indigo)',
-                color: 'var(--seashell)',
+                background: 'var(--brand)',
+                color: '#FFFFFF',
                 borderRadius: 10,
               }}
             >
@@ -222,71 +219,6 @@ export default function Home() {
                 : 'Enter as Client → (Open Portal)'}
             </button>
           </form>
-
-          {/* Quick Demo Switcher Strip */}
-          <div
-            style={{
-              marginTop: 24,
-              paddingTop: 18,
-              borderTop: '1px solid var(--line)',
-              textAlign: 'center',
-            }}
-          >
-            <span style={{ fontSize: 12, color: 'var(--muted)', display: 'block', marginBottom: 10 }}>
-              Evaluator Quick Access:
-            </span>
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-              <button
-                type="button"
-                className="btn secondary pill-sm"
-                onClick={() => {
-                  setUserId('u_freelancer1');
-                  router.push('/freelancer');
-                }}
-              >
-                Log In as Freelancer_Dev (P1)
-              </button>
-              <button
-                type="button"
-                className="btn secondary pill-sm"
-                onClick={() => {
-                  setUserId('u_client1');
-                  router.push('/client');
-                }}
-              >
-                Log In as Client_A (P1)
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Feature Highlights Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: 16,
-            marginTop: 40,
-          }}
-        >
-          <div className="card" style={{ padding: 16, background: 'var(--card)' }}>
-            <h4 style={{ margin: '0 0 6px', color: 'var(--space-indigo)' }}>📞 Freemium WebRTC Call</h4>
-            <p className="muted" style={{ margin: 0, fontSize: 13 }}>
-              5 audio-only calls free per workspace. 6th call unlocks through Per-Seat Pro Agency upgrade with video enabled.
-            </p>
-          </div>
-          <div className="card" style={{ padding: 16, background: 'var(--card)' }}>
-            <h4 style={{ margin: '0 0 6px', color: 'var(--space-indigo)' }}>🤖 WhatsApp Meta-Style AI</h4>
-            <p className="muted" style={{ margin: 0, fontSize: 13 }}>
-              Type <code>@AI</code> in chat to extract scope changes, compare with baseline SOW, and quote in one click.
-            </p>
-          </div>
-          <div className="card" style={{ padding: 16, background: 'var(--card)' }}>
-            <h4 style={{ margin: '0 0 6px', color: 'var(--space-indigo)' }}>🛡️ Contact Redaction</h4>
-            <p className="muted" style={{ margin: 0, fontSize: 13 }}>
-              Regex filter automatically masks personal emails and phone numbers to prevent off-platform leakage.
-            </p>
-          </div>
         </div>
       </div>
     </div>

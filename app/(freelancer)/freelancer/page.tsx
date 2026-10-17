@@ -77,7 +77,7 @@ export default function FreelancerPortal() {
       id: 'n2',
       icon: '📞',
       title: 'Incoming WebRTC Call Ready',
-      desc: 'Browser-native peer room projectFor(C35) available for audio call.',
+      desc: 'Browser-native peer room projectFor(P1) available for audio call.',
       time: '12m ago',
     },
     {
@@ -200,9 +200,9 @@ export default function FreelancerPortal() {
             type="button"
             className="btn pill-sm"
             onClick={() => setIsWorkspaceOpen(true)}
-            style={{ background: 'var(--space-indigo)', color: 'var(--seashell)' }}
+            style={{ background: 'var(--brand)', color: '#FFFFFF' }}
           >
-            🚀 Open Flagship Workspace (Case C35)
+            🚀 Open Project Workspace
           </button>
         )}
       </div>
@@ -394,7 +394,7 @@ export default function FreelancerPortal() {
                         Welcome back, Freelancer_Dev
                       </h1>
                       <p className="muted" style={{ margin: 0 }}>
-                        Case C35 Project Workspace is active. All communication is privacy-guarded.
+                        Project Workspace is active. All communication is privacy-guarded.
                       </p>
                     </div>
                     <span className="badge pro">Platform Verified</span>
@@ -403,7 +403,7 @@ export default function FreelancerPortal() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 18 }}>
                     <div style={{ background: 'var(--seashell)', padding: 12, borderRadius: 10, border: '1px solid var(--line)' }}>
                       <div style={{ fontSize: 11, color: 'var(--muted)' }}>Active Workspace</div>
-                      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--space-indigo)' }}>Case C35</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--space-indigo)' }}>Flagship Project</div>
                       <div style={{ fontSize: 10, color: 'var(--dusty-grape)' }}>Web Development</div>
                     </div>
                     <div style={{ background: 'var(--seashell)', padding: 12, borderRadius: 10, border: '1px solid var(--line)' }}>
@@ -432,7 +432,7 @@ export default function FreelancerPortal() {
                 <div
                   style={{
                     background: 'var(--card)',
-                    border: '2px solid var(--dusty-grape)',
+                    border: '2px solid var(--border)',
                     borderRadius: 16,
                     padding: 24,
                     boxShadow: '0 4px 16px rgba(34, 34, 59, 0.06)',
@@ -447,7 +447,7 @@ export default function FreelancerPortal() {
                         </span>
                       </div>
                       <h2 style={{ margin: 0, fontSize: 20, color: 'var(--space-indigo)' }}>
-                        Landing page for a small shop (Case C35)
+                        Landing page for a small shop
                       </h2>
                     </div>
                     <button
@@ -616,7 +616,7 @@ export default function FreelancerPortal() {
                       Freelancer_Dev
                     </h1>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                      <span className="badge pro">Case C35 Verified Freelancer</span>
+                      <span className="badge pro">Platform Verified Freelancer</span>
                       <span style={{ fontSize: 12, color: 'var(--muted)' }}>
                         🔒 Privacy-First Platform Profile
                       </span>

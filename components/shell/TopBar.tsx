@@ -45,9 +45,6 @@ export default function TopBar({ role }: { role: Role }) {
       <div className="topbar-left">
         <Link href={isFreelancer ? '/freelancer' : '/client'} className="brand-link">
           <span className="brand">Fynd ScopeDesk</span>
-          <span style={{ fontSize: 11, background: 'var(--almond-silk)', color: 'var(--space-indigo)', padding: '2px 7px', borderRadius: 4, fontWeight: 700 }}>
-            CASE C35
-          </span>
         </Link>
 
         <nav aria-label="Main Navigation">
@@ -89,25 +86,6 @@ export default function TopBar({ role }: { role: Role }) {
       </div>
 
       <div className="topbar-right">
-        {/* Subscription Tier Badge */}
-        {subscribed ? (
-          <span
-            className="badge pro"
-            title="Pro Per-Seat Agency Plan: Unlimited audio calls, HD video enabled, unlimited @AI analysis"
-            style={{ cursor: 'help' }}
-          >
-            ★ Pro Seat Active
-          </span>
-        ) : (
-          <span
-            className={`badge ${callsLeft <= 1 ? 'bad' : callsLeft <= 2 ? 'warn' : 'good'}`}
-            title="Free Tier: 5 WebRTC audio-only calls per workspace. Video unlocked on Pro upgrade."
-            style={{ cursor: 'help' }}
-          >
-            Free Tier: {callsLeft}/5 Audio Calls Left
-          </span>
-        )}
-
         {/* Anonymous platform display name */}
         <span
           className="muted"
