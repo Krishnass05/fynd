@@ -69,7 +69,7 @@ label.field { display: block; margin-bottom: 14px; font-size: 13px; color: var(-
 .role-card { padding: 14px; border-radius: 20px; }
 .role-tile { position: relative; height: 140px; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--teal)) center / cover; display: grid; place-items: end start; padding: 12px; color: var(--ink-strong); overflow: hidden; }
 .role-tile[data-role="client"] { background-position: center 30%; background-image: url('/bg/role-client-photo.png'); }
-.role-tile[data-role="freelancer"] { background-image: url('/bg/role-freelancer.svg'); }
+.role-tile[data-role="freelancer"] { background-position: center 55%; background-image: url('/bg/role-freelancer-photo.webp'); }
 .role-tile svg { width: 40px; height: 40px; padding: 8px; border-radius: 50%; background: var(--bg); box-sizing: border-box; }
 
 /* Keyboard users can jump past the menu */
