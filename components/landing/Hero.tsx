@@ -1,10 +1,10 @@
 'use client';
 // The cinematic hero: full-bleed background (video when supplied, otherwise crossfading photos) under a
-// dark overlay, the headline, the Hire / Work toggle, the search and trending chips. The pause button
+// dark overlay, the headline, the Hire / Work toggle and the search. The pause button
 // stops the slideshow (and video). With reduced motion it shows one still frame. OWNER: Krishna.
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { EXAMPLES, HERO_SLIDES, TRENDING, type Destination, type Intent } from './data';
+import { EXAMPLES, HERO_SLIDES, type Destination, type Intent } from './data';
 import { goSearch } from './goSearch';
 import HeroSearch from './HeroSearch';
 import Segmented from './Segmented';
@@ -91,14 +91,6 @@ export default function Hero() {
             <button key={x} type="button" onClick={() => { setQuery(x); search({ q: x }); }}>{x}{k < 2 ? ',' : ''}</button>
           ))}
         </p>
-        <div className="hero-chips">
-          <span>Popular:</span>
-          {TRENDING.map((t) => (
-            <button key={t} type="button" className="hchip" onClick={() => search({ q: t })}>
-              {t}<span aria-hidden="true">→</span>
-            </button>
-          ))}
-        </div>
       </div>
       {HERO_SLIDES.length > 1 ? (
         <button type="button" className="hero-pause" onClick={() => setPlaying((p) => !p)} aria-label={playing ? 'Pause background' : 'Play background'}>

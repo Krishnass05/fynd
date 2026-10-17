@@ -38,8 +38,6 @@ export const CATEGORIES: Category[] = [
   { slug: 'engineering-architecture', name: 'Engineering & Architecture', description: 'Architecture, CAD, engineering, and technical design.', image: '/img/categories/engineering-architecture.svg', alt: 'A blueprint of a building with a set square', tone: '#ccc5b9', to: { category: E } },
 ];
 
-export const TRENDING = ['Website Development', 'Graphic Design', 'Video Editing', 'Content Writing', 'Digital Marketing', 'AI Automation'];
-
 export const EXAMPLES: Record<Intent, string[]> = {
   hire: ['Website development', 'Brand identity design', 'Video editing', 'Digital marketing', 'Content writing'],
   work: ['Frontend development projects', 'UI/UX design projects', 'Content writing jobs', 'Video editing projects', 'Marketing opportunities'],

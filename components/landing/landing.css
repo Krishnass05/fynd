@@ -53,12 +53,6 @@
 .hero-examples { margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: 14px; color: rgba(255, 255, 255, 0.78); }
 .hero-examples button { border: 0; background: none; padding: 2px 0; color: #fff; font: inherit; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, 0.4); text-underline-offset: 3px; cursor: pointer; }
 .hero-examples button:hover { text-decoration-color: var(--paprika); }
-.hero-chips { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.hero-chips > span { font-size: 14px; color: rgba(255, 255, 255, 0.78); margin-right: 4px; }
-.hchip { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border: 1px solid rgba(255, 255, 255, 0.38); border-radius: 999px; background: rgba(255, 255, 255, 0.06); color: #fff; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease; }
-.hchip span { opacity: 0.7; transition: transform 0.2s ease; }
-.hchip:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.7); }
-.hchip:hover span { transform: translateX(3px); opacity: 1; }
 .hero-pause { position: absolute; right: 24px; bottom: 22px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.45); background: rgba(37, 36, 34, 0.35); color: #fff; display: grid; place-items: center; cursor: pointer; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .lhero :focus-visible { outline-color: #fff; }
 
@@ -193,5 +187,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-inner, .how-grid { animation: none; }
-  .hero-slide, .hero-slide img, .ccar-slide, .ccar-slide::before, .ccar-wash span, .seg2-thumb, .how-img, .hchip span { transition: none; }
+  .hero-slide, .hero-slide img, .ccar-slide, .ccar-slide::before, .ccar-wash span, .seg2-thumb, .how-img { transition: none; }
 }
