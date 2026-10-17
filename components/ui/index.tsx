@@ -20,7 +20,7 @@ export type CardTone = 'pink' | 'blue' | 'yellow' | 'green';
 const TONES: CardTone[] = ['pink', 'blue', 'yellow', 'green'];
 
 // Pick a stable colour from the title so the same card is always the same colour.
-function toneFor(seed: string): CardTone {
+export function toneFor(seed: string): CardTone {
   let h = 0;
   for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   return TONES[h % TONES.length];

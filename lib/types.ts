@@ -32,6 +32,7 @@ export interface Freelancer {
   rating: number | null;
   jobsDone: number;
   skills: string[];
+  saved?: boolean; // whether the viewing client has saved this freelancer
 }
 
 export interface FreelancerProfile extends Freelancer {
@@ -290,12 +291,31 @@ export interface ClientAttentionItem {
   href: string;
 }
 
+// One line of the recent activity feed on the client dashboard.
+export interface ActivityItem {
+  id: string;
+  kind: 'applicant' | 'message' | 'milestone' | 'change_order';
+  text: string;
+  detail: string;
+  at: string; // ISO time
+  href: string;
+}
+
 // Everything the client dashboard shows, in one call.
 export interface ClientDashboard {
   stats: { activeProjects: number; applicantsWaiting: number; awaitingDecision: number; approvedSpend: number };
   attention: ClientAttentionItem[];
   projects: ClientDashboardProject[];
   jobs: ClientDashboardJob[];
+  activity: ActivityItem[]; // newest first
+}
+
+// Real counts from our own data, for the landing page.
+export interface SiteStats {
+  jobProfiles: number;
+  sampleFreelancers: number;
+  checksPassed: number;
+  checksTotal: number;
 }
 
 export interface DemoStep {

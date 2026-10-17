@@ -52,6 +52,35 @@ assert.ok(j2.applications.every((a) => Array.isArray(a.freelancerSkills)));
 assert.notEqual(j2.applications[0].proposedPrice, j2.applications[1].proposedPrice);
 assert.equal((await call('GET', '/api/client-dashboard', 'u_freelancer1')).status, 403, 'client dashboard is client only');
 
+// recent activity feed on the client dashboard: real events, newest first
+assert.ok(cdash.activity.length >= 3, 'seed data produces activity');
+assert.ok(cdash.activity.some((a) => a.kind === 'applicant'), 'applicants appear');
+assert.ok(cdash.activity.some((a) => a.kind === 'milestone'), 'milestones appear');
+assert.ok(cdash.activity.every((a, i, arr) => i === 0 || arr[i - 1].at >= a.at), 'newest first');
+assert.ok(cdash.activity.every((a) => a.href.startsWith('/client/') && a.text && a.detail));
+
+// saved freelancers: a client shortlist
+const saved0 = await ok('GET', '/api/saved', CLIENT);
+assert.deepEqual(saved0.map((f) => f.id), ['u_freelancer3'], 'seed shortlist');
+const found = await ok('GET', '/api/freelancers', CLIENT);
+assert.equal(found.freelancers.find((f) => f.id === 'u_freelancer3').saved, true);
+assert.equal(found.freelancers.find((f) => f.id === 'u_freelancer2').saved, false);
+assert.deepEqual(await ok('PUT', '/api/saved/u_freelancer2', CLIENT, { saved: true }), { saved: true });
+assert.equal((await ok('GET', '/api/saved', CLIENT)).length, 2);
+assert.equal((await ok('GET', '/api/freelancers/u_freelancer2', CLIENT)).saved, true, 'profile shows the saved state');
+await ok('PUT', '/api/saved/u_freelancer2', CLIENT, { saved: false });
+assert.equal((await ok('GET', '/api/saved', CLIENT)).length, 1);
+assert.equal((await call('PUT', '/api/saved/u_freelancer2', CLIENT, { saved: 'yes' })).status, 400, 'saved must be true or false');
+assert.equal((await call('PUT', '/api/saved/nobody', CLIENT, { saved: true })).status, 404);
+assert.equal((await call('PUT', '/api/saved/u_freelancer2', FREE, { saved: true })).status, 403, 'only clients save');
+assert.equal((await call('GET', '/api/saved', FREE)).status, 403);
+
+// public landing page numbers: real counts, no sign-in
+const pub = await call('GET', '/api/stats', '');
+assert.equal(pub.status, 200);
+assert.ok(pub.data.jobProfiles >= 20 && pub.data.sampleFreelancers >= 8);
+assert.equal(pub.data.checksPassed, pub.data.checksTotal, 'all case checks pass');
+
 // hiring: post, apply, accept
 const job = await ok('POST', '/api/jobs', CLIENT, { title: 'Shop website', description: 'A small shop website with a contact form.', budget: 15000, deadline: '2026-12-01' });
 assert.equal(job.status, 'open');

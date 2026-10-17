@@ -145,3 +145,19 @@ flowchart LR
 ```
 
 Profiles are sample data. A freelancer edits their own profile on the Profile page and clients see the change straight away.
+
+## 10. Where things live in the app
+
+```mermaid
+flowchart LR
+  L[Landing page: pick a demo user] --> C[Client: sidebar]
+  L --> F[Freelancer: sidebar]
+  C --> C1[Dashboard: tiles, activity, attention]
+  C --> C2[Find freelancers: chips, cards, profile]
+  C --> C3[My jobs: applicants, compare, accept with milestones]
+  C --> C4[Saved]
+  C --> C5[Post a job: details, budget, review]
+  F --> F1[Dashboard]
+  F --> F2[Find jobs]
+  F --> F3[Profile]
+```

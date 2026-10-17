@@ -88,6 +88,12 @@ Source: reactbits.dev (MIT with Commons Clause: free to use inside our product).
 
 Ready-made versions: `JobCard` (a job: status, description, budget, deadline) and `ProjectCard` (a project: capacity bar, facts, footer). Lists of cards use `<div className="card-grid">`. Icons are in `components/ui/icons.tsx` (one family). `Button` now also has a `dark` variant, and `ButtonLink` is a link styled as a button.
 
+## Page layout
+
+The signed-in pages follow the marketplace mock: a sidebar on the left (Dashboard, Find freelancers, My jobs, Saved, Post a job for clients; Dashboard, Find jobs, Profile for freelancers), a top bar with search and the user, and the page content. `components/shell/AppShell.tsx` builds it for both sides. Under 960px the sidebar is hidden and the PillNav menu takes its place. The landing page has the PillNav bar, a headline with two buttons, a picture of a priced change order, and three real numbers from our own data. We do not show made-up user counts or reviews.
+
+Building blocks, in `app/globals.css`: `.tiles` and `.tile2` (tinted number tiles), `.duo` and `.panel2` (two-column panels), `.activity` (a list with icon, text and time), `.fgrid` and `.fcard` (freelancer cards), `.chips` and `.chip` (filter chips), `.stepper` and `.formcard` (step forms), `.profile`, `.tabs` and `.hirecard` (profile page).
+
 ## Navigation
 
 Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `PillNav` in our colours (light Seashell bar, Dusty Grape highlight, light theme). `TopBar` puts it next to the user name and "Switch user" on the client and freelancer sides, and the start page and case-checks page show it on its own. The links come from `lib/nav.ts`. To add a page to the menu, add it there and nowhere else. Do not build a second nav.

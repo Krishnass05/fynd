@@ -12,6 +12,7 @@ export interface Db {
   sow: SowDocument[];
   messages: Message[];
   milestones: Milestone[];
+  saved: Map<string, Set<string>>; // client id -> saved freelancer ids
   desks: Map<string, ScopeDesk>;
   labels: Map<string, Record<string, CompareLabel>>;
   hashes: Map<string, string>; // projectId:sha256(text) -> sow document id, to ignore repeat uploads
@@ -65,7 +66,7 @@ function seed(): Db {
   // Project P1 starts with the case fixture so the three case checks are visible straight away.
   const desks = new Map<string, ScopeDesk>([['P1', ScopeDesk.fromFixture(fixture)]]);
   const labels = new Map<string, Record<string, CompareLabel>>([['P1', {}]]);
-  return { users, jobs, applications, projects, sow, messages, milestones, desks, labels, hashes: new Map(), seq: 100 };
+  return { users, jobs, applications, projects, sow, messages, milestones, saved: new Map([['u_client1', new Set(['u_freelancer3'])]]), desks, labels, hashes: new Map(), seq: 100 };
 }
 
 const g = globalThis as unknown as { __scopeDeskDb?: Db };

@@ -1,39 +1,51 @@
 'use client';
-// A freelancer as a pastel card: availability pill, name, headline, rate, rating, jobs, place, top skills, and a profile button.
+// A freelancer as a card: photo block with initials and a heart to save, name, headline, rating, place, skills, rate.
 // Used when a client browses freelancers. Profiles are sample data. OWNER: Sanjana (look).
+import Link from 'next/link';
+import { initials } from '@/lib/format';
 import type { Freelancer } from '@/lib/types';
-import { ButtonLink, Card, Meta, money } from './index';
-import { Briefcase, MapPin, Rupee, Star } from './icons';
+import { ButtonLink, money, toneFor } from './index';
+import { Heart, MapPin, Star } from './icons';
 
-const initials = (name: string) => name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
-
-export default function FreelancerCard({ f, href, cta = 'See profile' }: { f: Freelancer; href: string; cta?: string }) {
+export default function FreelancerCard({ f, href, onSave }: {
+  f: Freelancer;
+  href: string;
+  onSave?: (id: string, saved: boolean) => void; // when given, the heart is shown
+}) {
   return (
-    <Card
-      title={f.name}
-      badge={f.availability === 'available' ? 'Available' : 'Booked for now'}
-      icon={<span style={{ fontWeight: 700, fontSize: 22 }} aria-hidden="true">{initials(f.name)}</span>}
-      footer={
-        <>
-          <span>{f.category}</span>
-          <ButtonLink href={href}>{cta}</ButtonLink>
-        </>
-      }
-    >
-      <p className="pcard-desc">{f.headline}</p>
-      <Meta
-        items={[
-          { icon: <Rupee />, text: f.ratePerHour ? `${money(f.ratePerHour)}/hr` : 'Rate not set' },
-          { icon: <Star />, text: f.rating ? `${f.rating.toFixed(1)} rating` : 'No rating yet' },
-          { icon: <Briefcase />, text: `${f.jobsDone} jobs` },
-          ...(f.location ? [{ icon: <MapPin />, text: f.location }] : []),
-        ]}
-      />
-      {f.skills.length ? (
-        <ul className="pcard-chips" aria-label="Skills">
-          {f.skills.slice(0, 5).map((s) => <li key={s} className="pcard-chip">{s}</li>)}
-        </ul>
-      ) : null}
-    </Card>
+    <article className="fcard">
+      <div className="fcard-photo" data-tone={toneFor(f.name)}>
+        <span className="fcard-initials" aria-hidden="true">{initials(f.name)}</span>
+        <span className={`fcard-avail${f.availability === 'available' ? '' : ' busy'}`}>{f.availability === 'available' ? 'Available' : 'Booked for now'}</span>
+        {onSave ? (
+          <button
+            type="button"
+            className="fcard-heart"
+            aria-pressed={Boolean(f.saved)}
+            aria-label={`${f.saved ? 'Remove' : 'Save'} ${f.name}`}
+            onClick={() => onSave(f.id, !f.saved)}
+          >
+            <Heart size={20} filled={Boolean(f.saved)} />
+          </button>
+        ) : null}
+      </div>
+      <div className="fcard-body">
+        <h3 className="fcard-name"><Link href={href}>{f.name}</Link></h3>
+        <p className="fcard-role">{f.headline}</p>
+        <p className="fcard-meta">
+          <span><Star size={14} /> {f.rating ? f.rating.toFixed(1) : 'New'} ({f.jobsDone})</span>
+          {f.location ? <span><MapPin size={14} /> {f.location}</span> : null}
+        </p>
+        {f.skills.length ? (
+          <ul className="fcard-chips" aria-label="Skills">
+            {f.skills.slice(0, 3).map((s) => <li key={s}>{s}</li>)}
+          </ul>
+        ) : null}
+        <div className="fcard-foot">
+          <strong>{f.ratePerHour ? `${money(f.ratePerHour)}/hr` : 'Rate not set'}</strong>
+          <ButtonLink href={href} variant="secondary">See profile</ButtonLink>
+        </div>
+      </div>
+    </article>
   );
 }

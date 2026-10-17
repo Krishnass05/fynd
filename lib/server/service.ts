@@ -4,15 +4,15 @@ import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
-  Application, AttentionItem, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
-  JobStatus, Message, MilestoneSummary, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
+  ActivityItem, Application, AttentionItem, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
+  JobStatus, Message, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
 import { parseSow, compareSow } from '@/lib/engine/sow';
 import { checkSplit, defaultSplit } from '@/lib/milestones';
 import type { MilestoneDraft } from '@/lib/milestones';
-import { findProfile } from './library';
+import { findProfile, library } from './library';
 import { db, nextId } from './store';
 
 const nowIso = () => new Date().toISOString();
@@ -58,14 +58,15 @@ export function updateMe(u: User, body: Record<string, unknown>): User {
 }
 
 // ---- browsing freelancers (client side) ----
-const toFreelancer = (u: User): Freelancer => ({
+const toFreelancer = (u: User, viewer?: User): Freelancer => ({
   id: u.id, name: u.name, headline: u.headline ?? '', location: u.location ?? '', ratePerHour: u.ratePerHour ?? null,
   category: u.category ?? 'Other', availability: u.availability ?? 'available', rating: u.rating ?? null, jobsDone: u.jobsDone ?? 0, skills: u.skills,
+  saved: viewer ? (db().saved.get(viewer.id)?.has(u.id) ?? false) : undefined,
 });
 
 export function searchFreelancers(u: User, params: URLSearchParams): FreelancerSearch {
   if (u.role !== 'client') throw forbidden('Only clients browse freelancers');
-  const all = db().users.filter((x) => x.role === 'freelancer').map(toFreelancer);
+  const all = db().users.filter((x) => x.role === 'freelancer').map((x) => toFreelancer(x, u));
   const q = (params.get('q') ?? '').trim().toLowerCase();
   const category = params.get('category') ?? '';
   const skill = (params.get('skill') ?? '').toLowerCase();
@@ -92,7 +93,25 @@ export function getFreelancerProfile(u: User, id: string): FreelancerProfile {
   const f = db().users.find((x) => x.id === id && x.role === 'freelancer');
   if (!f) throw notFound('Freelancer not found');
   const projects = db().projects.filter((p) => p.freelancerId === id).map((p) => ({ title: p.jobTitle, status: (db().jobs.find((j) => j.id === p.jobId)?.status ?? 'in_progress') as JobStatus }));
-  return { ...toFreelancer(f), overview: f.overview ?? '', projects };
+  return { ...toFreelancer(f, u), overview: f.overview ?? '', projects };
+}
+
+// Saved freelancers (a client's shortlist).
+export function listSaved(u: User): Freelancer[] {
+  if (u.role !== 'client') throw forbidden('Only clients save freelancers');
+  const ids = db().saved.get(u.id) ?? new Set<string>();
+  return db().users.filter((x) => x.role === 'freelancer' && ids.has(x.id)).map((x) => toFreelancer(x, u));
+}
+
+export function setSaved(u: User, freelancerId: string, saved: unknown): { saved: boolean } {
+  if (u.role !== 'client') throw forbidden('Only clients save freelancers');
+  if (typeof saved !== 'boolean') throw bad('saved must be true or false');
+  const f = db().users.find((x) => x.id === freelancerId && x.role === 'freelancer');
+  if (!f) throw notFound('Freelancer not found');
+  const set = db().saved.get(u.id) ?? new Set<string>();
+  if (saved) set.add(freelancerId); else set.delete(freelancerId);
+  db().saved.set(u.id, set);
+  return { saved };
 }
 
 // ---- jobs ----
@@ -403,6 +422,34 @@ export function freelancerDashboard(u: User): FreelancerDashboard {
 }
 
 // ---- client dashboard ----
+// Recent things that happened on the client's jobs and projects, newest first.
+function clientActivity(u: User): ActivityItem[] {
+  const items: ActivityItem[] = [];
+  const myJobs = db().jobs.filter((j) => j.clientId === u.id);
+  for (const a of db().applications.filter((x) => myJobs.some((j) => j.id === x.jobId))) {
+    const job = myJobs.find((j) => j.id === a.jobId)!;
+    items.push({ id: 'app-' + a.id, kind: 'applicant', text: a.freelancerName + ' applied', detail: job.title, at: a.createdAt, href: '/client/jobs/' + job.id });
+  }
+  for (const p of listProjects(u)) {
+    for (const m of db().messages.filter((x) => x.projectId === p.id && x.senderId !== u.id)) {
+      items.push({ id: 'msg-' + m.id, kind: 'message', text: m.senderName + ' sent a message', detail: p.jobTitle, at: m.sentAt, href: '/client/projects/' + p.id });
+    }
+    for (const m of db().milestones.filter((x) => x.projectId === p.id)) {
+      if (m.status === 'ready' && m.readyAt) items.push({ id: 'ms-r-' + m.id, kind: 'milestone', text: m.title + ' is ready for review', detail: p.jobTitle, at: m.readyAt, href: '/client/projects/' + p.id + '/milestones' });
+      if (m.status === 'approved' && m.approvedAt) items.push({ id: 'ms-a-' + m.id, kind: 'milestone', text: 'You approved ' + m.title, detail: p.jobTitle, at: m.approvedAt, href: '/client/projects/' + p.id + '/milestones' });
+    }
+    const desk = db().desks.get(p.id);
+    for (const e of desk ? desk.audit() : []) {
+      if (e.action === 'approved' || e.action === 'rejected') {
+        items.push({ id: 'co-' + p.id + '-' + e.seq, kind: 'change_order', text: 'Change order ' + e.id + ' ' + e.action, detail: p.jobTitle, at: e.at, href: '/client/projects/' + p.id });
+      } else if (e.action === 'imported' && e.by && e.by !== 'fixture') {
+        items.push({ id: 'co-' + p.id + '-' + e.seq, kind: 'change_order', text: 'Change order ' + e.id + ' was priced', detail: p.jobTitle, at: e.at, href: '/client/projects/' + p.id });
+      }
+    }
+  }
+  return items.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 8);
+}
+
 export function clientDashboard(u: User): ClientDashboard {
   if (u.role !== 'client') throw forbidden('This dashboard is for clients');
   const projects: ClientDashboardProject[] = [];
@@ -441,8 +488,18 @@ export function clientDashboard(u: User): ClientDashboard {
       awaitingDecision: projects.reduce((n, p) => n + p.counts.awaitingDecision, 0),
       approvedSpend: projects.reduce((n, p) => n + p.totals.committedValue, 0),
     },
-    attention, projects, jobs,
+    attention, projects, jobs, activity: clientActivity(u),
   };
 }
 
 export const demo = (): DemoResult => runDemo();
+
+export function siteStats(): SiteStats {
+  const checks = runDemo();
+  return {
+    jobProfiles: library().profiles.length,
+    sampleFreelancers: db().users.filter((x) => x.role === 'freelancer').length,
+    checksPassed: checks.steps.filter((s) => s.pass).length,
+    checksTotal: checks.steps.length,
+  };
+}

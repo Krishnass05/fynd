@@ -27,6 +27,9 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `listDemoUsers` | `GET /api/users` | anyone | `User[]` (only the three demo logins; the other sample freelancers are for browsing) |
 | `searchFreelancers` | `GET /api/freelancers?q=&category=&skill=&maxRate=&available=1` | client | `FreelancerSearch`: matching freelancers (best rated first) plus the category and skill options for the filters. Sample data |
 | `getFreelancer` | `GET /api/freelancers/:id` | client | `FreelancerProfile` (overview, skills, rate, rating, jobs, projects on this site). 404 if the id is not a freelancer |
+| `listSaved` | `GET /api/saved` | client | `Freelancer[]` (the client's saved freelancers) |
+| `setSaved` | `PUT /api/saved/:id` `{saved: true or false}` | client | `{ saved }` (404 if the id is not a freelancer). Freelancers in search results and profiles carry `saved` for the viewing client |
+| `getSiteStats` | `GET /api/stats` | anyone, no sign-in | `SiteStats`: real counts for the landing page (job profiles, sample freelancers, case checks passing) |
 | `getMe` | `GET /api/me` | any user | `User` |
 | `updateMe` | `PUT /api/me` `{name?, skills?, headline?, overview?, location?, ratePerHour?}` | any user (the profile fields are for freelancers) | `User`. `ratePerHour` is whole rupees above 0 |
 | `listJobs` | `GET /api/jobs?mine=1&status=open` | client (mine) or freelancer (open jobs) | `Job[]` |
@@ -42,7 +45,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `approveChange` | `POST /api/projects/:id/changes/:changeId/approve` | client | `ProjectDetail` |
 | `rejectChange` | `POST /api/projects/:id/changes/:changeId/reject` `{reason}` | client | `ProjectDetail` |
 | `reopenChange` | `POST /api/projects/:id/changes/:changeId/reopen` `{reason}` | either | `ProjectDetail` (reason required) |
-| `getClientDashboard` | `GET /api/client-dashboard` | client | `ClientDashboard` (stats, things needing attention, projects with capacity and counts, jobs with applicant counts) |
+| `getClientDashboard` | `GET /api/client-dashboard` | client | `ClientDashboard` (stats, things needing attention, projects with capacity and counts, jobs with applicant counts, and `activity`: the last 8 real events on the client's jobs and projects, newest first) |
 | `getLibrary` | `GET /api/library` | any user | `LibraryResponse` (28 job profiles with typical rate, hours, deliverables and exclusions; illustrative) |
 | `markMilestoneReady` | `POST /api/projects/:id/milestones/:milestoneId/ready` | freelancer | `ProjectDetail` (pending becomes ready, 409 otherwise) |
 | `approveMilestone` | `POST /api/projects/:id/milestones/:milestoneId/approve` | client | `ProjectDetail` (409 if already approved). `ProjectDetail` now has `milestones` and `milestoneSummary`. Record only: no money moves |

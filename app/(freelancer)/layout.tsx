@@ -1,11 +1,6 @@
-// Freelancer side shell. OWNER: Krishna.
-import TopBar from '@/components/shell/TopBar';
+// Freelancer side frame: sidebar, search, user. OWNER: Krishna.
+import AppShell from '@/components/shell/AppShell';
 
 export default function FreelancerLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <TopBar role="freelancer" />
-      <main id="main-content" className="page">{children}</main>
-    </>
-  );
+  return <AppShell role="freelancer">{children}</AppShell>;
 }
