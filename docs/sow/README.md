@@ -1,28 +1,107 @@
 # Statements of Work (SOW) library
 
-We need **50 job profiles**, one SOW file each. Our app reads these to detect scope changes and price them.
+We write **54 SOWs**, one per job profile. Our app reads these to detect scope changes and price them.
+
+Each person has a fixed range of numbers below. Write only your own, so nobody clashes.
+
+| Person | Numbers | Count |
+| --- | --- | --- |
+| Harini | 01 to 15 | 15 |
+| Sanjana | 16 to 30 | 15 |
+| Swapnil | 31 to 45 | 15 |
+| Krishna | 46 to 54 | 9 |
 
 ## Naming
 
-`NN-short-job-name.md`, with two digits and lowercase words joined by dashes.
+`NN-skill-name.md`: two digits, then the skill in lowercase with dashes.
+Examples: `01-php.md`, `21-graphic-design.md`, `46-autocad.md`
 
-Examples: `01-landing-page-design.md`, `02-logo-design.md`, `03-mobile-app-ui.md`
+Put every file in this folder (`docs/sow/`), on **your own branch**.
 
-Split the numbers between teammates so nobody clashes:
+## Your skills
 
-| Person | Numbers |
+Skills marked **(merged)** combine two near-identical listings into one SOW. Cover both in the same file.
+
+### Harini: 01 to 15 (Websites, IT and Software)
+
+| No. | Skill |
 | --- | --- |
-| Harini | 01-13 |
-| Swapnil | 14-26 |
-| Sanjana | 27-39 |
-| Krishna | 40-50 |
+| 01 | PHP |
+| 02 | HTML |
+| 03 | Web Development |
+| 04 | Digital Marketing |
+| 05 | SEO |
+| 06 | Adobe Premiere Pro |
+| 07 | Data Management and Database Management (merged) |
+| 08 | JavaScript |
+| 09 | Adobe Illustrator and Illustrator (merged) |
+| 10 | Software Architecture |
+| 11 | Web Design and Website Design (merged) |
+| 12 | Social Media Management |
+| 13 | WordPress |
+| 14 | Python |
+| 15 | API Development |
+
+### Sanjana: 16 to 30 (Websites, IT and Software, then Design and Media)
+
+| No. | Skill |
+| --- | --- |
+| 16 | eCommerce |
+| 17 | Link Building |
+| 18 | MySQL |
+| 19 | API Integration |
+| 20 | Data Collection |
+| 21 | Graphic Design |
+| 22 | Video Editing and Video Post-editing (merged) |
+| 23 | Video Production |
+| 24 | Photoshop and Adobe Photoshop (merged) |
+| 25 | After Effects |
+| 26 | Video Services |
+| 27 | Animation |
+| 28 | 3D Modelling and 3D Design (merged) |
+| 29 | 3D Rendering |
+| 30 | Logo Design |
+
+### Swapnil: 31 to 45 (Design, Media and Architecture)
+
+| No. | Skill |
+| --- | --- |
+| 31 | 3D Animation |
+| 32 | Illustration |
+| 33 | Photography |
+| 34 | Word |
+| 35 | CSS |
+| 36 | Final Cut Pro |
+| 37 | Audio Editing |
+| 38 | Motion Graphics |
+| 39 | Building Architecture |
+| 40 | Visual Design |
+| 41 | Photo Editing |
+| 42 | Videography |
+| 43 | Audio Services |
+| 44 | DaVinci Resolve |
+| 45 | Sound Design |
+
+### Krishna: 46 to 54 (Engineering, Business, Data Entry and Admin)
+
+| No. | Skill |
+| --- | --- |
+| 46 | AutoCAD |
+| 47 | CAD/CAM |
+| 48 | Data Analysis |
+| 49 | Project Management |
+| 50 | Business Development |
+| 51 | Data Entry |
+| 52 | Excel |
+| 53 | Data Processing |
+| 54 | Customer Service |
 
 ## Template (copy this into every file)
 
 ```markdown
-# <Job profile name>
+# <Skill name>
 
-**Category:** <design / development / writing / marketing / other>
+**Category:** <Websites, IT and Software / Design, Media and Architecture / Engineering and Science / Business and Admin / Data Entry and Admin>
 **Currency:** INR
 **Rate per hour:** <number>
 **Assumed total hours:** <number>
@@ -50,4 +129,5 @@ Split the numbers between teammates so nobody clashes:
 - Be specific. "A landing page" is good. "Website stuff" is not.
 - Every excluded item should be something a client really might ask for.
 - If an hour estimate is not known, write `unknown`. Do not write `0`.
-- All numbers are synthetic and for the simulation. Do not present them as real market prices.
+- Rates and hours are synthetic, for the simulation. Do not present them as real market prices.
+- Write at least 3 rows in the change-request table. Our pricing and anomaly checks use them.
