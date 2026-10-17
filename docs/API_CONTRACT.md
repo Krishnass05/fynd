@@ -24,9 +24,11 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 
 | Function in `lib/api.ts` | Method and path | Who | Returns |
 | --- | --- | --- | --- |
-| `listDemoUsers` | `GET /api/users` | anyone | `User[]` |
+| `listDemoUsers` | `GET /api/users` | anyone | `User[]` (only the three demo logins; the other sample freelancers are for browsing) |
+| `searchFreelancers` | `GET /api/freelancers?q=&category=&skill=&maxRate=&available=1` | client | `FreelancerSearch`: matching freelancers (best rated first) plus the category and skill options for the filters. Sample data |
+| `getFreelancer` | `GET /api/freelancers/:id` | client | `FreelancerProfile` (overview, skills, rate, rating, jobs, projects on this site). 404 if the id is not a freelancer |
 | `getMe` | `GET /api/me` | any user | `User` |
-| `updateMe` | `PUT /api/me` `{name?, skills?}` | any user | `User` |
+| `updateMe` | `PUT /api/me` `{name?, skills?, headline?, overview?, location?, ratePerHour?}` | any user (the profile fields are for freelancers) | `User`. `ratePerHour` is whole rupees above 0 |
 | `listJobs` | `GET /api/jobs?mine=1&status=open` | client (mine) or freelancer (open jobs) | `Job[]` |
 | `createJob` | `POST /api/jobs` `{title, description, budget, deadline, profileId?}` | client | `Job`. With a `profileId`, accepting an applicant sets the project rate and hours from that profile |
 | `getJob` | `GET /api/jobs/:id` | owner client, or freelancer | `JobDetail`: the job, `typicalTotal` (library price, or null) and applicants with their skills (client sees all, freelancer only their own) |

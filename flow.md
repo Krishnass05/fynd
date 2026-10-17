@@ -132,3 +132,16 @@ stateDiagram-v2
 ```
 
 Record only: approving a milestone marks it approved and no money moves.
+
+## 9. How a client finds a freelancer
+
+```mermaid
+flowchart LR
+  S[Find freelancers] --> F[Filter: search, category, skill, rate, availability]
+  F --> C[Freelancer cards, best rated first]
+  C --> P[Profile: about, skills, rate, projects]
+  P --> J[Post a job]
+  J --> A[Freelancers apply]
+```
+
+Profiles are sample data. A freelancer edits their own profile on the Profile page and clients see the change straight away.

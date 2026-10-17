@@ -8,6 +8,41 @@ export interface User {
   name: string;
   role: Role;
   skills: string[];
+  demo?: boolean; // shown on the start page as a one-click demo login
+  // Freelancer profile fields. Seed values are sample data, not real people or real ratings.
+  headline?: string;
+  overview?: string;
+  location?: string;
+  ratePerHour?: number;
+  category?: string; // matches a library category
+  availability?: 'available' | 'busy';
+  rating?: number; // 0 to 5, sample data
+  jobsDone?: number; // sample data
+}
+
+// What a client sees when browsing freelancers.
+export interface Freelancer {
+  id: string;
+  name: string;
+  headline: string;
+  location: string;
+  ratePerHour: number | null;
+  category: string;
+  availability: 'available' | 'busy';
+  rating: number | null;
+  jobsDone: number;
+  skills: string[];
+}
+
+export interface FreelancerProfile extends Freelancer {
+  overview: string;
+  projects: Array<{ title: string; status: JobStatus }>; // real projects on this site
+}
+
+export interface FreelancerSearch {
+  freelancers: Freelancer[];
+  categories: string[];
+  skills: string[];
 }
 
 export type JobStatus = 'open' | 'in_progress' | 'closed';

@@ -5,6 +5,7 @@ export const NAV: Record<Role, Array<{ href: string; label: string }>> = {
   client: [
     { href: '/client', label: 'Dashboard' },
     { href: '/client/jobs', label: 'My jobs' },
+    { href: '/client/freelancers', label: 'Find freelancers' },
     { href: '/client/jobs/new', label: 'Post a job' },
   ],
   freelancer: [

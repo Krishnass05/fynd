@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
-  Application, AttentionItem, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
+  Application, AttentionItem, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
   JobStatus, Message, MilestoneSummary, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
@@ -38,7 +38,8 @@ export function actor(userId: string | null): User {
   return u;
 }
 
-export const listUsers = (): User[] => db().users;
+// The start page offers only the demo users; the other freelancers exist to be browsed.
+export const listUsers = (): User[] => db().users.filter((u) => u.demo);
 
 export function updateMe(u: User, body: Record<string, unknown>): User {
   if (body.name !== undefined) u.name = str(body.name, 'name', 80);
@@ -47,7 +48,51 @@ export function updateMe(u: User, body: Record<string, unknown>): User {
     if (body.skills.length > 10) throw bad('At most 10 skills');
     u.skills = (body.skills as string[]).map((s) => s.trim());
   }
+  if (u.role === 'freelancer') {
+    if (body.headline !== undefined) u.headline = str(body.headline, 'headline', 120);
+    if (body.overview !== undefined) u.overview = str(body.overview, 'overview', 1000);
+    if (body.location !== undefined) u.location = str(body.location, 'location', 60);
+    if (body.ratePerHour !== undefined && body.ratePerHour !== null && body.ratePerHour !== '') u.ratePerHour = wholeRupees(body.ratePerHour, 'ratePerHour');
+  }
   return u;
+}
+
+// ---- browsing freelancers (client side) ----
+const toFreelancer = (u: User): Freelancer => ({
+  id: u.id, name: u.name, headline: u.headline ?? '', location: u.location ?? '', ratePerHour: u.ratePerHour ?? null,
+  category: u.category ?? 'Other', availability: u.availability ?? 'available', rating: u.rating ?? null, jobsDone: u.jobsDone ?? 0, skills: u.skills,
+});
+
+export function searchFreelancers(u: User, params: URLSearchParams): FreelancerSearch {
+  if (u.role !== 'client') throw forbidden('Only clients browse freelancers');
+  const all = db().users.filter((x) => x.role === 'freelancer').map(toFreelancer);
+  const q = (params.get('q') ?? '').trim().toLowerCase();
+  const category = params.get('category') ?? '';
+  const skill = (params.get('skill') ?? '').toLowerCase();
+  const maxRateRaw = params.get('maxRate');
+  const maxRate = maxRateRaw ? Number(maxRateRaw) : null;
+  if (maxRate !== null && (!Number.isFinite(maxRate) || maxRate <= 0)) throw bad('maxRate must be a number above 0');
+  const available = params.get('available') === '1';
+  const found = all
+    .filter((f) => !q || [f.name, f.headline, f.location, f.category, ...f.skills].some((t) => t.toLowerCase().includes(q)))
+    .filter((f) => !category || f.category === category)
+    .filter((f) => !skill || f.skills.some((s) => s.toLowerCase() === skill))
+    .filter((f) => maxRate === null || (f.ratePerHour !== null && f.ratePerHour <= maxRate))
+    .filter((f) => !available || f.availability === 'available')
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || b.jobsDone - a.jobsDone);
+  return {
+    freelancers: found,
+    categories: [...new Set(all.map((f) => f.category))].sort(),
+    skills: [...new Set(all.flatMap((f) => f.skills))].sort((a, b) => a.localeCompare(b)),
+  };
+}
+
+export function getFreelancerProfile(u: User, id: string): FreelancerProfile {
+  if (u.role !== 'client') throw forbidden('Only clients browse freelancers');
+  const f = db().users.find((x) => x.id === id && x.role === 'freelancer');
+  if (!f) throw notFound('Freelancer not found');
+  const projects = db().projects.filter((p) => p.freelancerId === id).map((p) => ({ title: p.jobTitle, status: (db().jobs.find((j) => j.id === p.jobId)?.status ?? 'in_progress') as JobStatus }));
+  return { ...toFreelancer(f), overview: f.overview ?? '', projects };
 }
 
 // ---- jobs ----

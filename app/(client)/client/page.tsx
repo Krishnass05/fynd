@@ -17,7 +17,7 @@ const SHORTCUTS: Array<{ title: string; text: string; href?: string }> = [
   { title: 'Post a job', text: 'Describe the work and get applicants', href: '/client/jobs/new' },
   { title: 'My jobs', text: 'Applicants, status and deadlines', href: '/client/jobs' },
   { title: 'Case checks', text: 'See the three scored checks run', href: '/demo' },
-  { title: 'Find freelancers', text: 'Browse by category and skill' },
+  { title: 'Find freelancers', text: 'Browse by category and skill', href: '/client/freelancers' },
   { title: 'Payments', text: 'Protected payment ledger (simulated)' },
 ];
 

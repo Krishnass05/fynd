@@ -162,4 +162,35 @@ assert.equal(pproj.project.availableHours, php.typicalHours, 'hours come from th
 assert.deepEqual(pproj.milestones.map((m) => m.amount), [13800, 18400, 13800], 'default 30/40/30 split adds up to the price');
 assert.equal((await ok('GET', `/api/jobs/${pjob.id}`, CLIENT)).typicalTotal, 1200 * php.typicalHours);
 
+// browsing freelancers (client side): list, search, filters, profile, role limits
+const users = await ok('GET', '/api/users');
+assert.deepEqual(users.map((u) => u.id).sort(), ['u_client1', 'u_freelancer1', 'u_freelancer2'], 'start page offers only the demo users');
+const all = await ok('GET', '/api/freelancers', CLIENT);
+assert.ok(all.freelancers.length >= 8, 'sample freelancers are listed');
+assert.ok(all.categories.length >= 2 && all.skills.length >= 10, 'filter options are returned');
+assert.ok(all.freelancers.every((f, i, a) => i === 0 || (a[i - 1].rating ?? 0) >= (f.rating ?? 0)), 'best rated first');
+const logo = await ok('GET', '/api/freelancers?q=logo', CLIENT);
+assert.ok(logo.freelancers.some((f) => f.id === 'u_freelancer2'), 'search finds a skill');
+assert.ok(logo.freelancers.length < all.freelancers.length);
+const cat = all.categories[0];
+assert.ok((await ok('GET', '/api/freelancers?category=' + encodeURIComponent(cat), CLIENT)).freelancers.every((f) => f.category === cat), 'category filter');
+const cheap = await ok('GET', '/api/freelancers?maxRate=1000', CLIENT);
+assert.ok(cheap.freelancers.length > 0 && cheap.freelancers.every((f) => f.ratePerHour <= 1000), 'rate filter');
+assert.ok((await ok('GET', '/api/freelancers?available=1', CLIENT)).freelancers.every((f) => f.availability === 'available'), 'availability filter');
+assert.equal((await ok('GET', '/api/freelancers?q=zzzzzz', CLIENT)).freelancers.length, 0, 'no match gives an empty list');
+assert.equal((await call('GET', '/api/freelancers?maxRate=-5', CLIENT)).status, 400);
+assert.equal((await call('GET', '/api/freelancers', FREE)).status, 403, 'only clients browse');
+const prof = await ok('GET', '/api/freelancers/u_freelancer2', CLIENT);
+assert.ok(prof.overview.length > 10 && prof.skills.includes('Logo design'));
+assert.equal((await call('GET', '/api/freelancers/u_client1', CLIENT)).status, 404, 'a client is not a freelancer profile');
+assert.equal((await call('GET', '/api/freelancers/nobody', CLIENT)).status, 404);
+assert.equal((await call('GET', '/api/freelancers/u_freelancer2', FREE)).status, 403);
+
+// a freelancer edits their own profile and clients see the change
+const upd = await ok('PUT', '/api/me', FREE, { headline: 'Brand marks that work on a cafe sign', ratePerHour: 1100, location: 'Pune' });
+assert.equal(upd.ratePerHour, 1100);
+assert.equal((await ok('GET', '/api/freelancers/u_freelancer2', CLIENT)).headline, 'Brand marks that work on a cafe sign');
+assert.equal((await call('PUT', '/api/me', FREE, { ratePerHour: 0 })).status, 400, 'rate must be above 0');
+assert.equal((await call('PUT', '/api/me', FREE, { headline: '' })).status, 400, 'headline cannot be empty');
+
 console.log('smoke test passed');

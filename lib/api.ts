@@ -1,7 +1,7 @@
 // The ONLY way pages talk to the server. OWNER: Krishna. Do not call fetch in pages.
 // Every function throws an Error whose message is safe to show to the user.
 import type {
-  Application, ClientDashboard, DemoResult, FreelancerDashboard, Job, JobDetail, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
+  Application, ClientDashboard, DemoResult, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
 } from './types';
 import { getUserId } from './session';
 
@@ -35,7 +35,20 @@ const post = <T>(path: string, body?: unknown) => call<T>(path, { method: 'POST'
 // users and profile
 export const listDemoUsers = () => call<User[]>('/api/users');
 export const getMe = () => call<User>('/api/me');
-export const updateMe = (b: { name?: string; skills?: string[] }) => call<User>('/api/me', { method: 'PUT', body: b });
+export const updateMe = (b: { name?: string; skills?: string[]; headline?: string; overview?: string; location?: string; ratePerHour?: number }) =>
+  call<User>('/api/me', { method: 'PUT', body: b });
+
+// browsing freelancers (client side)
+export const searchFreelancers = (o: { q?: string; category?: string; skill?: string; maxRate?: number; available?: boolean } = {}) => {
+  const p = new URLSearchParams();
+  if (o.q) p.set('q', o.q);
+  if (o.category) p.set('category', o.category);
+  if (o.skill) p.set('skill', o.skill);
+  if (o.maxRate) p.set('maxRate', String(o.maxRate));
+  if (o.available) p.set('available', '1');
+  return call<FreelancerSearch>(`/api/freelancers?${p.toString()}`);
+};
+export const getFreelancer = (id: string) => call<FreelancerProfile>(`/api/freelancers/${id}`);
 
 // jobs
 export const listJobs = (o: { mine?: boolean; status?: string } = {}) =>
