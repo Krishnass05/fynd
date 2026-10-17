@@ -13,8 +13,8 @@ const PUBLIC_ITEMS = [
 ];
 
 // Our palette (from joveo.com) as hex (PillNav needs hex to pick readable label colours).
-const BRAND = '#5a54bd'; // purple
-const INK = '#1a1818'; // near-black
+const BRAND = '#403d39'; // Charcoal Brown
+const INK = '#252422'; // Carbon Black
 
 const Mark = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

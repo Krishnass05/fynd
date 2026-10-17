@@ -1,18 +1,18 @@
 # Design system
 
-Rules for how the app looks and moves. Sanjana owns the final look. Everyone follows these so the pages feel like one product. Colours come from the Joveo palette below; the layout and headings follow the Crafthire design. Checked against the ui-ux-pro-max rules (accessibility first, restrained motion), with animation from React Bits.
+Rules for how the app looks and moves. Sanjana owns the final look. Everyone follows these so the pages feel like one product. Colours come from the five-colour palette below; the layout and headings follow the Crafthire design. Checked against the ui-ux-pro-max rules (accessibility first, restrained motion), with animation from React Bits.
 
 ## Colour palette
 
-Taken from joveo.com on 18 October 2026 (Krishna's request). Everything on screen comes from these or a tint of them.
+Chosen by Krishna on 18 October 2026. The site is mostly white; orange is used on some buttons only.
 
 | Name | Hex | Where it is used |
 | --- | --- | --- |
-| Cream | `#FFFDF9` | Page background |
-| Near-black | `#1A1818` | Body text, headings, the dark button |
-| Purple | `#5A54BD` | Primary buttons, links, the highlight in the navigation |
-| Lavender | `#DDDBFF` | Soft panels, neutral badges, bar tracks |
-| Teal | `#6BB3CD` | Decoration only (avatars, the corner of the role tiles) |
+| Floral White | `#FFFCF2` | Page background |
+| Silver | `#CCC5B9` | Decoration, soft panels, background art |
+| Charcoal Brown | `#403D39` | Secondary text, links, navigation highlight, bars |
+| Carbon Black | `#252422` | Body text, headings, the dark button |
+| Spicy Paprika | `#EB5E28` | Primary buttons (with Carbon Black text), decoration |
 
 ## Tokens (already in `app/globals.css`)
 
@@ -20,39 +20,31 @@ Use the variables. Never put a raw colour in a component.
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `--bg` | `#FFFDF9` cream | page background |
+| `--bg` | `#FFFCF2` | page background (with a faint line pattern from `public/bg/pattern.svg`) |
 | `--card` | `#FFFFFF` | cards, inputs |
-| `--ink` / `--ink-strong` | `#1A1818` / `#111111` | body text / headings |
-| `--muted` | `#444444` | secondary text |
-| `--brand` | `#5A54BD` purple | primary buttons, links, highlights |
-| `--brand-soft` | `#DDDBFF` lavender | neutral badges, bar tracks |
-| `--accent` | `#6BB3CD` teal | decorative tiles and avatars |
-| `--teal` | `#4A90A4` | decoration only, never text |
-| `--line` | `#E8E6E0` | card edges and dividers (decoration) |
-| `--line-strong` | `#858A87` | **form field borders** |
+| `--ink` / `--ink-strong` | `#252422` | body text / headings |
+| `--muted` | `#403D39` | secondary text |
+| `--brand` | `#403D39` | links, highlights, progress bars |
+| `--orange` | `#EB5E28` | primary `.btn` background |
+| `--brand-soft` | `#ECE8DF` | neutral badges, bar tracks |
+| `--accent` | `#CCC5B9` | decorative tiles |
+| `--line` | `#E6E1D6` | card edges and dividers (decoration) |
+| `--line-strong` | `#8A857B` | **form field borders** |
 | `--ok`, `--bad`, `--warn` (+ `bg`) | green, red, amber | statuses. They always come with a word |
-| `--radius` | `0.75rem` | cards and fields; buttons are pills |
 
-Card tints (`data-tone`): pink is a lavender tint, blue a teal tint, yellow a warm cream tint, green a slate tint. The names are kept so older code keeps working; the colours come from the palette.
-
-Typography: Fraunces for headings (`--font-display`), Manrope for text (`--font-body`). Body 15px, line height 1.55. Spacing in steps of 4 and 8.
+Background images: `public/bg/hero.svg` (soft orange and silver circles behind the start page) and `public/bg/pattern.svg` (faint outline shapes on every page). They are our own drawings, not stock photos.
 
 ## Checked contrast (WCAG)
 
 | Pair | Ratio | Needs |
 | --- | --- | --- |
-| Near-black on cream / white | 17.4 / 17.7 : 1 | 4.5 |
-| Secondary text (#444) on cream / white | 9.6 / 9.7 : 1 | 4.5 |
-| White on purple (primary button) | 6.1 : 1 | 4.5 |
-| White on near-black (dark button) | 17.7 : 1 | 4.5 |
-| Links (purple) on cream | 6.0 : 1 | 4.5 |
-| Purple on lavender | 4.55 : 1 | 4.5 |
-| Near-black on the four card tints | 14.6 to 15.4 : 1 | 4.5 |
-| Secondary text on the four card tints | 8.0 to 8.5 : 1 | 4.5 |
-| Status badges (good, bad, warn) | 5.0 to 5.5 : 1 | 4.5 |
-| Form field border (`--line-strong`) on cream / white | 3.5 / 3.5 : 1 | 3 |
+| Carbon Black on Floral White / white | about 16 : 1 | 4.5 |
+| Charcoal Brown on Floral White | about 10 : 1 | 4.5 |
+| Carbon Black on Spicy Paprika (primary button) | 4.6 : 1 | 4.5 |
+| White on Charcoal Brown / Carbon Black | 10 to 16 : 1 | 4.5 |
+| Form field border on white | 3.4 : 1 | 3 |
 
-**Joveo's teal is only 2.3 : 1 on cream (3.6 : 1 for the darker one).** Use it for decoration, never for text. Joveo's own light grey field border (#D0D5D2) is 1.5 : 1, so we use a darker grey for fields. The thin `--line` border is for card edges only, never for a field or a control.
+**White on Spicy Paprika is only 3.4 : 1 and paprika text on white is 3.4 : 1.** So orange buttons carry dark text, and orange is never used for text or links.
 
 ## Motion
 
@@ -69,7 +61,7 @@ Typography: Fraunces for headings (`--font-display`), Manrope for text (`--font-
 | `BlurText` | start page headline | one reveal on load, readable by screen readers |
 | `CountUp` | dashboard numbers | shows that figures are live, ends on the real value |
 | `SpotlightCard` | role cards, project cards | a soft glow under the pointer, also appears on keyboard focus |
-| `PillNav` | the navigation bar on every page | marks the current page, fills the hovered link with purple, folds into a menu button on phones |
+| `PillNav` | the navigation bar on every page | marks the current page, fills the hovered link with Charcoal Brown, folds into a menu button on phones |
 
 Source: reactbits.dev (MIT with Commons Clause: free to use inside our product). The files were copied unchanged. Only these four are installed on purpose. FadeContent and similar pull in GSAP, and the WebGL backgrounds cost a lot of battery, so we left them out. To add another, copy it into `components/fx/`, recolour it with our tokens, and check it for reduced motion first.
 
@@ -97,7 +89,7 @@ Building blocks, in `app/globals.css`: `.tiles` and `.tile2` (tinted number tile
 
 ## Navigation
 
-Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `PillNav` in our colours (white bar, purple highlight, light theme). `TopBar` puts it next to the user name and "Switch user" on the client and freelancer sides, and the start page and case-checks page show it on its own. The links come from `lib/nav.ts`. To add a page to the menu, add it there and nowhere else. Do not build a second nav.
+Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `PillNav` in our colours (white bar, Charcoal Brown highlight, light theme). `TopBar` puts it next to the user name and "Switch user" on the client and freelancer sides, and the start page and case-checks page show it on its own. The links come from `lib/nav.ts`. To add a page to the menu, add it there and nowhere else. Do not build a second nav.
 
 ## Component rules
 
@@ -130,4 +122,4 @@ Every page is checked at 375px wide (a small phone), with long unbroken titles a
 
 ## History
 
-The first look was green and cream, taken from the Crafthire design. On 18 October 2026 Krishna replaced it with a five-colour palette, and later the same day with the Joveo palette above (decisions D-40 and D-44). The ui-ux-pro-max tool had also suggested a blue and green SaaS palette; we did not use it.
+The first look was green and cream, taken from the Crafthire design. On 18 October 2026 Krishna replaced it with a five-colour palette, and later the same day with the Joveo palette above (D-40), then with the Joveo palette (D-44), then with the current palette (D-45). The ui-ux-pro-max tool had also suggested a blue and green SaaS palette; we did not use it.
