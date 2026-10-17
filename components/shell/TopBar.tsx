@@ -12,7 +12,7 @@ export default function TopBar({ role }: { role: Role }) {
   const { user } = useUser(role);
   return (
     <header className="topbar">
-      <strong>Scope Change Desk</strong>
+      <Link href="/" className="brand">Scope Change Desk</Link>
       <nav aria-label="Main">
         {NAV[role].map((l) => <Link key={l.href} href={l.href}>{l.label}</Link>)}
       </nav>
