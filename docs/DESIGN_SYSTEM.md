@@ -50,8 +50,9 @@ The thin `--line` border is 1.3 : 1. That is fine for card edges, but **never us
 | `BlurText` | start page headline | one reveal on load, readable by screen readers |
 | `CountUp` | dashboard numbers | shows that figures are live, ends on the real value |
 | `SpotlightCard` | role cards, project cards | a soft glow under the pointer, also appears on keyboard focus |
+| `PillNav` | the navigation bar on every page | marks the current page, fills the hovered link with green, folds into a menu button on phones |
 
-Source: reactbits.dev (MIT with Commons Clause: free to use inside our product). The files were copied unchanged. Only these three are installed on purpose. FadeContent and similar pull in GSAP, and the WebGL backgrounds cost a lot of battery, so we left them out. To add another, copy it into `components/fx/`, recolour it with our tokens, and check it for reduced motion first.
+Source: reactbits.dev (MIT with Commons Clause: free to use inside our product). The files were copied unchanged. Only these four are installed on purpose. FadeContent and similar pull in GSAP, and the WebGL backgrounds cost a lot of battery, so we left them out. To add another, copy it into `components/fx/`, recolour it with our tokens, and check it for reduced motion first.
 
 ## The card
 
@@ -68,6 +69,10 @@ Source: reactbits.dev (MIT with Commons Clause: free to use inside our product).
 | `plain` | the old flat white card, for dense content such as long forms or tables |
 
 Ready-made versions: `JobCard` (a job: status, description, budget, deadline) and `ProjectCard` (a project: capacity bar, facts, footer). Lists of cards use `<div className="card-grid">`. Icons are in `components/ui/icons.tsx` (one family). `Button` now also has a `dark` variant, and `ButtonLink` is a link styled as a button.
+
+## Navigation
+
+Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `PillNav` in our colours (white bar, green highlight, light theme). `TopBar` puts it next to the user name and "Switch user" on the client and freelancer sides, and the start page and case-checks page show it on its own. The links come from `lib/nav.ts`. To add a page to the menu, add it there and nowhere else. Do not build a second nav.
 
 ## Component rules
 

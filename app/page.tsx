@@ -10,6 +10,7 @@ import { setUserId } from '@/lib/session';
 import type { Role } from '@/lib/types';
 import { useAsync } from '@/lib/useAsync';
 import BlurText from '@/components/fx/BlurText';
+import AppNav from '@/components/shell/AppNav';
 import SpotlightCard from '@/components/fx/SpotlightCard';
 import { Button, ErrorMessage, Spinner } from '@/components/ui';
 
@@ -43,7 +44,7 @@ export default function Home() {
   return (
     <main id="main-content" className="welcome">
       <div className="inner">
-        <span className="brand">Scope Change Desk</span>
+        <div className="appbar-public"><AppNav /></div>
         <section className="hero">
           <h1>
             <BlurText text="Great work starts with a clear scope." trigger="load" animateBy="words" direction="top" delay={110} stepDuration={0.4} />
