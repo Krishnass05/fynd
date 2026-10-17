@@ -64,6 +64,17 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
         <div className="topnav-row">
           <Link href={HOME[role]} className="brand topnav-brand">Scope Change Desk</Link>
 
+          <form role="search" className="searchbox" onSubmit={search}>
+            <Search size={18} />
+            <input
+              type="search"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={role === 'client' ? 'Search for skills or freelancers' : 'Search for jobs'}
+              aria-label={role === 'client' ? 'Search freelancers' : 'Search jobs'}
+            />
+          </form>
+
           <nav className="topnav-menu" aria-label="Main">
             {lead ? <Link href={lead.href} className="topnav-link" aria-current={lead.href === current ? 'page' : undefined}>{lead.label}</Link> : null}
 
@@ -125,17 +136,6 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
               <Link key={l.href} href={l.href} className="topnav-link" aria-current={l.href === current ? 'page' : undefined}>{l.label}</Link>
             ))}
           </nav>
-
-          <form role="search" className="searchbox" onSubmit={search}>
-            <Search size={18} />
-            <input
-              type="search"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder={role === 'client' ? 'Search for skills or freelancers' : 'Search for jobs'}
-              aria-label={role === 'client' ? 'Search freelancers' : 'Search jobs'}
-            />
-          </form>
 
           <div className="usermenu">
             <span className="usermenu-name"><small>Hello,</small>{user ? user.name : ''}</span>
