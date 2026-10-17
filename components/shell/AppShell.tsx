@@ -1,63 +1,131 @@
 'use client';
-// The frame around every signed-in page: a sidebar on wide screens, a top bar with search and the user,
-// and the PillNav menu on phones. OWNER: Sanjana (look). Links come from lib/nav.ts.
+// The frame around every signed-in page: a top navigation bar with drop-down menus (Jobs, Services),
+// a search box and the user, plus the PillNav menu on phones. OWNER: Sanjana (look).
+// Links come from lib/nav.ts; the Services menu comes from lib/services.ts.
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { NAV, type NavIcon } from '@/lib/nav';
+import { useEffect, useRef, useState } from 'react';
+import { MENUS, NAV, TOP_LINKS } from '@/lib/nav';
 import { clearUser } from '@/lib/session';
+import { SERVICES } from '@/lib/services';
 import type { Role } from '@/lib/types';
 import { useUser } from '@/lib/useUser';
-import { Briefcase, CheckSquare, Heart, Home, Plus, Search, User } from '@/components/ui/icons';
+import { ChevronRight, Search } from '@/components/ui/icons';
 import AppNav from './AppNav';
 
-const ICONS: Record<NavIcon, (p: { size?: number }) => React.JSX.Element> = {
-  home: Home, search: Search, jobs: Briefcase, heart: (p) => <Heart {...p} />, plus: Plus, user: User,
-};
-
 const initials = (name: string) => name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+
+type MenuId = 'jobs' | 'services';
 
 export default function AppShell({ role, children }: { role: Role; children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() ?? '';
   const { user } = useUser(role);
   const [q, setQ] = useState('');
-  const items = NAV[role];
-  // The most specific link wins: /client/jobs/new is "Post a job", not "My jobs".
-  const active = items
-    .filter((i) => pathname === i.href || pathname.startsWith(`${i.href}/`))
-    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+  const [open, setOpen] = useState<MenuId | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const dash = NAV[role][0];
+  const links = TOP_LINKS[role];
+  const jobsMenu = MENUS[role];
+  const searchBase = role === 'client' ? '/client/freelancers' : '/freelancer/jobs';
+
+  // Close a menu with Escape, a click elsewhere, or a page change.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(null); };
+    const onClick = (e: MouseEvent) => { if (navRef.current && !navRef.current.contains(e.target as Node)) setOpen(null); };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onClick);
+    return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick); };
+  }, []);
+  useEffect(() => setOpen(null), [pathname]);
+
+  const isHere = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  // The most specific link wins, so /client/jobs/new is not also "My jobs".
+  const all = [dash.href, ...links.map((l) => l.href), ...(jobsMenu?.items.map((i) => i.href) ?? [])];
+  const current = all.filter(isHere).sort((a, b) => b.length - a.length)[0];
+  const jobsActive = Boolean(jobsMenu?.items.some((i) => i.href === current));
+  const servicesQuery = (value: { category?: string; q?: string }) => {
+    const p = new URLSearchParams();
+    if (role === 'client' && value.category) p.set('category', value.category);
+    else p.set('q', value.category ?? value.q ?? '');
+    return `${searchBase}?${p.toString()}`;
+  };
 
   function search(e: React.FormEvent) {
     e.preventDefault();
-    const target = role === 'client' ? '/client/freelancers' : '/freelancer/jobs';
-    router.push(q.trim() ? `${target}?q=${encodeURIComponent(q.trim())}` : target);
+    router.push(q.trim() ? `${searchBase}?q=${encodeURIComponent(q.trim())}` : searchBase);
   }
+
+  const toggle = (id: MenuId) => setOpen(id);
 
   return (
     <div className="shell">
-      <aside className="sidebar" aria-label="Sidebar">
-        <Link href={`/${role}`} className="brand sidebar-brand">Scope Change Desk</Link>
-        <nav aria-label="Main">
-          <ul className="sidebar-list">
-            {items.map((i) => {
-              const Icon = ICONS[i.icon];
-              return (
-                <li key={i.href}>
-                  <Link href={i.href} className="sidebar-link" aria-current={i.href === active ? 'page' : undefined}>
-                    <Icon size={18} />{i.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-        <Link href="/demo" className="sidebar-link sidebar-foot"><CheckSquare size={18} />Case checks</Link>
-      </aside>
+      <header className="topnav">
+        <div className="topnav-row">
+          <Link href={`/${role}`} className="brand topnav-brand">Scope Change Desk</Link>
 
-      <div className="shell-main">
-        <div className="mobilebar"><AppNav role={role} /></div>
-        <header className="topbar2">
+          <nav className="topnav-menu" aria-label="Main" ref={navRef}>
+            <Link href={dash.href} className="topnav-link" aria-current={dash.href === current ? 'page' : undefined}>{dash.label}</Link>
+
+            {jobsMenu ? (
+            <div className="topnav-item" onMouseEnter={() => setOpen('jobs')} onMouseLeave={() => setOpen(null)}>
+              <button type="button" className="topnav-link" aria-expanded={open === 'jobs'} aria-controls="menu-jobs" data-active={jobsActive || undefined} onClick={() => toggle('jobs')}>
+                {jobsMenu.label}<span className="caret" aria-hidden="true" />
+              </button>
+              {open === 'jobs' ? (
+                <div className="megamenu" id="menu-jobs">
+                  <div className="mega-intro"><strong>{jobsMenu.title}</strong><span>{jobsMenu.blurb}</span></div>
+                  <div className="mega-body">
+                    <p className="mega-label">{jobsMenu.label.toUpperCase()}</p>
+                    <ul className="mega-grid mega-grid--2">
+                      {jobsMenu.items.map((i) => (
+                        <li key={i.href}>
+                          <Link href={i.href} onClick={() => setOpen(null)}><strong>{i.label}</strong><span>{i.detail}</span></Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+            ) : null}
+
+            <div className="topnav-item" onMouseEnter={() => setOpen('services')} onMouseLeave={() => setOpen(null)}>
+              <button type="button" className="topnav-link" aria-expanded={open === 'services'} aria-controls="menu-services" onClick={() => toggle('services')}>
+                Services<span className="caret" aria-hidden="true" />
+              </button>
+              {open === 'services' ? (
+                <div className="megamenu megamenu--wide" id="menu-services">
+                  <div className="mega-intro">
+                    <strong>Browse our services</strong>
+                    <span>{role === 'client' ? 'Pick a domain to see the freelancers who work in it.' : 'Pick a domain to see open jobs in it.'}</span>
+                  </div>
+                  <div className="mega-body">
+                    <p className="mega-label">DOMAINS</p>
+                    <div className="mega-grid mega-grid--3">
+                      {SERVICES.map((d) => (
+                        <div key={d.name} className="mega-domain">
+                          <Link href={servicesQuery({ category: d.name })} className="mega-domain-title" onClick={() => setOpen(null)}>
+                            {d.name}<ChevronRight size={14} />
+                          </Link>
+                          <ul>
+                            {d.topics.slice(0, 5).map((t) => (
+                              <li key={t}><Link href={servicesQuery({ q: t })} onClick={() => setOpen(null)}>{t}</Link></li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            {links.map((l) => (
+              <Link key={l.href} href={l.href} className="topnav-link" aria-current={l.href === current ? 'page' : undefined}>{l.label}</Link>
+            ))}
+          </nav>
+
           <form role="search" className="searchbox" onSubmit={search}>
             <Search size={18} />
             <input
@@ -68,14 +136,16 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
               aria-label={role === 'client' ? 'Search freelancers' : 'Search jobs'}
             />
           </form>
+
           <div className="usermenu">
             <span className="usermenu-name">{user ? `${user.name}` : ''}<small>{user ? user.role : ''}</small></span>
             <span className="avatar" aria-hidden="true">{user ? initials(user.name) : ''}</span>
-            <button className="btn secondary" onClick={() => { clearUser(); router.push('/login'); }}>Switch user</button>
+            <button className="btn secondary" onClick={() => { clearUser(); router.push('/login'); }}>Log out</button>
           </div>
-        </header>
-        <main id="main-content" className="page">{children}</main>
-      </div>
+        </div>
+        <div className="mobilebar"><AppNav role={role} /></div>
+      </header>
+      <main id="main-content" className="page">{children}</main>
     </div>
   );
 }

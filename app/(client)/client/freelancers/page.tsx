@@ -13,14 +13,14 @@ import s from './freelancers.module.css';
 function Browse() {
   const params = useSearchParams();
   const [q, setQ] = useState(params.get('q') ?? '');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState(params.get('category') ?? '');
   const [skill, setSkill] = useState('');
   const [maxRate, setMaxRate] = useState('');
   const [available, setAvailable] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // The search box in the top bar changes the address; follow it.
-  useEffect(() => { setQ(params.get('q') ?? ''); }, [params]);
+  useEffect(() => { setQ(params.get('q') ?? ''); setCategory(params.get('category') ?? ''); }, [params]);
 
   const rate = Number(maxRate);
   const { data, error, loading, setData } = useAsync<FreelancerSearch>(

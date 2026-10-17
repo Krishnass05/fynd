@@ -23,3 +23,32 @@ export const NAV: Record<Role, NavItem[]> = {
     { href: '/freelancer/profile', label: 'Profile', icon: 'user' },
   ],
 };
+
+// Desktop top bar: Dashboard, then the drop-down menus, then these links.
+export const TOP_LINKS: Record<Role, NavItem[]> = {
+  client: [
+    { href: '/client/freelancers', label: 'Find freelancers', icon: 'search' },
+    { href: '/client/saved', label: 'Saved', icon: 'heart' },
+  ],
+  freelancer: [
+    { href: '/freelancer/jobs', label: 'Find jobs', icon: 'search' },
+    { href: '/freelancer/profile', label: 'Profile', icon: 'user' },
+  ],
+};
+
+export interface MenuItem { href: string; label: string; detail: string }
+export interface MegaMenu { label: string; title: string; blurb: string; items: MenuItem[] }
+
+// The "Jobs" drop-down. Only clients have one: freelancers just have Find jobs.
+export const MENUS: Record<Role, MegaMenu | null> = {
+  client: {
+    label: 'Jobs',
+    title: 'Manage your work',
+    blurb: 'Post new jobs and follow the ones you have.',
+    items: [
+      { href: '/client/jobs', label: 'My jobs', detail: 'Applicants, hiring and your projects' },
+      { href: '/client/jobs/new', label: 'Post a job', detail: 'Describe the work and set a budget' },
+    ],
+  },
+  freelancer: null,
+};
