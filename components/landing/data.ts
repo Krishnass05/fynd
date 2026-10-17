@@ -27,7 +27,7 @@ const A = 'Data Entry and Admin';
 
 export const CATEGORIES: Category[] = [
   { slug: 'ai-services', name: 'AI Services', description: 'AI solutions, automation, and intelligent tools.', image: '/img/categories/ai-services.svg', alt: 'A network of connected nodes, standing for AI and automation', tone: '#eb5e28', to: { q: 'automation' } },
-  { slug: 'development-it', name: 'Development & IT', description: 'Websites, applications, software, and technical expertise.', image: '/img/categories/development-it.svg', alt: 'A code editor window with brackets and lines of code', tone: '#403d39', to: { category: W } },
+  { slug: 'development-it', name: 'Development & IT', description: 'Websites, applications, software, and technical expertise.', image: '/img/categories/development-it.png', alt: 'A developer at a desk looking at code on a large monitor and a laptop', tone: '#403d39', to: { category: W } },
   { slug: 'design-creative', name: 'Design & Creative', description: 'Brand identity, graphic design, UI/UX, and creative direction.', image: '/img/categories/design-creative.svg', alt: 'A pen tool drawing a curve over shapes and a colour swatch', tone: '#eb5e28', to: { category: D } },
   { slug: 'sales-marketing', name: 'Sales & Marketing', description: 'Campaigns, growth strategy, SEO, and social media.', image: '/img/categories/sales-marketing.svg', alt: 'A rising bar chart with a megaphone', tone: '#ccc5b9', to: { q: 'marketing' } },
   { slug: 'writing-translation', name: 'Writing & Translation', description: 'Copywriting, content creation, editing, and translation.', image: '/img/categories/writing-translation.svg', alt: 'A page of text with a pen', tone: '#403d39', to: { q: 'writing' } },
