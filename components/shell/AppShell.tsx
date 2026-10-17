@@ -64,8 +64,8 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
   const jobsActive = Boolean(jobsMenu?.items.some((i) => i.href === current));
   const servicesQuery = (value: { category?: string; q?: string }) => {
     const p = new URLSearchParams();
-    if (role === 'client' && value.category) p.set('category', value.category);
-    else p.set('q', value.category ?? value.q ?? '');
+    if (value.category) p.set('category', value.category);
+    else p.set('q', value.q ?? '');
     return `${searchBase}?${p.toString()}`;
   };
 

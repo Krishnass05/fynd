@@ -1,14 +1,9 @@
 'use client';
-// The client's first page: a headline, a short description and a big search box in the middle,
-// then reviews from other clients as a coverflow carousel. OWNER: Krishna (look follows the joveo.com home page).
-// The reviews are SAMPLE text written for the demo, not real customers.
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import BlurText from '@/components/fx/BlurText';
-import { Search } from '@/components/ui/icons';
-import ReviewCarousel, { type Review } from '@/components/reviews/ReviewCarousel';
+// The client's first page. The reviews are SAMPLE text written for the demo, not real customers. OWNER: Krishna.
+import MarketHome from '@/components/home/MarketHome';
+import type { Review } from '@/components/reviews/ReviewCarousel';
 
-const POPULAR = ['Web Development', 'Logo Design', 'Video Editing', 'SEO', 'Data Entry', 'Graphic Design'];
+const CHIPS = ['Web Development', 'Logo Design', 'Video Editing', 'SEO', 'Data Entry', 'Graphic Design'];
 
 const REVIEWS: Review[] = [
   { name: 'Anjali M.', role: 'Bakery owner, Hyderabad', text: 'I knew the price of every extra request before anyone started. No surprise bills at the end.', rating: 5 },
@@ -20,34 +15,19 @@ const REVIEWS: Review[] = [
 ];
 
 export default function ClientHome() {
-  const router = useRouter();
-  const [q, setQ] = useState('');
-  const go = (value: string) => router.push(value.trim() ? `/client/freelancers?q=${encodeURIComponent(value.trim())}` : '/client/freelancers');
-
   return (
-    <>
-      <section className="chero" aria-labelledby="chero-title">
-        <p className="eyebrow">Hire with the scope agreed first</p>
-        <h1 id="chero-title">
-          <BlurText text="Find the right freelancer for the job." trigger="load" animateBy="words" direction="top" delay={90} stepDuration={0.4} />
-        </h1>
-        <p className="lead">Search skilled freelancers across design, development, writing, marketing and more. Every extra request is priced and approved by you before the work starts.</p>
-        <form className="bigsearch" role="search" onSubmit={(e) => { e.preventDefault(); go(q); }}>
-          <Search size={20} />
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search for a skill or a freelancer, like logo design or PHP" aria-label="Search freelancers" />
-          <button type="submit" className="btn">Search</button>
-        </form>
-        <div className="chero-chips">
-          <span>Popular:</span>
-          {POPULAR.map((t) => <button key={t} type="button" className="chip" onClick={() => go(t)}>{t}</button>)}
-        </div>
-      </section>
-
-      <section className="reviews" aria-labelledby="reviews-title">
-        <h2 id="reviews-title">What clients say</h2>
-        <p className="muted">Sample reviews written for this demo. They are not from real customers.</p>
-        <ReviewCarousel reviews={REVIEWS} label="Client reviews" />
-      </section>
-    </>
+    <MarketHome
+      eyebrow="Hire with the scope agreed first"
+      title="Find the right freelancer for the job."
+      lead="Search skilled freelancers across design, development, writing, marketing and more. Every extra request is priced and approved by you before the work starts."
+      placeholder="Search for a skill or a freelancer, like logo design or PHP"
+      searchLabel="Search freelancers"
+      searchPath="/client/freelancers"
+      chips={CHIPS}
+      reviewsTitle="What clients say"
+      reviewsNote="Sample reviews written for this demo. They are not from real customers."
+      reviewsLabel="Client reviews"
+      reviews={REVIEWS}
+    />
   );
 }

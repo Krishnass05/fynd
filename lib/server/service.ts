@@ -9,6 +9,7 @@ import type {
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
+import { matchesAllWords } from '@/lib/search';
 import { parseSow, compareSow } from '@/lib/engine/sow';
 import { checkSplit, defaultSplit } from '@/lib/milestones';
 import type { MilestoneDraft } from '@/lib/milestones';
@@ -88,13 +89,6 @@ const toFreelancer = (u: User, viewer?: User): Freelancer => ({
   saved: viewer ? (db().saved.get(viewer.id)?.has(u.id) ?? false) : undefined,
 });
 
-// Search is by words, not by the exact phrase: "Web Development" finds a web developer. Every word typed
-// must match some word of the profile; a word matches when one contains the other or they share a
-// 5-letter start (develop-ment / develop-er).
-const wordsOf = (s: string) => s.toLowerCase().split(/[^a-z0-9+#]+/).filter(Boolean);
-const wordMatches = (token: string, word: string) =>
-  word.includes(token) || (word.length >= 3 && token.includes(word)) || (token.length >= 5 && word.length >= 5 && token.slice(0, 5) === word.slice(0, 5));
-
 export function searchFreelancers(u: User, params: URLSearchParams): FreelancerSearch {
   if (u.role !== 'client') throw forbidden('Only clients browse freelancers');
   const all = db().users.filter((x) => x.role === 'freelancer').map((x) => toFreelancer(x, u));
@@ -106,12 +100,7 @@ export function searchFreelancers(u: User, params: URLSearchParams): FreelancerS
   if (maxRate !== null && (!Number.isFinite(maxRate) || maxRate <= 0)) throw bad('maxRate must be a number above 0');
   const available = params.get('available') === '1';
   const found = all
-    .filter((f) => {
-      const tokens = wordsOf(q);
-      if (!tokens.length) return true;
-      const hay = wordsOf([f.name, f.headline, db().users.find((x) => x.id === f.id)?.overview ?? '', f.location, f.category, ...f.skills].join(' '));
-      return tokens.every((t) => hay.some((w) => wordMatches(t, w)));
-    })
+    .filter((f) => matchesAllWords(q, [f.name, f.headline, db().users.find((x) => x.id === f.id)?.overview ?? '', f.location, f.category, ...f.skills].join(' ')))
     .filter((f) => !category || f.category === category)
     .filter((f) => !skill || f.skills.some((s) => s.toLowerCase() === skill))
     .filter((f) => maxRate === null || (f.ratePerHour !== null && f.ratePerHour <= maxRate))

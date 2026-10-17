@@ -19,9 +19,9 @@ export const NAV: Record<Role, NavItem[]> = {
     { href: '/client/dashboard', label: 'Dashboard', icon: 'home' },
   ],
   freelancer: [
-    { href: '/freelancer', label: 'Dashboard', icon: 'home' },
     { href: '/freelancer/jobs', label: 'Find jobs', icon: 'search' },
     { href: '/freelancer/profile', label: 'Profile', icon: 'user' },
+    { href: '/freelancer/dashboard', label: 'Dashboard', icon: 'home' },
   ],
 };
 
@@ -31,10 +31,7 @@ export const TOP_LINKS: Record<Role, NavItem[]> = {
     { href: '/client/freelancers', label: 'Find freelancers', icon: 'search' },
     { href: '/client/saved', label: 'Saved', icon: 'heart' },
   ],
-  freelancer: [
-    { href: '/freelancer/jobs', label: 'Find jobs', icon: 'search' },
-    { href: '/freelancer/profile', label: 'Profile', icon: 'user' },
-  ],
+  freelancer: [],
 };
 
 export interface MenuItem { href: string; label: string; detail: string }
@@ -51,13 +48,21 @@ export const MENUS: Record<Role, MegaMenu | null> = {
       { href: '/client/jobs/new', label: 'Post a job', detail: 'Describe the work and set a budget' },
     ],
   },
-  freelancer: null,
+  freelancer: {
+    label: 'Jobs',
+    title: 'Find work',
+    blurb: 'Browse open jobs and follow your applications.',
+    items: [
+      { href: '/freelancer/jobs', label: 'Find jobs', detail: 'Browse open jobs and apply' },
+      { href: '/freelancer/dashboard', label: 'My work', detail: 'Your applications, projects and what needs you' },
+    ],
+  },
 };
 
 // Where each side opens after login and where the logo goes. The client dashboard is not the first
 // page: it sits under the client's profile (the avatar in the top bar).
 export const HOME: Record<Role, string> = { client: '/client', freelancer: '/freelancer' };
 export const PROFILE: Record<Role, string> = { client: '/client/profile', freelancer: '/freelancer/profile' };
-export const DASHBOARD: Record<Role, string> = { client: '/client/dashboard', freelancer: '/freelancer' };
+export const DASHBOARD: Record<Role, string> = { client: '/client/dashboard', freelancer: '/freelancer/dashboard' };
 // The link before the drop-down menus in the desktop top bar (clients have none).
-export const LEAD: Record<Role, NavItem | null> = { client: null, freelancer: { href: '/freelancer', label: 'Dashboard', icon: 'home' } };
+export const LEAD: Record<Role, NavItem | null> = { client: null, freelancer: null };

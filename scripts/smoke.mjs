@@ -44,7 +44,7 @@ const seedDash = await ok('GET', '/api/dashboard', 'u_freelancer1');
 assert.equal(seedDash.stats.activeProjects, 1);
 assert.equal(seedDash.projects[0].counts.awaitingClient, 1, 'seed R1 is waiting for the client');
 assert.ok(seedDash.attention.some((a) => a.kind === 'awaiting_client'));
-assert.equal(seedDash.stats.openJobs, 0, 'seed freelancer 1 already applied to the only open job J2');
+assert.equal(seedDash.stats.openJobs, 14, 'fourteen sample open jobs (J3 to J16) are open to apply to; J2 is already applied to');
 assert.equal((await call('GET', '/api/dashboard', CLIENT)).status, 403, 'dashboard is freelancer only');
 
 // client dashboard on the seed data
@@ -225,6 +225,11 @@ const topics = topicLists.flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((x
 assert.ok(topics.length >= 25, 'read the topics from lib/services.ts');
 for (const t of topics) {
   assert.ok((await ok('GET', '/api/freelancers?q=' + encodeURIComponent(t), CLIENT)).freelancers.length > 0, 'Services topic finds a freelancer: ' + t);
+}
+// the freelancer side has open jobs in every Services domain to search and apply to
+const openJobs = await ok('GET', '/api/jobs', 'u_freelancer1');
+for (const cat of ['Websites, IT and Software', 'Design, Media and Architecture', 'Engineering and Science', 'Business, Accounting, Human Resources and Legal', 'Data Entry and Admin']) {
+  assert.ok(openJobs.some((j) => j.status === 'open' && j.category === cat), 'open job in domain: ' + cat);
 }
 // every popular search on the client home page finds someone, by words rather than the exact phrase
 for (const t of ['Web Development', 'Logo Design', 'Video Editing', 'SEO', 'Data Entry', 'Graphic Design', 'PHP']) {
