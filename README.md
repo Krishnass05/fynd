@@ -38,6 +38,10 @@ Needs Node 20+. Data is held in server memory and resets on restart. Supabase re
 | Reject | Never counted as committed. Can return only through reopen with a reason |
 | Import | Same id and content is ignored, so no double charge or double booking |
 
+## Demo
+
+A 6-minute walkthrough with sample SOW files is in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+
 ## For teammates
 
 Read [TEAM_GUIDE.md](TEAM_GUIDE.md) for setup and the branch rules, and [docs/OWNERSHIP.md](docs/OWNERSHIP.md) for who edits what. Statements of Work go in [docs/sow](docs/sow/README.md).
