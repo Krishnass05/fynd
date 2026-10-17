@@ -40,6 +40,13 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
   }, []);
   useEffect(() => setOpen(null), [pathname]);
   useEffect(() => { if (open !== 'services') setDomain(null); }, [open]);
+  useEffect(() => {
+    const el = document.querySelector<HTMLElement>('.megamenu');
+    if (!el) return;
+    el.style.left = '0px';
+    const over = el.getBoundingClientRect().right - (window.innerWidth - 16);
+    if (over > 0) el.style.left = `${-over}px`;
+  }, [open, domain]);
 
   const isHere = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
   // The most specific link wins, so /client/jobs/new is not also "My jobs".
@@ -87,7 +94,6 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
               </button>
               {open === 'jobs' ? (
                 <div className="megamenu" id="menu-jobs">
-                  <div className="mega-intro"><strong>{jobsMenu.title}</strong><span>{jobsMenu.blurb}</span></div>
                   <div className="mega-body">
                     <p className="mega-label">{jobsMenu.label.toUpperCase()}</p>
                     <ul className="mega-grid mega-grid--2">
@@ -109,11 +115,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
               </button>
               {open === 'services' ? (
                 <div className="megamenu megamenu--wide" id="menu-services">
-                  <div className="mega-intro">
-                    <strong>Browse our services</strong>
-                    <span>{role === 'client' ? 'Hover a domain to see its topics. Pick one to see the freelancers who work in it.' : 'Hover a domain to see its topics. Pick one to see open jobs in it.'}</span>
-                  </div>
-                  <div className="mega-body mega-split">
+                  <div className={`mega-body mega-split${domain !== null ? ' mega-split--open' : ''}`}>
                     <div>
                       <p className="mega-label">DOMAINS</p>
                       <ul className="mega-domains" onMouseLeave={() => setDomain(null)}>

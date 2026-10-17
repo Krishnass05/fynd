@@ -69,6 +69,7 @@ Status: **Done** (built), **Planned** (agreed, not built), **Open** (still to de
 | D-54 | 2026-10-18 | The Log out button is gone from the top bar. Hovering or clicking the avatar (initials) opens a menu with three items: Profile, Dashboard and Log out, for both clients and freelancers. For clients the profile and the dashboard are now two pages (/client/profile and /client/dashboard) instead of the dashboard sitting under the profile as in D-50. Freelancers: Profile is /freelancer/profile and Dashboard is /freelancer | Requested by Krishna. Menus also open on click and close with Escape, so touch and keyboard users can use them | Done |
 | D-55 | 2026-10-18 | Top bar order is now: logo, search box, then Jobs, Services, Find freelancers and Saved, with the greeting and avatar on the right | Requested by Krishna | Done |
 | D-56 | 2026-10-18 | The Services menu opens with only the five domains. Hovering or focusing a domain shows that domain's topics in a panel to the right; clicking a domain filters by it and clicking a topic searches for it | Requested by Krishna. Replaces the all-at-once grid from D-49 | Done |
+| D-57 | 2026-10-18 | The Jobs and Services menus now open to the right, starting under their own button (they shift left only if they would run off the screen). The intro panel on the left of each menu ("Browse our services", "Manage your work") is removed | Requested by Krishna. The menus used to open from the left edge of the bar, which looked backwards | Done |
 
 ## Team and process
 
