@@ -21,9 +21,9 @@ A small cafe hires a freelancer to design a logo. Halfway through, the cafe asks
 
 | Step | Who | What to click | What to say |
 | --- | --- | --- | --- |
-| 1. The job | Client | Continue as Demo Client, then My jobs, then "Logo for a new cafe" | The client posted a job. Two freelancers applied with different prices. Open the comparison table to see them side by side |
+| 1. The job | Client | Log in as client (Fill in Demo Client), then Jobs > My jobs, then "Logo for a new cafe" | The client posted a job. Two freelancers applied with different prices. Open the comparison table to see them side by side |
 | 2. Hire | Client | Accept **Second Freelancer**, check the milestone split (30/40/30 of Rs 9,000), then Accept and create project | The client splits the price into milestones before hiring. It is a record only, no money moves. Accepting closes the job and opens a shared workspace |
-| 3. Agree the scope | Freelancer | Continue as Second Freelancer, open the project, upload `signed-sow.txt` | The signed SOW is the baseline. What is included and what is excluded is now on record |
+| 3. Agree the scope | Freelancer | Log in as freelancer (Fill in Second Freelancer), open the project, upload `signed-sow.txt` | The signed SOW is the baseline. What is included and what is excluded is now on record |
 | 4. Client asks for more | Client | Open the project, upload `amended-sow.txt` | The site compares the two documents. Nobody argued about it |
 | 5. Read the result | Client | Look at the change orders | **Brand guidelines** was excluded in the signed SOW, so it is flagged and priced at 6 hours x Rs 1000 = **Rs 6,000 before tax**. **Social media banners** is also excluded: 4 hours, Rs 4,000. **Menu design** has no hours, so it is not priced until clarified. We never guess zero |
 | 6. Decide | Client | Approve brand guidelines, reject social banners with a reason | The client decides with the price in front of them |
