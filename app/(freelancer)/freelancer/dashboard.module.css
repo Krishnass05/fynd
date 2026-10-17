@@ -1,0 +1,18 @@
+/* Dashboard-only styles, kept out of globals.css so they never conflict with the design system. */
+.greeting { margin-bottom: 4px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: 18px 0 8px; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.statValue { font-family: var(--font-display), Georgia, serif; font-size: 30px; line-height: 1.1; color: var(--ink-strong); }
+.statLabel { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.attention { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.attention li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius); background: var(--warnbg); }
+.attention li a { margin-left: auto; white-space: nowrap; font-weight: 600; }
+.projectGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.project { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+.project h3 { margin: 0 0 2px; font-size: 18px; }
+.bar { height: 8px; border-radius: 999px; background: var(--brand-soft); overflow: hidden; margin: 10px 0 4px; }
+.barFill { height: 100%; background: var(--brand); border-radius: 999px; }
+.barFillFull { background: var(--bad); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
+.list { display: grid; gap: 8px; }
+.listItem { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: space-between; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; }

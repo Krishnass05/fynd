@@ -1,0 +1,15 @@
+# Owners are asked to review changes to their folders. See docs/OWNERSHIP.md.
+*                                     @Krishnass05
+
+# Sanjana: design system and client jobs
+/components/ui/                       @vincezo-ks
+/components/shell/                    @vincezo-ks
+/app/globals.css                      @vincezo-ks
+/app/(client)/layout.tsx              @vincezo-ks
+/app/(client)/client/page.tsx         @vincezo-ks
+/app/(client)/client/jobs/            @vincezo-ks
+
+# Harini: chat, change orders, client project page
+/components/chat/                     @chinthakuntaharini
+/components/changes/                  @chinthakuntaharini
+/app/(client)/client/projects/        @chinthakuntaharini
