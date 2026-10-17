@@ -35,7 +35,7 @@ export default function AppNav({ role }: { role?: Role }) {
       logo={<Mark />}
       logoAlt="Scope Change Desk, home"
       logoHref={role ? HOME[role] : '/'}
-      items={items}
+      items={items.map(({ label, href }) => ({ label, href }))}
       activeHref={best?.href ?? ''}
       linkComponent={Link}
       theme="light"
