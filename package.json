@@ -4,6 +4,7 @@
   "description": "C35 Freelancer Scope Change Desk - scope, cost and approval decisions for client change requests",
   "private": true,
   "scripts": {
+    "start": "node server.js",
     "test": "node --test"
   },
   "engines": {

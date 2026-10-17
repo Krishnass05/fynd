@@ -5,10 +5,11 @@ Fynd x NMIMS Hyderabad hackathon, 17-18 Oct 2026. A workflow aid that turns a va
 ## Run and test
 
 ```bash
-npm test
+npm start   # http://localhost:3000
+npm test    # 21 tests
 ```
 
-Needs Node 20+. No dependencies.
+Needs Node 20+. No dependencies. The UI (`public/`) only calls the rules engine through a small server (`server.js`). Each change is saved to `data/latest.json` (ignored by git) and can be exported as JSON or CSV from the page. The saved file is a record for evidence; it is not reloaded on restart.
 
 ## Data note
 
@@ -44,4 +45,4 @@ Tests in `scopeDesk.test.js` are named `check 1`, `check 2`, `check 3`, in the p
 
 ## Not built yet
 
-UI, demo panel, JSON/CSV export, v1/v2 tags for the business-feedback improvement, optional language model with a labelled manual fallback.
+v1/v2 tags for the business-feedback improvement, optional language model with a labelled manual fallback, reloading saved state on restart.
