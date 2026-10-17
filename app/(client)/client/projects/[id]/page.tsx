@@ -34,7 +34,7 @@ export default function ClientProject() {
           <h2>Change orders</h2>
           <ChangeList projectId={id} changes={data.changeRequests} canDecide onChanged={setData} />
           <h2>Chat</h2>
-          <Card><Chat projectId={id} /></Card>
+          <Card plain><Chat projectId={id} role="client" /></Card>
         </>
       ) : null}
     </>

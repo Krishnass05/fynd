@@ -316,9 +316,23 @@ export function listMessages(u: User, projectId: string): Message[] {
   return db().messages.filter((m) => m.projectId === projectId);
 }
 
+// Keep the work on the platform: email addresses and phone numbers in chat are replaced before saving.
+// Phone numbers need 10 or more digits, so prices, hours and dates (2026-11-10) are left alone.
+export const HIDDEN = '***REDACTED***';
+const EMAIL = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
+const PHONE = /\+?\d[\d\s().-]{8,}\d/g;
+export function hideContacts(text: string): { body: string; redacted: boolean } {
+  let redacted = false;
+  const body = text
+    .replace(EMAIL, () => { redacted = true; return HIDDEN; })
+    .replace(PHONE, (match) => (match.replace(/\D/g, '').length >= 10 ? ((redacted = true), HIDDEN) : match));
+  return { body, redacted };
+}
+
 export function sendMessage(u: User, projectId: string, b: Record<string, unknown>): Message {
   projectFor(u, projectId);
-  const m: Message = { id: nextId('M'), projectId, senderId: u.id, senderName: u.name, body: str(b.body, 'message', 2000), sentAt: nowIso() };
+  const { body, redacted } = hideContacts(str(b.body, 'message', 2000));
+  const m: Message = { id: nextId('M'), projectId, senderId: u.id, senderName: u.name, body, sentAt: nowIso(), ...(redacted ? { redacted: true } : {}) };
   db().messages.push(m);
   return m;
 }

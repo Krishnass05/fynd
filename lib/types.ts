@@ -226,6 +226,7 @@ export interface Message {
   senderName: string;
   body: string;
   sentAt: string;
+  redacted?: boolean; // true when the server hid an email address or phone number in the body
 }
 
 export interface CompareItem {

@@ -135,6 +135,18 @@ assert.equal(dash1.applications.find((a) => a.id === app.id).jobTitle, 'Shop web
 // chat
 await ok('POST', `/api/projects/${projectId}/messages`, FREE, { body: 'Hello, ready to start.' });
 assert.equal((await ok('GET', `/api/projects/${projectId}/messages`, CLIENT)).length, 1);
+// chat: both sides see the same thread; the server hides contact details, but not prices or dates
+const hidden = await ok('POST', `/api/projects/${projectId}/messages`, CLIENT, { body: 'Mail me at owner@shop.in or call +91 98765 43210' });
+assert.equal(hidden.redacted, true, 'contact details are flagged');
+assert.ok(!hidden.body.includes('owner@shop.in') && !hidden.body.includes('98765'), 'email and phone are hidden: ' + hidden.body);
+const plain = await ok('POST', `/api/projects/${projectId}/messages`, FREE, { body: 'Extra 6 hours at Rs 1000, due 2026-11-10' });
+assert.equal(plain.redacted, undefined, 'prices, hours and dates are not touched');
+assert.equal(plain.body, 'Extra 6 hours at Rs 1000, due 2026-11-10');
+const thread = await ok('GET', `/api/projects/${projectId}/messages`, FREE);
+assert.equal(thread.length, 3, 'the freelancer sees the client messages too');
+assert.ok(thread.every((m) => !m.body.includes('owner@shop.in')), 'hidden text is what was saved');
+assert.equal((await call('POST', `/api/projects/${projectId}/messages`, CLIENT, { body: '   ' })).status, 400, 'empty message refused');
+assert.equal((await call('GET', `/api/projects/${projectId}/messages`, 'u_freelancer3')).status, 403, 'outsiders cannot read the chat');
 
 // signed SOW then amendment
 const baseline = ['Rate: Rs 1000/hr', '', 'Deliverables', '- One landing page', '- Contact form', '', 'Excluded', '- Payment checkout', '- Blog'].join('\n');

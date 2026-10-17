@@ -41,7 +41,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `listProjects` | `GET /api/projects` | participant | `Project[]` |
 | `getProject` | `GET /api/projects/:id` | participant | `ProjectDetail` (SOW versions, change requests, totals, audit) |
 | `listMessages` | `GET /api/projects/:id/messages` | participant | `Message[]` |
-| `sendMessage` | `POST /api/projects/:id/messages` `{body}` | participant | `Message` |
+| `sendMessage` | `POST /api/projects/:id/messages` `{body}` | participant | `Message`. Before saving, the server replaces email addresses and phone numbers (10 or more digits) with `***REDACTED***` and sets `redacted: true`. Prices, hours and dates are not touched. 400 for an empty message |
 | `uploadSow` | `POST /api/projects/:id/sow` `{kind, filename, text}` | freelancer uploads `baseline`; client uploads `amendment` | `UploadSowResult` |
 | `approveChange` | `POST /api/projects/:id/changes/:changeId/approve` | client | `ProjectDetail` |
 | `rejectChange` | `POST /api/projects/:id/changes/:changeId/reject` `{reason}` | client | `ProjectDetail` |

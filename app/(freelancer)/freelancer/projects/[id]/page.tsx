@@ -35,7 +35,7 @@ export default function FreelancerProject() {
           <h2>Change orders</h2>
           <ChangeList projectId={id} changes={data.changeRequests} canDecide={false} onChanged={setData} />
           <h2>Chat</h2>
-          <Card><Chat projectId={id} /></Card>
+          <Card plain><Chat projectId={id} role="freelancer" /></Card>
         </>
       ) : null}
     </>
