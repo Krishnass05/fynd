@@ -1,13 +1,27 @@
 {
   "name": "scope-change-desk",
-  "version": "0.1.0",
-  "description": "C35 Freelancer Scope Change Desk - scope, cost and approval decisions for client change requests",
+  "version": "0.2.0",
+  "description": "C35 Scope Change Desk: job board, project workspace and priced change orders from SOW comparison",
   "private": true,
   "scripts": {
-    "start": "node server.js",
-    "test": "node --test"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node --test lib/engine/scopeDesk.test.js lib/engine/demo.test.js",
+    "smoke": "node scripts/smoke.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "next": "^16.4.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
   }
 }
