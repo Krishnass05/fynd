@@ -1,0 +1,26 @@
+{
+  "_reconstructed": true,
+  "_note": "RECONSTRUCTED from the case brief in CLAUDE.md, not the organisers' original file. Synthetic data. Replace with the official fixture.json if it is obtained, and do not edit this one afterwards.",
+  "project": "Landing page for a small client",
+  "currency": "INR",
+  "ratePerHour": 1000,
+  "availableHours": 10,
+  "scope": {
+    "included": ["one landing page", "contact form"],
+    "excluded": ["payment checkout"]
+  },
+  "requests": [
+    {
+      "id": "R1",
+      "text": "Add payment checkout",
+      "hours": 6,
+      "status": "pending"
+    },
+    {
+      "id": "R2",
+      "text": "Fix our broken contact form",
+      "hours": 2,
+      "reason": "defect rework"
+    }
+  ]
+}

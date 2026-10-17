@@ -1,0 +1,12 @@
+{
+  "name": "scope-change-desk",
+  "version": "0.1.0",
+  "description": "C35 Freelancer Scope Change Desk - scope, cost and approval decisions for client change requests",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
