@@ -12,7 +12,7 @@ Chosen by Krishna on 18 October 2026. The site is mostly white; orange is used o
 | Silver | `#CCC5B9` | Decoration, soft panels, background art |
 | Charcoal Brown | `#403D39` | Secondary text, links, navigation highlight, bars |
 | Carbon Black | `#252422` | Body text, headings, the dark button |
-| Spicy Paprika | `#EB5E28` | Primary buttons (with Carbon Black text), decoration |
+| Spicy Paprika | `#EB5E28` (buttons use the darker `#C84B1A`) | Primary buttons with white text, decoration |
 
 ## Tokens (already in `app/globals.css`)
 
@@ -25,7 +25,7 @@ Use the variables. Never put a raw colour in a component.
 | `--ink` / `--ink-strong` | `#252422` | body text / headings |
 | `--muted` | `#403D39` | secondary text |
 | `--brand` | `#403D39` | links, highlights, progress bars |
-| `--orange` | `#EB5E28` | primary `.btn` background |
+| `--orange` | `#C84B1A` (Spicy Paprika, darkened) | primary `.btn` background, white text |
 | `--brand-soft` | `#ECE8DF` | neutral badges, bar tracks |
 | `--accent` | `#CCC5B9` | decorative tiles |
 | `--line` | `#E6E1D6` | card edges and dividers (decoration) |
@@ -40,11 +40,11 @@ Background images: `public/bg/role-client.svg` and `role-freelancer.svg` (the pi
 | --- | --- | --- |
 | Carbon Black on Floral White / white | about 16 : 1 | 4.5 |
 | Charcoal Brown on Floral White | about 10 : 1 | 4.5 |
-| Carbon Black on Spicy Paprika (primary button) | 4.6 : 1 | 4.5 |
+| White on darkened Spicy Paprika #C84B1A (primary button) | 4.7 : 1 | 4.5 |
 | White on Charcoal Brown / Carbon Black | 10 to 16 : 1 | 4.5 |
 | Form field border on white | 3.4 : 1 | 3 |
 
-**White on Spicy Paprika is only 3.4 : 1 and paprika text on white is 3.4 : 1.** So orange buttons carry dark text, and orange is never used for text or links.
+**White on the pure Spicy Paprika #EB5E28 is only 3.4 : 1**, so buttons use a darker shade of it (#C84B1A). Orange is never used for text or links.
 
 ## Motion
 

@@ -10,7 +10,7 @@
   --line: #e6e1d6; /* decorative dividers and card edges */
   --line-strong: #8a857b; /* form field borders (3:1 or more on white and Floral White) */
   --brand: #403d39; /* Charcoal Brown: links, highlights, bars. White on it 11:1 */
-  --orange: #eb5e28; /* Spicy Paprika: some buttons only. Carbon Black text on it 4.6:1; white would be 3.4:1 */
+  --orange: #c84b1a; /* Spicy Paprika, darkened so white text passes: white on it 4.7:1 (on pure #EB5E28 only 3.4:1) */
   --brand-soft: #ece8df; /* Silver tint */
   --accent: #ccc5b9; /* Silver: decoration */
   --teal: #eb5e28; /* Paprika: decoration only */
@@ -40,7 +40,7 @@ main.page { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
 .badge.bad { background: var(--badbg); color: var(--bad); }
 .badge.warn { background: var(--warnbg); color: var(--warn); }
 
-.btn { padding: 9px 18px; border: 0; border-radius: 999px; background: var(--orange); color: var(--ink-strong); font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+.btn { padding: 9px 18px; border: 0; border-radius: 999px; background: var(--orange); color: #fff; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
 .btn { transition: filter 0.18s ease, background-color 0.18s ease; }
 .btn:hover { filter: brightness(0.93); }
 .btn.secondary { background: transparent; color: var(--ink-strong); border: 1px solid var(--line); }
