@@ -5,7 +5,7 @@ export default function FreelancerLayout({ children }: { children: React.ReactNo
   return (
     <>
       <TopBar role="freelancer" />
-      <main className="page">{children}</main>
+      <main id="main-content" className="page">{children}</main>
     </>
   );
 }

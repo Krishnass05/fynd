@@ -38,6 +38,10 @@ Needs Node 20+. Data is held in server memory and resets on restart. Supabase re
 | Reject | Never counted as committed. Can return only through reopen with a reason |
 | Import | Same id and content is ignored, so no double charge or double booking |
 
+## Design
+
+Colours, type, motion and accessibility rules are in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md).
+
 ## Demo
 
 A 6-minute walkthrough with sample SOW files is in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).

@@ -5,7 +5,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <>
       <TopBar role="client" />
-      <main className="page">{children}</main>
+      <main id="main-content" className="page">{children}</main>
     </>
   );
 }

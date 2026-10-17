@@ -8,7 +8,7 @@
 .attention li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius); background: var(--warnbg); }
 .attention li a { margin-left: auto; white-space: nowrap; font-weight: 600; }
 .projectGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
-.project { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+.project { /* border and surface come from SpotlightCard */ }
 .project h3 { margin: 0 0 2px; font-size: 18px; }
 .bar { height: 8px; border-radius: 999px; background: var(--brand-soft); overflow: hidden; margin: 10px 0 4px; }
 .barFill { height: 100%; background: var(--brand); border-radius: 999px; }

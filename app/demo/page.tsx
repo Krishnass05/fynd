@@ -7,7 +7,7 @@ import { Badge, Button, Card, ErrorMessage, Spinner } from '@/components/ui';
 export default function Demo() {
   const { data, error, loading, reload } = useAsync(runCaseChecks, []);
   return (
-    <main className="page">
+    <main id="main-content" className="page">
       <h1>Case outcome checks</h1>
       <p className="muted">Runs on a scratch desk, so your data is untouched.</p>
       <Button onClick={() => void reload()}>Run again</Button>

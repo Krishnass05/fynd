@@ -4,8 +4,14 @@ import Link from 'next/link';
 import { getFreelancerDashboard } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
 import { useUser } from '@/lib/useUser';
+import type { CSSProperties } from 'react';
+import CountUp from '@/components/fx/CountUp';
+import SpotlightCard from '@/components/fx/SpotlightCard';
 import { Badge, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
 import s from './dashboard.module.css';
+
+// Flat look: the card draws its own thin border; surface and shadow come from our tokens.
+const CARD_STYLE = { '--spotlight-card-surface': 'var(--card)', '--spotlight-card-shadow': 'none', padding: '16px 18px', borderRadius: 'var(--radius)' } as CSSProperties;
 
 export default function FreelancerDashboard() {
   const { user } = useUser('freelancer');
@@ -19,10 +25,10 @@ export default function FreelancerDashboard() {
       {data ? (
         <>
           <section className={s.stats} aria-label="Summary">
-            <div className={s.stat}><div className={s.statValue}>{data.stats.activeProjects}</div><div className={s.statLabel}>Active projects</div></div>
-            <div className={s.stat}><div className={s.statValue}>{data.stats.pendingApplications}</div><div className={s.statLabel}>Applications waiting</div></div>
-            <div className={s.stat}><div className={s.statValue}>{data.stats.openJobs}</div><div className={s.statLabel}>Open jobs to apply to</div></div>
-            <div className={s.stat}><div className={s.statValue}>{money(data.stats.approvedValue)}</div><div className={s.statLabel}>Approved change value</div></div>
+            <div className={s.stat}><div className={s.statValue}><CountUp to={data.stats.activeProjects} duration={0.9} /></div><div className={s.statLabel}>Active projects</div></div>
+            <div className={s.stat}><div className={s.statValue}><CountUp to={data.stats.pendingApplications} duration={0.9} /></div><div className={s.statLabel}>Applications waiting</div></div>
+            <div className={s.stat}><div className={s.statValue}><CountUp to={data.stats.openJobs} duration={0.9} /></div><div className={s.statLabel}>Open jobs to apply to</div></div>
+            <div className={s.stat}><div className={s.statValue}><CountUp to={data.stats.approvedValue} prefix={'₹'} separator="," duration={1.1} /></div><div className={s.statLabel}>Approved change value</div></div>
           </section>
 
           <h2>Needs your attention</h2>
@@ -48,7 +54,7 @@ export default function FreelancerDashboard() {
               {data.projects.map((p) => {
                 const pct = Math.min(100, Math.round((p.totals.committedHours / (p.project.availableHours || 1)) * 100));
                 return (
-                  <article key={p.project.id} className={s.project}>
+                  <SpotlightCard key={p.project.id} theme="light" className={s.project} style={CARD_STYLE} spotlightColor="var(--brand)" intensity={0.5}>
                     <h3><Link href={`/freelancer/projects/${p.project.id}`}>{p.project.jobTitle}</Link></h3>
                     <div className="muted">For {p.clientName} · {money(p.project.ratePerHour)}/hr</div>
                     <div className={s.bar} role="img" aria-label={`${pct}% of capacity committed`}>
@@ -63,7 +69,7 @@ export default function FreelancerDashboard() {
                       {p.counts.approved ? <Badge tone="good">{p.counts.approved} approved</Badge> : null}
                     </div>
                     <div><strong>{money(p.totals.committedValue)}</strong> <span className="muted">approved changes</span></div>
-                  </article>
+                  </SpotlightCard>
                 );
               })}
             </div>
