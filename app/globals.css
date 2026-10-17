@@ -2,7 +2,7 @@
    Mostly white; orange only on some buttons. Sanjana owns the final look. Keep the class names and CSS variables so other pages keep working. */
 :root {
   --radius: 0.75rem;
-  --bg: #fffcf2; /* Floral White */
+  --bg: #ffffff; /* white */
   --card: #ffffff;
   --ink: #252422; /* Carbon Black */
   --ink-strong: #252422;
@@ -19,7 +19,7 @@
   --warn: #7a5200; --warnbg: #f3e4c4;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg) url('/bg/pattern.svg') repeat fixed; color: var(--ink); font-family: var(--font-body), system-ui, sans-serif; font-size: 15px; line-height: 1.55; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body), system-ui, sans-serif; font-size: 15px; line-height: 1.55; }
 a { color: var(--brand); }
 h1, h2, h3 { font-family: var(--font-display), Georgia, serif; color: var(--ink-strong); letter-spacing: -0.01em; }
 h1 { font-size: 30px; margin: 0 0 8px; }
@@ -58,7 +58,7 @@ label.field { display: block; margin-bottom: 14px; font-size: 13px; color: var(-
 .bubble { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 12px; }
 
 /* Start page (hero and role cards) */
-.welcome { min-height: 100vh; background: url('/bg/hero.svg') no-repeat right top / min(900px, 100%), var(--bg); }
+.welcome { min-height: 100vh; background: var(--bg); }
 .welcome .inner { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
 .hero { text-align: center; padding: 56px 0 32px; }
 .hero h1 { font-size: clamp(34px, 6vw, 54px); line-height: 1.1; margin: 0 0 12px; }

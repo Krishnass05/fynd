@@ -8,7 +8,7 @@ Chosen by Krishna on 18 October 2026. The site is mostly white; orange is used o
 
 | Name | Hex | Where it is used |
 | --- | --- | --- |
-| Floral White | `#FFFCF2` | Page background |
+| White | `#FFFFFF` | Page background (plain white, no pattern or glow) |
 | Silver | `#CCC5B9` | Decoration, soft panels, background art |
 | Charcoal Brown | `#403D39` | Secondary text, links, navigation highlight, bars |
 | Carbon Black | `#252422` | Body text, headings, the dark button |
@@ -20,7 +20,7 @@ Use the variables. Never put a raw colour in a component.
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `--bg` | `#FFFCF2` | page background (with a faint line pattern from `public/bg/pattern.svg`) |
+| `--bg` | `#FFFFFF` | page background, plain white |
 | `--card` | `#FFFFFF` | cards, inputs |
 | `--ink` / `--ink-strong` | `#252422` | body text / headings |
 | `--muted` | `#403D39` | secondary text |
