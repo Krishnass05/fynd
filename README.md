@@ -11,6 +11,10 @@ npm test    # 21 tests
 
 Needs Node 20+. No dependencies. The UI (`public/`) only calls the rules engine through a small server (`server.js`). Each change is saved to `data/latest.json` (ignored by git) and can be exported as JSON or CSV from the page. The saved file is a record for evidence; it is not reloaded on restart.
 
+## For teammates
+
+Read [TEAM_GUIDE.md](TEAM_GUIDE.md) for setup, the branch rules and how to send work to `main`. Statements of Work go in [docs/sow](docs/sow/README.md).
+
 ## Data note
 
 `fixture.json` is **reconstructed** from the case brief (flagged by `"_reconstructed": true`). It is not the organisers' original file. Swap in the official one if you get it.
