@@ -1,9 +1,8 @@
 'use client';
 // My jobs list. OWNER: Sanjana. Starter version: replace with the final design.
-import Link from 'next/link';
 import { listJobs } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
-import { EmptyState, ErrorMessage, Spinner } from '@/components/ui';
+import { ButtonLink, EmptyState, ErrorMessage, Spinner } from '@/components/ui';
 import JobCard from '@/components/ui/JobCard';
 
 export default function MyJobs() {
@@ -11,7 +10,7 @@ export default function MyJobs() {
   return (
     <>
       <h1>My jobs</h1>
-      <p><Link href="/client/jobs/new">Post a job</Link></p>
+      <p><ButtonLink href="/client/jobs/new" variant="primary">Post a job</ButtonLink></p>
       <ErrorMessage message={error} />
       {loading ? <Spinner /> : null}
       {data?.length === 0 ? <EmptyState>You have not posted any jobs yet.</EmptyState> : null}

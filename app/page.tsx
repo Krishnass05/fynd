@@ -3,7 +3,6 @@
 // Motion: the headline reveals once (React Bits BlurText) and the role cards get a hover spotlight
 // (React Bits SpotlightCard). Both respect the "reduce motion" setting.
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { listDemoUsers } from '@/lib/api';
 import { setUserId } from '@/lib/session';
@@ -12,7 +11,7 @@ import { useAsync } from '@/lib/useAsync';
 import BlurText from '@/components/fx/BlurText';
 import AppNav from '@/components/shell/AppNav';
 import SpotlightCard from '@/components/fx/SpotlightCard';
-import { Button, ErrorMessage, Spinner } from '@/components/ui';
+import { Button, ButtonLink, ErrorMessage, Spinner } from '@/components/ui';
 
 const Briefcase = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -70,7 +69,7 @@ export default function Home() {
             </SpotlightCard>
           ))}
         </div>
-        <p style={{ textAlign: 'center', marginTop: 28 }}><Link href="/demo">Run the three case checks</Link></p>
+        <p style={{ textAlign: 'center', marginTop: 28 }}><ButtonLink href="/demo" variant="secondary">Run the three case checks</ButtonLink></p>
       </div>
     </main>
   );

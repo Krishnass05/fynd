@@ -5,7 +5,7 @@ import { getFreelancerDashboard } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
 import { useUser } from '@/lib/useUser';
 import CountUp from '@/components/fx/CountUp';
-import { Badge, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
+import { Badge, ButtonLink, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
 import JobCard from '@/components/ui/JobCard';
 import ProjectCard from '@/components/ui/ProjectCard';
 import { Clock, ListChecks } from '@/components/ui/icons';
@@ -99,7 +99,7 @@ export default function FreelancerDashboard() {
               <div className="card-grid">
                 {data.openJobs.map((j) => <JobCard key={j.id} job={j} href={`/freelancer/jobs/${j.id}`} cta="View and apply" />)}
               </div>
-              <p><Link href="/freelancer/jobs">See all open jobs</Link></p>
+              <p><ButtonLink href="/freelancer/jobs" variant="secondary">See all open jobs</ButtonLink></p>
             </>
           )}
         </>

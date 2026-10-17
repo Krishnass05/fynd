@@ -85,12 +85,22 @@ Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `Pi
 - Money is `money()` from `components/ui`, whole rupees, always labelled before tax.
 - Touch targets are at least 44 px tall. No horizontal scrolling at 375 px wide.
 
+## Phones
+
+Every page is checked at 375px wide (a small phone), with long unbroken titles and chat messages as the worst case.
+
+- Nothing may scroll sideways. `main.page` breaks long words, `card-grid` uses `minmax(min(320px, 100%), 1fr)`, and cards can shrink (`min-width: 0`).
+- Buttons and inputs are at least 44px tall. Use `Button` or `ButtonLink` instead of a bare link when the link is an action.
+- The navigation folds into a menu button when the links do not fit (PillNav does this by itself).
+- Under 640px the cards use smaller padding and a smaller corner icon, and the footer button stretches.
+- To check a page: use the browser's phone size, or ask Claude to run the audit (it measures sideways overflow and small touch targets on every page).
+
 ## Before you open a pull request
 
 - [ ] Tab through the page: every control reachable, focus ring visible, order matches the screen
 - [ ] "Skip to main content" works (it is already in the root layout, and each layout needs `id="main-content"` on its `<main>`)
 - [ ] Turn on reduce motion in the browser or OS: nothing moves
-- [ ] 375 px wide: nothing cut off
+- [ ] 375 px wide: no sideways scroll, nothing cut off, buttons at least 44px tall
 - [ ] No raw hex or `oklch` values in new CSS, only tokens
 
 ## Open decision

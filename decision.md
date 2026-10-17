@@ -45,6 +45,7 @@ Status: **Done** (built), **Planned** (agreed, not built), **Open** (still to de
 | D-25 | 2026-10-17 | Motion: at most two animated things per screen. React Bits components used: BlurText, CountUp, SpotlightCard, PillNav. We skipped GSAP-based and WebGL ones | Weight, battery and the one-or-two rule | Done |
 | D-26 | 2026-10-17 | The shared `Card` is the pastel card from the reference picture (pill label, icon, facts, progress bar, footer with a dark button). `JobCard` and `ProjectCard` are ready-made versions | Requested by Krishna | Done |
 | D-27 | 2026-10-17 | One navigation bar everywhere: PillNav via `AppNav`, links from `lib/nav.ts` | Requested by Krishna. A second nav is not allowed | Done |
+| D-33 | 2026-10-17 | Every page must work on a 375px phone: no sideways scroll (long words break), buttons and inputs at least 44px tall, navigation folds into a menu. Checked by measuring overflow and touch targets on all pages | Requested by Krishna. Judges and the MBA team will open it on phones | Done |
 
 ## Team and process
 
