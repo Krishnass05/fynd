@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { getProject } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
 import Chat from '@/components/chat/Chat';
+import Call from '@/components/call/Call';
 import AmendmentUpload from '../AmendmentUpload';
 import ChangeOrderReview from '../ChangeOrderReview';
 import { Badge, Button, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
@@ -247,6 +248,18 @@ export default function ClientProject() {
               canDecide={true}
               onChanged={setData}
             />
+          </section>
+
+          {/* 5b. Workspace Call (audio-only voice call + screen share) */}
+          <section aria-labelledby="call-heading" style={{ marginTop: 28 }}>
+            <h2 id="call-heading" style={{ margin: '0 0 8px' }}>Workspace Call</h2>
+            <p className="muted" style={{ margin: '0 0 14px' }}>
+              Voice call with {data.freelancer.name} — audio only (no camera), with optional screen share.
+              The call stays inside Fynd, so no personal details are exchanged.
+            </p>
+            <Card>
+              <Call projectId={id} role="client" peerName={data.freelancer.name} />
+            </Card>
           </section>
 
           {/* 6. Workspace Chat */}

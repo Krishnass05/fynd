@@ -4,13 +4,13 @@ import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
-  Application, AttentionItem, ChangeRequest, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
+  Application, AttentionItem, CallSignal, CallSignalType, ChangeRequest, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
   JobStatus, Message, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
 import { parseSow, compareSow } from './sow';
-import { db, nextId } from './store';
+import { db, nextId, nextSeq } from './store';
 
 const nowIso = () => new Date().toISOString();
 const str = (v: unknown, name: string, max: number): string => {
@@ -281,3 +281,37 @@ export function freelancerDashboard(u: User): FreelancerDashboard {
 }
 
 export const demo = (): DemoResult => runDemo();
+
+// ---- workspace call (audio-only voice call + on-demand screen share) ----
+// Signaling is in-app only: the "room" is the project, and projectFor() already
+// restricts access to the matched client and freelancer. No contact details are
+// stored or exchanged, the camera is never requested, and signals are in-memory.
+const peerOf = (project: Project, u: User): string => (project.clientId === u.id ? project.freelancerId : project.clientId);
+
+function pushSignal(project: Project, u: User, type: CallSignalType, payload: string): CallSignal {
+  const seq = nextSeq();
+  const sig: CallSignal = { id: `SIG${seq}`, seq, projectId: project.id, fromUserId: u.id, toUserId: peerOf(project, u), type, payload, at: nowIso() };
+  db().signals.push(sig);
+  return sig;
+}
+
+// Caller rings the other project member.
+export function startCall(u: User, projectId: string): CallSignal {
+  return pushSignal(projectFor(u, projectId), u, 'ring', '');
+}
+
+// A member polls for signals addressed to them since the given sequence number.
+export function listCallSignals(u: User, projectId: string, since: number): CallSignal[] {
+  projectFor(u, projectId);
+  return db().signals.filter((s) => s.projectId === projectId && s.toUserId === u.id && s.seq > since);
+}
+
+// Exchange offer / answer / ICE / hangup / reject. Only the two members can send.
+export function sendCallSignal(u: User, projectId: string, b: Record<string, unknown>): CallSignal {
+  const project = projectFor(u, projectId);
+  const type = b.type as CallSignalType;
+  const allowed = new Set<CallSignalType>(['offer', 'answer', 'ice', 'hangup', 'reject']);
+  if (!type || !allowed.has(type)) throw bad('Unknown call signal type');
+  const payload = typeof b.payload === 'string' ? b.payload : b.payload === undefined ? '' : JSON.stringify(b.payload);
+  return pushSignal(project, u, type, payload);
+}

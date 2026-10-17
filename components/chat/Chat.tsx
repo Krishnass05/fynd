@@ -66,10 +66,16 @@ export default function Chat({ projectId, role }: ChatProps) {
     const trimmed = text.trim();
     if (!trimmed || sending) return;
 
+    // Step 4 Requirement: Automatically run a regex filter on sendMessage() that masks any email addresses or phone numbers (***REDACTED***)
+    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi;
+    const phoneRegex = /(?:\+?(\d{1,3}))?[-.\s]?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4,}/g;
+    let cleanText = trimmed.replace(emailRegex, '***REDACTED***');
+    cleanText = cleanText.replace(phoneRegex, (m) => (m.replace(/\D/g, '').length >= 7 ? '***REDACTED***' : m));
+
     setSending(true);
     setSendError(null);
     try {
-      await sendMessage(projectId, trimmed);
+      await sendMessage(projectId, cleanText);
       setText('');
       await reload();
       setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);

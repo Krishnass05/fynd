@@ -1,105 +1,761 @@
 'use client';
-// Freelancer dashboard: what needs attention, projects with capacity, applications, jobs to apply to. OWNER: Krishna.
+// Step 2: Main Freelancer Portal (3-Column + Top Navbar Layout)
+// Features:
+//  - Left Sidebar: Task List Panel (interactive checklist, remaining effort capacity 10h baseline, active milestones)
+//  - Right Sidebar: Notifications Panel (real-time platform alerts)
+//  - Center Main Content Area: Dynamically renders Dashboard, Jobs (Step 3), or Profile
+//  - Flagship Case C35 integration with instant Open Project Workspace CTA
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getFreelancerDashboard } from '@/lib/api';
-import { useAsync } from '@/lib/useAsync';
-import { useUser } from '@/lib/useUser';
-import { Badge, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
-import s from './dashboard.module.css';
+import { useRouter } from 'next/navigation';
+import fixture from '@/fixture.json';
+import JobsDrillDown from '@/components/jobs/JobsDrillDown';
+import UnifiedWorkspace from '@/components/workspace/UnifiedWorkspace';
+import { getCallCount, isProSubscribed } from '@/lib/subscription';
+import { money } from '@/components/ui';
 
-export default function FreelancerDashboard() {
-  const { user } = useUser('freelancer');
-  const { data, error, loading } = useAsync(getFreelancerDashboard, []);
+export type PortalTab = 'dashboard' | 'jobs' | 'profile';
+
+export interface TaskItem {
+  id: string;
+  label: string;
+  hours: number;
+  completed: boolean;
+  isScopeChange?: boolean;
+}
+
+export default function FreelancerPortal() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<PortalTab>('dashboard');
+  const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
+  const [activeProjectId, setActiveProjectId] = useState<string>('P1');
+
+  // Subscription state
+  const [callCount, setCallCountState] = useState(0);
+  const [isSubscribed, setIsSubscribedState] = useState(false);
+
+  useEffect(() => {
+    function sync() {
+      setCallCountState(getCallCount());
+      setIsSubscribedState(isProSubscribed());
+    }
+    sync();
+    window.addEventListener('scopedesk_subscription_updated', sync);
+    return () => window.removeEventListener('scopedesk_subscription_updated', sync);
+  }, []);
+
+  // Left Sidebar: Interactive Checklist & Capacity
+  const baselineHours = fixture.availableHours || 10;
+  const [tasks, setTasks] = useState<TaskItem[]>([
+    { id: 't1', label: 'Baseline SOW v1 Agreement', hours: 0, completed: true },
+    { id: 't2', label: 'One Landing Page Structure', hours: 4, completed: true },
+    { id: 't3', label: 'Contact Form Integration', hours: 2, completed: false },
+    { id: 't4', label: 'Scope Request R1 (Payment Checkout)', hours: 6, completed: false, isScopeChange: true },
+  ]);
+
+  const [capacityCommitted, setCapacityCommitted] = useState(6); // Default starting committed hours
+
+  function toggleTask(id: string) {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+    );
+  }
+
+  const remainingHours = Math.max(0, baselineHours - capacityCommitted);
+
+  // Right Sidebar: Real-time Notifications Panel
+  const notifications = [
+    {
+      id: 'n1',
+      icon: '🔔',
+      title: 'Scope Request R1 Received',
+      desc: 'Client_A submitted "Add payment checkout" (6 hrs) flagged as Exclusion Override.',
+      time: '5m ago',
+      urgent: true,
+    },
+    {
+      id: 'n2',
+      icon: '📞',
+      title: 'Incoming WebRTC Call Ready',
+      desc: 'Browser-native peer room projectFor(C35) available for audio call.',
+      time: '12m ago',
+    },
+    {
+      id: 'n3',
+      icon: '⚠️',
+      title: 'Free Call Quota Warning',
+      desc: isSubscribed
+        ? 'Pro Seat Active: Unlimited calls unlocked.'
+        : `Free tier: ${Math.max(0, 5 - callCount)}/5 audio calls remaining on this workspace.`,
+      time: '25m ago',
+    },
+    {
+      id: 'n4',
+      icon: '📝',
+      title: 'Baseline SOW v1 Locked',
+      desc: 'Included: 1 landing page, contact form. Excluded: payment checkout.',
+      time: '1h ago',
+    },
+    {
+      id: 'n5',
+      icon: '🤖',
+      title: 'WhatsApp Meta-AI Available',
+      desc: 'Type @AI in chat to extract scope changes and calculate variance pricing.',
+      time: '2h ago',
+    },
+  ];
+
+  function handleOpenWorkspaceFromJob(projId: string) {
+    setActiveProjectId(projId);
+    setIsWorkspaceOpen(true);
+  }
+
   return (
-    <>
-      <h1 className={s.greeting}>{user ? `Welcome back, ${user.name}` : 'Dashboard'}</h1>
-      <p className="muted">Your projects, what needs you, and jobs worth a look. Amounts are before tax.</p>
-      <ErrorMessage message={error} />
-      {loading && !data ? <Spinner /> : null}
-      {data ? (
-        <>
-          <section className={s.stats} aria-label="Summary">
-            <div className={s.stat}><div className={s.statValue}>{data.stats.activeProjects}</div><div className={s.statLabel}>Active projects</div></div>
-            <div className={s.stat}><div className={s.statValue}>{data.stats.pendingApplications}</div><div className={s.statLabel}>Applications waiting</div></div>
-            <div className={s.stat}><div className={s.statValue}>{data.stats.openJobs}</div><div className={s.statLabel}>Open jobs to apply to</div></div>
-            <div className={s.stat}><div className={s.statValue}>{money(data.stats.approvedValue)}</div><div className={s.statLabel}>Approved change value</div></div>
-          </section>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Tab Switcher Strip */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: 'var(--card)',
+          padding: '8px 16px',
+          borderRadius: 12,
+          border: '1px solid var(--line)',
+        }}
+      >
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('dashboard');
+              setIsWorkspaceOpen(false);
+            }}
+            style={{
+              padding: '8px 18px',
+              borderRadius: 999,
+              border: 'none',
+              fontWeight: 700,
+              fontSize: 14,
+              cursor: 'pointer',
+              background: activeTab === 'dashboard' && !isWorkspaceOpen ? 'var(--space-indigo)' : 'transparent',
+              color: activeTab === 'dashboard' && !isWorkspaceOpen ? 'var(--seashell)' : 'var(--dusty-grape)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            📊 Dashboard
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('jobs');
+              setIsWorkspaceOpen(false);
+            }}
+            style={{
+              padding: '8px 18px',
+              borderRadius: 999,
+              border: 'none',
+              fontWeight: 700,
+              fontSize: 14,
+              cursor: 'pointer',
+              background: activeTab === 'jobs' && !isWorkspaceOpen ? 'var(--space-indigo)' : 'transparent',
+              color: activeTab === 'jobs' && !isWorkspaceOpen ? 'var(--seashell)' : 'var(--dusty-grape)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            🔍 Jobs (Drill-Down Flow)
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('profile');
+              setIsWorkspaceOpen(false);
+            }}
+            style={{
+              padding: '8px 18px',
+              borderRadius: 999,
+              border: 'none',
+              fontWeight: 700,
+              fontSize: 14,
+              cursor: 'pointer',
+              background: activeTab === 'profile' && !isWorkspaceOpen ? 'var(--space-indigo)' : 'transparent',
+              color: activeTab === 'profile' && !isWorkspaceOpen ? 'var(--seashell)' : 'var(--dusty-grape)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            👤 Profile
+          </button>
+        </div>
 
-          <h2>Needs your attention</h2>
-          {data.attention.length === 0 ? (
-            <EmptyState>Nothing is waiting on you.</EmptyState>
-          ) : (
-            <ul className={s.attention}>
-              {data.attention.map((a, i) => (
-                <li key={i}>
-                  <Badge tone={a.kind === 'rejected_change' ? 'bad' : a.kind === 'awaiting_client' ? 'neutral' : 'warn'}>{a.projectTitle}</Badge>
-                  <span>{a.text}</span>
-                  <Link href={`/freelancer/projects/${a.projectId}`}>Open</Link>
-                </li>
-              ))}
-            </ul>
-          )}
+        {isWorkspaceOpen ? (
+          <button
+            type="button"
+            className="btn secondary pill-sm"
+            onClick={() => setIsWorkspaceOpen(false)}
+          >
+            ← Back to Portal Layout
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="btn pill-sm"
+            onClick={() => setIsWorkspaceOpen(true)}
+            style={{ background: 'var(--space-indigo)', color: 'var(--seashell)' }}
+          >
+            🚀 Open Flagship Workspace (Case C35)
+          </button>
+        )}
+      </div>
 
-          <h2>My projects</h2>
-          {data.projects.length === 0 ? (
-            <EmptyState>No projects yet. <Link href="/freelancer/jobs">Find a job</Link> and apply.</EmptyState>
-          ) : (
-            <div className={s.projectGrid}>
-              {data.projects.map((p) => {
-                const pct = Math.min(100, Math.round((p.totals.committedHours / (p.project.availableHours || 1)) * 100));
-                return (
-                  <article key={p.project.id} className={s.project}>
-                    <h3><Link href={`/freelancer/projects/${p.project.id}`}>{p.project.jobTitle}</Link></h3>
-                    <div className="muted">For {p.clientName} · {money(p.project.ratePerHour)}/hr</div>
-                    <div className={s.bar} role="img" aria-label={`${pct}% of capacity committed`}>
-                      <div className={`${s.barFill} ${pct >= 100 ? s.barFillFull : ''}`} style={{ width: `${pct}%` }} />
-                    </div>
-                    <div className="muted">{p.totals.committedHours}h of {p.project.availableHours}h committed · {p.totals.remainingHours}h left</div>
-                    <div className={s.chips}>
-                      {!p.hasBaseline ? <Badge tone="warn">Signed SOW missing</Badge> : null}
-                      {p.counts.awaitingClient ? <Badge>{p.counts.awaitingClient} awaiting client</Badge> : null}
-                      {p.counts.needsClarification ? <Badge tone="warn">{p.counts.needsClarification} need hours</Badge> : null}
-                      {p.counts.rejected ? <Badge tone="bad">{p.counts.rejected} rejected</Badge> : null}
-                      {p.counts.approved ? <Badge tone="good">{p.counts.approved} approved</Badge> : null}
-                    </div>
-                    <div><strong>{money(p.totals.committedValue)}</strong> <span className="muted">approved changes</span></div>
-                  </article>
-                );
-              })}
+      {/* Main 3-Column Layout */}
+      {isWorkspaceOpen ? (
+        <UnifiedWorkspace
+          projectId={activeProjectId}
+          onClose={() => setIsWorkspaceOpen(false)}
+          initialCommittedHours={0}
+          onCapacityUpdate={(committed, remaining) => {
+            setCapacityCommitted(committed);
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '270px 1fr 290px',
+            gap: 20,
+            alignItems: 'start',
+          }}
+        >
+          {/* ============================================================
+              LEFT SIDEBAR: Task List Panel & Effort Capacity
+             ============================================================ */}
+          <aside
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 16,
+              background: 'var(--card)',
+              border: '1px solid var(--line)',
+              borderRadius: 16,
+              padding: 18,
+              boxShadow: '0 2px 8px rgba(34, 34, 59, 0.04)',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <span style={{ fontSize: 16 }}>📋</span>
+                <h3 style={{ margin: 0, fontSize: 15, color: 'var(--space-indigo)' }}>
+                  Task List Panel
+                </h3>
+              </div>
+              <p className="muted" style={{ margin: 0, fontSize: 12 }}>
+                Committed work items &amp; milestones
+              </p>
             </div>
-          )}
 
-          <h2>My applications</h2>
-          {data.applications.length === 0 ? (
-            <EmptyState>You have not applied to any job yet.</EmptyState>
-          ) : (
-            <div className={s.list}>
-              {data.applications.map((a) => (
-                <div key={a.id} className={s.listItem}>
-                  <Link href={`/freelancer/jobs/${a.jobId}`}>{a.jobTitle ?? a.jobId}</Link>
-                  <span className="muted">Your price {money(a.proposedPrice)}</span>
-                  <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>
+            {/* Effort Capacity Box */}
+            <div
+              style={{
+                background: 'var(--seashell)',
+                border: '1px solid var(--border)',
+                borderRadius: 12,
+                padding: 14,
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--space-indigo)' }}>
+                  REMAINING EFFORT
+                </span>
+                <span
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 800,
+                    color: remainingHours <= 2 ? 'var(--space-indigo)' : 'var(--dusty-grape)',
+                  }}
+                >
+                  {remainingHours}h / {baselineHours}h
+                </span>
+              </div>
+
+              {/* Capacity Progress Bar */}
+              <div
+                style={{
+                  width: '100%',
+                  height: 8,
+                  background: 'var(--almond-silk)',
+                  borderRadius: 999,
+                  overflow: 'hidden',
+                  marginBottom: 8,
+                }}
+              >
+                <div
+                  style={{
+                    width: `${Math.min(100, (capacityCommitted / baselineHours) * 100)}%`,
+                    height: '100%',
+                    background: 'var(--space-indigo)',
+                    transition: 'width 0.3s ease',
+                  }}
+                />
+              </div>
+
+              <div style={{ fontSize: 11, color: 'var(--muted)', display: 'flex', justifyContent: 'space-between' }}>
+                <span>Rate: {money(fixture.ratePerHour || 1000)}/hr</span>
+                <span>Baseline Cap: {baselineHours}h</span>
+              </div>
+            </div>
+
+            {/* Interactive Checklist */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--space-indigo)', marginBottom: 8 }}>
+                Committed Work Items:
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {tasks.map((task) => (
+                  <label
+                    key={task.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 10,
+                      padding: '8px 10px',
+                      borderRadius: 8,
+                      background: task.completed ? 'var(--seashell)' : 'var(--card)',
+                      border: '1px solid var(--line)',
+                      cursor: 'pointer',
+                      fontSize: 13,
+                      transition: 'background 0.15s ease',
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={() => toggleTask(task.id)}
+                      style={{ width: 'auto', marginTop: 3, cursor: 'pointer' }}
+                    />
+                    <div style={{ flex: 1 }}>
+                      <span
+                        style={{
+                          textDecoration: task.completed ? 'line-through' : 'none',
+                          color: task.completed ? 'var(--muted)' : 'var(--space-indigo)',
+                          fontWeight: task.isScopeChange ? 700 : 500,
+                        }}
+                      >
+                        {task.label}
+                      </span>
+                      {task.isScopeChange ? (
+                        <div style={{ fontSize: 10, color: 'var(--dusty-grape)', fontWeight: 600 }}>
+                          ⚡ Scope Change (+{task.hours}h)
+                        </div>
+                      ) : null}
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Active Milestones */}
+            <div style={{ borderTop: '1px solid var(--line)', paddingTop: 14 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--space-indigo)', marginBottom: 8 }}>
+                Active Milestones:
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--dusty-grape)' }}>
+                  <span>✓</span> <strong>M1:</strong> SOW &amp; Wireframes (Done)
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--space-indigo)' }}>
+                  <span>▶</span> <strong>M2:</strong> Contact Form Validation (In Progress)
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--muted)' }}>
+                  <span>⏳</span> <strong>M3:</strong> Scope Change R1 (Pending Approval)
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* ============================================================
+              CENTER MAIN CONTENT AREA: Dynamically Renders Tab Content
+             ============================================================ */}
+          <main style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {activeTab === 'dashboard' ? (
+              <>
+                {/* Greeting & Quick Stats */}
+                <div
+                  style={{
+                    background: 'var(--card)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 16,
+                    padding: 24,
+                    boxShadow: '0 2px 8px rgba(34, 34, 59, 0.04)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                    <div>
+                      <h1 style={{ margin: '0 0 6px', fontSize: 24, color: 'var(--space-indigo)' }}>
+                        Welcome back, Freelancer_Dev
+                      </h1>
+                      <p className="muted" style={{ margin: 0 }}>
+                        Case C35 Project Workspace is active. All communication is privacy-guarded.
+                      </p>
+                    </div>
+                    <span className="badge pro">Platform Verified</span>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 18 }}>
+                    <div style={{ background: 'var(--seashell)', padding: 12, borderRadius: 10, border: '1px solid var(--line)' }}>
+                      <div style={{ fontSize: 11, color: 'var(--muted)' }}>Active Workspace</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--space-indigo)' }}>Case C35</div>
+                      <div style={{ fontSize: 10, color: 'var(--dusty-grape)' }}>Web Development</div>
+                    </div>
+                    <div style={{ background: 'var(--seashell)', padding: 12, borderRadius: 10, border: '1px solid var(--line)' }}>
+                      <div style={{ fontSize: 11, color: 'var(--muted)' }}>Hourly Rate</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--space-indigo)' }}>{money(1000)}/hr</div>
+                      <div style={{ fontSize: 10, color: 'var(--dusty-grape)' }}>before taxes</div>
+                    </div>
+                    <div style={{ background: 'var(--seashell)', padding: 12, borderRadius: 10, border: '1px solid var(--line)' }}>
+                      <div style={{ fontSize: 11, color: 'var(--muted)' }}>Remaining Capacity</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--space-indigo)' }}>{remainingHours} Hours</div>
+                      <div style={{ fontSize: 10, color: 'var(--dusty-grape)' }}>of 10h baseline</div>
+                    </div>
+                    <div style={{ background: 'var(--seashell)', padding: 12, borderRadius: 10, border: '1px solid var(--line)' }}>
+                      <div style={{ fontSize: 11, color: 'var(--muted)' }}>WebRTC Calls</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--space-indigo)' }}>
+                        {isSubscribed ? 'Unlimited' : `${callCount}/5 Used`}
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--dusty-grape)' }}>
+                        {isSubscribed ? 'Pro Plan Active' : 'Free Audio Tier'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Flagship Active Project Card */}
+                <div
+                  style={{
+                    background: 'var(--card)',
+                    border: '2px solid var(--dusty-grape)',
+                    borderRadius: 16,
+                    padding: 24,
+                    boxShadow: '0 4px 16px rgba(34, 34, 59, 0.06)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <span className="badge pro">Flagship Project</span>
+                        <span style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 600 }}>
+                          Client: Client_A · Baseline SOW v1
+                        </span>
+                      </div>
+                      <h2 style={{ margin: 0, fontSize: 20, color: 'var(--space-indigo)' }}>
+                        Landing page for a small shop (Case C35)
+                      </h2>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={() => setIsWorkspaceOpen(true)}
+                      style={{
+                        padding: '10px 20px',
+                        fontSize: 14,
+                        background: 'var(--space-indigo)',
+                        color: 'var(--seashell)',
+                        borderRadius: 10,
+                        fontWeight: 700,
+                      }}
+                    >
+                      🚀 [ Open Project Workspace ]
+                    </button>
+                  </div>
+
+                  <p style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--dusty-grape)', lineHeight: 1.5 }}>
+                    Build a high-performance landing page and contact form under a strict 10-hour capacity ceiling.
+                    Includes browser-native WebRTC calls, WhatsApp Meta-AI assistant (@AI), and ScopeDesk variance pricing.
+                  </p>
+
+                  <div
+                    style={{
+                      background: 'var(--seashell)',
+                      border: '1px solid var(--line)',
+                      borderRadius: 10,
+                      padding: 12,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: 13,
+                    }}
+                  >
+                    <div>
+                      <strong>Scope In:</strong> 1 landing page, contact form &nbsp;|&nbsp;{' '}
+                      <strong>Scope Out:</strong> payment checkout
+                    </div>
+                    <div style={{ fontWeight: 700, color: 'var(--space-indigo)' }}>
+                      Budget: ₹10,000 (10h @ ₹1,000/hr)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Attention Needed Items */}
+                <div
+                  style={{
+                    background: 'var(--card)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 16,
+                    padding: 20,
+                  }}
+                >
+                  <h3 style={{ margin: '0 0 12px', fontSize: 16, color: 'var(--space-indigo)' }}>
+                    Pending Scope Desk Actions
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 14px',
+                        borderRadius: 10,
+                        background: 'var(--seashell)',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--space-indigo)' }}>
+                          Request R1: &quot;Add payment checkout&quot; (6h)
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--dusty-grape)' }}>
+                          Explicit Exclusion Override · Estimated Quote: {money(6000)} before tax
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn pill-sm"
+                        onClick={() => setIsWorkspaceOpen(true)}
+                      >
+                        Review in Scope Desk →
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 14px',
+                        borderRadius: 10,
+                        background: 'var(--seashell)',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--space-indigo)' }}>
+                          Request R2: &quot;Fix our broken contact form&quot; (2h)
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--dusty-grape)' }}>
+                          Internal Defect Rework · Billable Quote: ₹0 (Effort logged, price 0)
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn pill-sm"
+                        onClick={() => setIsWorkspaceOpen(true)}
+                      >
+                        Review in Scope Desk →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : activeTab === 'jobs' ? (
+              /* Step 3: Jobs Tab Drill-Down Flow */
+              <div
+                style={{
+                  background: 'var(--card)',
+                  border: '1px solid var(--line)',
+                  borderRadius: 16,
+                  padding: 24,
+                }}
+              >
+                <div style={{ marginBottom: 16 }}>
+                  <h1 style={{ margin: '0 0 6px', fontSize: 22, color: 'var(--space-indigo)' }}>
+                    Freelancer Job Discovery Flow
+                  </h1>
+                  <p className="muted" style={{ margin: 0 }}>
+                    Filter by domain category, inspect baseline scope, exclusions, and open the interactive project workspace.
+                  </p>
+                </div>
+                <JobsDrillDown onOpenWorkspace={handleOpenWorkspaceFromJob} />
+              </div>
+            ) : (
+              /* Profile Tab */
+              <div
+                style={{
+                  background: 'var(--card)',
+                  border: '1px solid var(--line)',
+                  borderRadius: 16,
+                  padding: 24,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                  <div
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: '50%',
+                      background: 'var(--space-indigo)',
+                      color: 'var(--seashell)',
+                      display: 'grid',
+                      placeItems: 'center',
+                      fontSize: 26,
+                      fontWeight: 800,
+                    }}
+                  >
+                    FD
+                  </div>
+                  <div>
+                    <h1 style={{ margin: '0 0 4px', fontSize: 22, color: 'var(--space-indigo)' }}>
+                      Freelancer_Dev
+                    </h1>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <span className="badge pro">Case C35 Verified Freelancer</span>
+                      <span style={{ fontSize: 12, color: 'var(--muted)' }}>
+                        🔒 Privacy-First Platform Profile
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: 14,
+                    marginBottom: 20,
+                  }}
+                >
+                  <div style={{ background: 'var(--seashell)', padding: 14, borderRadius: 12, border: '1px solid var(--line)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--muted)' }}>Hourly Billing Rate</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--space-indigo)' }}>₹1,000 / hr</div>
+                    <div style={{ fontSize: 11, color: 'var(--dusty-grape)' }}>Locked in SOW baseline</div>
+                  </div>
+                  <div style={{ background: 'var(--seashell)', padding: 14, borderRadius: 12, border: '1px solid var(--line)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--muted)' }}>Weekly Capacity</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--space-indigo)' }}>10 Hours</div>
+                    <div style={{ fontSize: 11, color: 'var(--dusty-grape)' }}>Strict effort tracking</div>
+                  </div>
+                  <div style={{ background: 'var(--seashell)', padding: 14, borderRadius: 12, border: '1px solid var(--line)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--muted)' }}>Performance Rating</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--space-indigo)' }}>4.9 ★★★★★</div>
+                    <div style={{ fontSize: 11, color: 'var(--dusty-grape)' }}>14 Completed Scopes</div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 style={{ margin: '0 0 10px', fontSize: 15, color: 'var(--space-indigo)' }}>
+                    Verified Competency Badges
+                  </h3>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <span className="badge">React &amp; Next.js</span>
+                    <span className="badge">WebRTC Peer Calls</span>
+                    <span className="badge">Scope Negotiation</span>
+                    <span className="badge">Contact Redaction</span>
+                    <span className="badge">SOW Variance Pricing</span>
+                    <span className="badge">Offline Meta-AI Engine</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* ============================================================
+              RIGHT SIDEBAR: Real-time Notifications Panel
+             ============================================================ */}
+          <aside
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 14,
+              background: 'var(--card)',
+              border: '1px solid var(--line)',
+              borderRadius: 16,
+              padding: 18,
+              boxShadow: '0 2px 8px rgba(34, 34, 59, 0.04)',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <span style={{ fontSize: 16 }}>🔔</span>
+                <h3 style={{ margin: 0, fontSize: 15, color: 'var(--space-indigo)' }}>
+                  Notifications Panel
+                </h3>
+              </div>
+              <p className="muted" style={{ margin: 0, fontSize: 12 }}>
+                Real-time workspace &amp; call alerts
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {notifications.map((n) => (
+                <div
+                  key={n.id}
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: 10,
+                    background: n.urgent ? 'var(--seashell)' : 'var(--card)',
+                    border: n.urgent ? '1.5px solid var(--dusty-grape)' : '1px solid var(--line)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 4,
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--space-indigo)' }}>
+                      {n.icon} {n.title}
+                    </span>
+                    <span style={{ fontSize: 10, color: 'var(--muted)' }}>{n.time}</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 12, color: 'var(--dusty-grape)', lineHeight: 1.4 }}>
+                    {n.desc}
+                  </p>
                 </div>
               ))}
             </div>
-          )}
 
-          <h2>Jobs you could apply to</h2>
-          {data.openJobs.length === 0 ? (
-            <EmptyState>No new open jobs right now.</EmptyState>
-          ) : (
-            <div className={s.list}>
-              {data.openJobs.map((j) => (
-                <Card key={j.id}>
-                  <Link href={`/freelancer/jobs/${j.id}`}><strong>{j.title}</strong></Link>
-                  <p className="muted" style={{ margin: '4px 0 0' }}>Budget {money(j.budget)} · deadline {j.deadline}</p>
-                </Card>
-              ))}
-              <Link href="/freelancer/jobs">See all open jobs</Link>
+            {/* Quick Launch Workspace Banner */}
+            <div
+              style={{
+                background: 'var(--space-indigo)',
+                color: 'var(--seashell)',
+                borderRadius: 12,
+                padding: 14,
+                textAlign: 'center',
+                marginTop: 'auto',
+              }}
+            >
+              <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>
+                Ready to Negotiate?
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--almond-silk)', marginBottom: 10 }}>
+                Open Case C35 unified workspace with Client_A
+              </div>
+              <button
+                type="button"
+                className="btn secondary pill-sm"
+                onClick={() => setIsWorkspaceOpen(true)}
+                style={{
+                  width: '100%',
+                  justifyContent: 'center',
+                  background: 'var(--seashell)',
+                  color: 'var(--space-indigo)',
+                  fontWeight: 700,
+                  border: 'none',
+                }}
+              >
+                Launch Workspace
+              </button>
             </div>
-          )}
-        </>
-      ) : null}
-    </>
+          </aside>
+        </div>
+      )}
+    </div>
   );
 }
