@@ -1,0 +1,26 @@
+STATEMENT OF WORK (SOW) — API DEVELOPMENT
+Domain: Websites, IT & Software | Active Job Volume: 119 Jobs
+
+1. Project Objective
+Architect, build, secure, test, and document high-performance REST or GraphQL APIs.
+
+2. Scope of Work
+- Design resource schemas, responses, and pagination.
+- Implement JWT authentication, permissions, and rate limiting.
+- Connect endpoints to databases with ORM and caching.
+- Create automated tests and OpenAPI documentation.
+
+3. Key Deliverables
+- Complete API source code and database migrations.
+- Interactive Swagger documentation and Postman collection.
+- Automated test suite and deployed cloud service.
+
+4. Milestones and Payment Schedule
+- M1: API contract design and auth middleware (30%)
+- M2: Core CRUD and business logic implementation (45%)
+- M3: Testing, documentation, and deployment (25%)
+
+5. Acceptance Criteria and QA
+- High pass rate on automated test suites.
+- Average response latency under 200ms.
+- Strict input validation rejecting unauthorized access.

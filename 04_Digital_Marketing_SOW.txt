@@ -1,0 +1,26 @@
+STATEMENT OF WORK (SOW) — DIGITAL MARKETING
+Domain: Websites, IT & Software | Active Job Volume: 400 Jobs
+
+1. Project Objective
+Plan, execute, track, and optimize digital marketing campaigns to drive website traffic, lead generation, and measurable return on ad spend.
+
+2. Scope of Work
+- Conduct competitor analysis and marketing funnel planning.
+- Set up and manage paid ad campaigns across Google and Meta.
+- Configure conversion tracking tools, pixels, and analytics.
+- Run structured A/B tests on ad headlines, visuals, and audiences.
+
+3. Key Deliverables
+- Comprehensive digital marketing strategy and media plan.
+- Configured ad accounts with active campaign structures.
+- Verified conversion tracking setup and performance reports.
+
+4. Milestones and Payment Schedule
+- M1: Account audit and tracking setup (25%)
+- M2: Campaign launch and initial audience testing (35%)
+- M3: Optimization, A/B testing, and ROI reporting (40%)
+
+5. Acceptance Criteria and QA
+- Accuracy in conversion event firing across platforms.
+- Achievement of target KPI benchmarks defined in media plan.
+- Timely delivery of spend and conversion reports.

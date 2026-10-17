@@ -1,0 +1,26 @@
+STATEMENT OF WORK (SOW) — SOFTWARE ARCHITECTURE
+Domain: Websites, IT & Software | Active Job Volume: 195 Jobs
+
+1. Project Objective
+Design a scalable, secure, and cost-effective technical architecture and system blueprint for software applications.
+
+2. Scope of Work
+- Define architectural patterns and tech stack selection.
+- Architect entity relationship diagrams and API contracts.
+- Design cloud infrastructure, containerization, and pipelines.
+- Establish security protocols and disaster recovery plans.
+
+3. Key Deliverables
+- High-level and low-level design specification documents.
+- UML system architecture and deployment diagrams.
+- Database schema and API contract specifications.
+
+4. Milestones and Payment Schedule
+- M1: Discovery and tech stack blueprint (35%)
+- M2: Detailed design, ERD, and cloud topology (45%)
+- M3: Security review and engineering walkthrough (20%)
+
+5. Acceptance Criteria and QA
+- Architecture supports target concurrency and uptime.
+- No single points of failure in production paths.
+- Clear technical documentation ready for execution.

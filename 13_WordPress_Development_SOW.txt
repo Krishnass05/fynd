@@ -1,0 +1,26 @@
+STATEMENT OF WORK (SOW) — WORDPRESS DEVELOPMENT
+Domain: Websites, IT & Software | Active Job Volume: 177 Jobs
+
+1. Project Objective
+Design, develop, and optimize a secure, fast-loading WordPress website or WooCommerce store.
+
+2. Scope of Work
+- Install WordPress, custom themes, and child themes.
+- Configure custom post types, fields, and forms.
+- Integrate SEO plugins, caching, and payment flows.
+- Optimize database tables and harden security.
+
+3. Key Deliverables
+- Live WordPress website migrated to client hosting.
+- Custom child theme packages and site backups.
+- Editor training guide for updating content.
+
+4. Milestones and Payment Schedule
+- M1: Environment setup and core layout build (30%)
+- M2: Inner pages and plugin integration (45%)
+- M3: Speed optimization, security, and migration (25%)
+
+5. Acceptance Criteria and QA
+- High performance page speed score.
+- Zero plugin version conflicts or broken links.
+- Easy dashboard content editing for non-technical users.

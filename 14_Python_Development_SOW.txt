@@ -1,0 +1,26 @@
+STATEMENT OF WORK (SOW) — PYTHON DEVELOPMENT
+Domain: Websites, IT & Software | Active Job Volume: 174 Jobs
+
+1. Project Objective
+Build reliable Python applications, backend APIs, automated workflows, data pipelines, or scraping systems.
+
+2. Scope of Work
+- Build RESTful services using FastAPI or Flask.
+- Develop resilient automation scripts using Selenium or BeautifulSoup.
+- Implement ETL pipelines using Pandas and NumPy.
+- Structure virtual environments, Dockerfiles, and logging.
+
+3. Key Deliverables
+- Compliant Python source code with documentation.
+- Dependency manifests and Docker configuration files.
+- Sample output datasets and unit tests.
+
+4. Milestones and Payment Schedule
+- M1: Architecture setup and script prototype (30%)
+- M2: Full feature implementation and error handling (45%)
+- M3: Testing, containerization, and documentation (25%)
+
+5. Acceptance Criteria and QA
+- Code conforms to standards and runs error-free.
+- Robust exception handling and retry mechanisms.
+- Reproducible setup via container or virtual environment.

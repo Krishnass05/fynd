@@ -1,0 +1,26 @@
+STATEMENT OF WORK (SOW) — ADOBE PREMIERE PRO VIDEO EDITING
+Domain: Websites, IT & Software | Active Job Volume: 248 Jobs
+
+1. Project Objective
+Transform raw video footage and audio into high-retention video assets for YouTube, social media, or corporate campaigns.
+
+2. Scope of Work
+- Ingest raw footage, remove dead air, and establish pacing.
+- Apply color correction, grading, zoom cuts, and B-roll overlays.
+- Integrate animated lower thirds, titles, and captions.
+- Clean audio noise and mix music and sound effects.
+
+3. Key Deliverables
+- Final mastered video exports in high resolution.
+- Formatted aspect ratio variations for different platforms.
+- Separate subtitle files and organized project archives.
+
+4. Milestones and Payment Schedule
+- M1: Footage review and rough cut assembly (30%)
+- M2: Fine cut with graphics, grading, and sound design (50%)
+- M3: Client revisions and high-res rendering (20%)
+
+5. Acceptance Criteria and QA
+- Zero audio clipping or rendering glitches.
+- Adherence to brand typography and pacing guidelines.
+- Delivery within agreed revision limits.

@@ -1,0 +1,27 @@
+STATEMENT OF WORK (SOW) — PHP DEVELOPMENT
+Domain: Websites, IT & Software | Active Job Volume: 602 Jobs
+
+1. Project Objective
+Develop, maintain, upgrade, and troubleshoot server-side web applications, dynamic websites, and custom backend modules using PHP and modern frameworks.
+
+2. Scope of Work
+- Write clean object-oriented PHP code for new features or applications.
+- Design and integrate MySQL or PostgreSQL database schemas and queries.
+- Upgrade legacy PHP codebases to newer versions and fix server errors.
+- Build and connect RESTful APIs, webhooks, and payment gateways.
+
+3. Key Deliverables
+- Complete source code pushed to a Git repository.
+- Database migration files and SQL dump files.
+- Deployed application on staging and production environments.
+
+4. Milestones and Payment Schedule
+- M1: Requirements gathering and database setup (20%)
+- M2: Backend module development and integration (40%)
+- M3: API integration and QA bug fixing (25%)
+- M4: Production deployment and final handover (15%)
+
+5. Acceptance Criteria and QA
+- Zero syntax or deprecation errors in error logs.
+- Server response time under 400ms for database queries.
+- 100% pass rate on functional and security checks.

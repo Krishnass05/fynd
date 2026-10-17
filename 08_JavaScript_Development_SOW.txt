@@ -1,0 +1,26 @@
+STATEMENT OF WORK (SOW) — JAVASCRIPT DEVELOPMENT
+Domain: Websites, IT & Software | Active Job Volume: 208 Jobs
+
+1. Project Objective
+Develop modular client-side or server-side JavaScript logic, interactive UI components, and asynchronous API integrations.
+
+2. Scope of Work
+- Build custom DOM calculators, filters, and form validations.
+- Implement smooth data fetching using fetch API or Axios.
+- Connect third-party SDKs, maps, and payment widgets.
+- Resolve console errors, memory leaks, and optimize listeners.
+
+3. Key Deliverables
+- Clean and modular JavaScript source files.
+- Minified production bundles and source maps.
+- Working demo page or repository branch.
+
+4. Milestones and Payment Schedule
+- M1: Technical specification and logic prototype (30%)
+- M2: API integration and edge-case validation (45%)
+- M3: Debugging, minification, and final delivery (25%)
+
+5. Acceptance Criteria and QA
+- Zero unhandled exceptions in browser console.
+- Smooth UI execution without main-thread blocking.
+- Compatibility across modern browsers.
