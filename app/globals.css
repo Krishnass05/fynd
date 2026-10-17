@@ -67,8 +67,10 @@ label.field { display: block; margin-bottom: 14px; font-size: 13px; color: var(-
 .role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 28px; }
 .hero h1 p { margin: 0; justify-content: center; color: inherit; font-size: inherit; max-width: none; }
 .role-card { padding: 14px; border-radius: 20px; }
-.role-tile { height: 120px; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--teal)); display: grid; place-items: center; color: var(--ink-strong); }
-.role-tile svg { width: 52px; height: 52px; }
+.role-tile { position: relative; height: 140px; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--teal)) center / cover; display: grid; place-items: end start; padding: 12px; color: var(--ink-strong); overflow: hidden; }
+.role-tile[data-role="client"] { background-image: url('/bg/role-client.svg'); }
+.role-tile[data-role="freelancer"] { background-image: url('/bg/role-freelancer.svg'); }
+.role-tile svg { width: 40px; height: 40px; padding: 8px; border-radius: 50%; background: var(--bg); box-sizing: border-box; }
 
 /* Keyboard users can jump past the menu */
 .skip-link { position: absolute; left: 8px; top: -48px; z-index: 100; background: var(--ink-strong); color: #fff; padding: 8px 14px; border-radius: 999px; text-decoration: none; }

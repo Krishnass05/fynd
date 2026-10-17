@@ -93,7 +93,7 @@ export default function Home() {
           <div className="role-grid">
             {ROLES.map(({ role, title, text, Icon }) => (
               <SpotlightCard key={role} theme="light" className="role-card" style={CARD_STYLE} spotlightColor="var(--brand)" intensity={0.5}>
-                <div className="role-tile"><Icon /></div>
+                <div className="role-tile" data-role={role}><Icon /></div>
                 <h2>{title}</h2>
                 <p>{text}</p>
                 <div className="row">

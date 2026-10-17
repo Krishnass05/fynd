@@ -32,7 +32,7 @@ Use the variables. Never put a raw colour in a component.
 | `--line-strong` | `#8A857B` | **form field borders** |
 | `--ok`, `--bad`, `--warn` (+ `bg`) | green, red, amber | statuses. They always come with a word |
 
-Background images: `public/bg/hero.svg` (soft orange and silver circles behind the start page) and `public/bg/pattern.svg` (faint outline shapes on every page). They are our own drawings, not stock photos.
+Background images: `public/bg/role-client.svg` and `role-freelancer.svg` (the pictures on the two role cards), `public/bg/hero.svg` (soft orange and silver circles behind the start page) and `public/bg/pattern.svg` (faint outline shapes on every page). They are our own drawings, not stock photos.
 
 ## Checked contrast (WCAG)
 
