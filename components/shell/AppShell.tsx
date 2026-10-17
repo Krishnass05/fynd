@@ -40,6 +40,15 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
   }, []);
   useEffect(() => setOpen(null), [pathname]);
   useEffect(() => { if (open !== 'services') setDomain(null); }, [open]);
+  // Hover intent: wait a moment before switching domain, so moving diagonally to the topics does not swap them.
+  const hoverTimer = useRef<number | undefined>(undefined);
+  const cancelHover = () => window.clearTimeout(hoverTimer.current);
+  const showDomain = (i: number, now = false) => {
+    cancelHover();
+    if (now || domain === null) setDomain(i);
+    else hoverTimer.current = window.setTimeout(() => setDomain(i), 140);
+  };
+  useEffect(() => cancelHover, []);
   useEffect(() => {
     const el = document.querySelector<HTMLElement>('.megamenu');
     if (!el) return;
@@ -96,7 +105,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
                 <div className="megamenu" id="menu-jobs">
                   <div className="mega-body">
                     <p className="mega-label">{jobsMenu.label.toUpperCase()}</p>
-                    <ul className="mega-grid mega-grid--2">
+                    <ul className="mega-grid mega-grid--1">
                       {jobsMenu.items.map((i) => (
                         <li key={i.href}>
                           <Link href={i.href} onClick={() => setOpen(null)}><strong>{i.label}</strong><span>{i.detail}</span></Link>
@@ -118,15 +127,15 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
                   <div className={`mega-body mega-split${domain !== null ? ' mega-split--open' : ''}`}>
                     <div>
                       <p className="mega-label">DOMAINS</p>
-                      <ul className="mega-domains" onMouseLeave={() => setDomain(null)}>
+                      <ul className="mega-domains" onMouseLeave={cancelHover}>
                         {SERVICES.map((d, i) => (
                           <li key={d.name}>
                             <Link
                               href={servicesQuery({ category: d.name })}
                               className="mega-domain-link"
                               aria-current={domain === i ? 'true' : undefined}
-                              onMouseEnter={() => setDomain(i)}
-                              onFocus={() => setDomain(i)}
+                              onMouseEnter={() => showDomain(i)}
+                              onFocus={() => showDomain(i, true)}
                               onClick={() => setOpen(null)}
                             >
                               {d.name}<ChevronRight size={14} />

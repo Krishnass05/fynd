@@ -218,6 +218,14 @@ const cheap = await ok('GET', '/api/freelancers?maxRate=1000', CLIENT);
 assert.ok(cheap.freelancers.length > 0 && cheap.freelancers.every((f) => f.ratePerHour <= 1000), 'rate filter');
 assert.ok((await ok('GET', '/api/freelancers?available=1', CLIENT)).freelancers.every((f) => f.availability === 'available'), 'availability filter');
 assert.equal((await ok('GET', '/api/freelancers?q=zzzzzz', CLIENT)).freelancers.length, 0, 'no match gives an empty list');
+// every topic in the Services menu (lib/services.ts) finds at least one sample freelancer
+import { readFileSync } from 'node:fs';
+const topicLists = [...readFileSync(new URL('../lib/services.ts', import.meta.url), 'utf8').matchAll(/topics: \[([^\]]*)\]/g)];
+const topics = topicLists.flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]));
+assert.ok(topics.length >= 25, 'read the topics from lib/services.ts');
+for (const t of topics) {
+  assert.ok((await ok('GET', '/api/freelancers?q=' + encodeURIComponent(t), CLIENT)).freelancers.length > 0, 'Services topic finds a freelancer: ' + t);
+}
 // every popular search on the client home page finds someone, by words rather than the exact phrase
 for (const t of ['Web Development', 'Logo Design', 'Video Editing', 'SEO', 'Data Entry', 'Graphic Design', 'PHP']) {
   assert.ok((await ok('GET', '/api/freelancers?q=' + encodeURIComponent(t), CLIENT)).freelancers.length > 0, 'popular search finds a freelancer: ' + t);

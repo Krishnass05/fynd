@@ -70,6 +70,7 @@ Status: **Done** (built), **Planned** (agreed, not built), **Open** (still to de
 | D-55 | 2026-10-18 | Top bar order is now: logo, search box, then Jobs, Services, Find freelancers and Saved, with the greeting and avatar on the right | Requested by Krishna | Done |
 | D-56 | 2026-10-18 | The Services menu opens with only the five domains. Hovering or focusing a domain shows that domain's topics in a panel to the right; clicking a domain filters by it and clicking a topic searches for it | Requested by Krishna. Replaces the all-at-once grid from D-49 | Done |
 | D-57 | 2026-10-18 | The Jobs and Services menus now open to the right, starting under their own button (they shift left only if they would run off the screen). The intro panel on the left of each menu ("Browse our services", "Manage your work") is removed | Requested by Krishna. The menus used to open from the left edge of the bar, which looked backwards | Done |
+| D-58 | 2026-10-18 | Services topics are now clickable: the topics panel stays open while the mouse moves to it (the domain only switches after a short pause), and clicking a topic like PHP lists the freelancers who work in it. Every topic finds at least one sample freelancer (added skills to existing samples; the smoke test checks all topics). The Jobs menu lists My jobs and Post a job one below the other | Requested by Krishna. The topics used to disappear as the mouse left the domain list, so they could not be clicked | Done |
 
 ## Team and process
 
