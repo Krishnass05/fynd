@@ -2,11 +2,10 @@
 // "Find freelancers for every type of work": a 3D coverflow of the ten categories. The active slide is
 // large and flat, its neighbours turn away, and a colour wash sweeps to the active category's tone.
 // Our own build (the paid React Bits Pro Prism Carousel needs a licence we do not have). Arrow keys,
-// buttons, dots and clicking a side slide move it; clicking the active slide or "Explore category"
-// opens the search for that category. No autoplay. OWNER: Krishna.
+// dots and clicking a side slide move it; clicking the active slide (or Enter) opens the search
+// for that category. No autoplay. OWNER: Krishna.
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { ChevronRight } from '@/components/ui/icons';
 import { CATEGORIES } from './data';
 import { goSearch } from './goSearch';
 
@@ -69,18 +68,6 @@ export default function CategoryCarousel() {
               </figure>
             );
           })}
-        </div>
-      </div>
-      <div className="ccar-info" aria-live="polite">
-        <div>
-          <p className="ccar-count">{String(active + 1).padStart(2, '0')} / {n}</p>
-          <h3>{cur.name}</h3>
-          <p>{cur.description}</p>
-        </div>
-        <div className="ccar-controls">
-          <button type="button" className="ccar-btn" aria-label="Previous category" onClick={() => go(active - 1)}><span style={{ display: 'inline-flex', transform: 'scaleX(-1)' }}><ChevronRight size={20} /></span></button>
-          <button type="button" className="ccar-btn" aria-label="Next category" onClick={() => go(active + 1)}><ChevronRight size={20} /></button>
-          <button type="button" className="btn dark" onClick={explore}>Explore {cur.name}</button>
         </div>
       </div>
       <div className="ccar-dots">

@@ -105,13 +105,6 @@
 .ccar-slide figcaption { position: absolute; left: 20px; right: 20px; bottom: 18px; z-index: 1; color: #fff; display: grid; gap: 4px; }
 .ccar-slide figcaption strong { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
 .ccar-num { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; opacity: 0.8; }
-.ccar-info { max-width: 1200px; margin: 30px auto 0; padding: 0 24px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.ccar-info h3 { margin: 2px 0 6px; font-size: 26px; color: var(--charcoal); }
-.ccar-info p { margin: 0; color: var(--muted); }
-.ccar-count { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; }
-.ccar-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.ccar-btn { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--silver); background: #fff; color: var(--charcoal); display: grid; place-items: center; cursor: pointer; }
-.ccar-btn:hover { border-color: var(--charcoal); }
 .ccar-dots { display: flex; justify-content: center; gap: 2px; margin-top: 22px; }
 .ccar-dots button { width: 26px; height: 26px; padding: 0; border: 0; background: transparent; display: grid; place-items: center; cursor: pointer; }
 .ccar-dots button::after { content: ''; width: 8px; height: 8px; border-radius: 99px; background: var(--silver); transition: width 0.3s ease, background-color 0.3s ease; }
@@ -120,7 +113,6 @@
   .cats { padding: 60px 0 48px; }
   .ccar-stage { height: 360px; --step: 150px; }
   .ccar-slide { width: 240px; height: 330px; margin-left: -120px; }
-  .ccar-info { padding: 0 16px; }
 }
 
 /* ---- How it works ---- */
