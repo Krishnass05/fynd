@@ -1,0 +1,11 @@
+/* The comparison table scrolls inside its own box on small screens, never the whole page. */
+.scroll { position: relative; overflow-x: auto; max-width: 100%; border-radius: var(--radius); }
+.scroll:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+.table th, .table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.table thead th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+.table tbody th { font-weight: 600; color: var(--ink-strong); }
+.pitch { min-width: 180px; overflow-wrap: anywhere; }
+.table td, .table th { overflow-wrap: normal; }
+.nowrap { white-space: nowrap; }
+.nowrap button { white-space: nowrap; }

@@ -1,7 +1,7 @@
 // The ONLY way pages talk to the server. OWNER: Krishna. Do not call fetch in pages.
 // Every function throws an Error whose message is safe to show to the user.
 import type {
-  Application, DemoResult, FreelancerDashboard, Job, JobDetail, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
+  Application, ClientDashboard, DemoResult, FreelancerDashboard, Job, JobDetail, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
 } from './types';
 import { getUserId } from './session';
 
@@ -40,7 +40,8 @@ export const updateMe = (b: { name?: string; skills?: string[] }) => call<User>(
 // jobs
 export const listJobs = (o: { mine?: boolean; status?: string } = {}) =>
   call<Job[]>(`/api/jobs?${o.mine ? 'mine=1&' : ''}${o.status ? `status=${encodeURIComponent(o.status)}` : ''}`);
-export const createJob = (b: { title: string; description: string; budget: number; deadline: string }) => post<Job>('/api/jobs', b);
+export const createJob = (b: { title: string; description: string; budget: number; deadline: string; profileId?: string }) => post<Job>('/api/jobs', b);
+export const getLibrary = () => call<LibraryResponse>('/api/library');
 export const getJob = (id: string) => call<JobDetail>(`/api/jobs/${id}`);
 export const applyToJob = (jobId: string, b: { pitch: string; proposedPrice: number }) => post<Application>(`/api/jobs/${jobId}/applications`, b);
 export const acceptApplication = (applicationId: string) => post<{ projectId: string }>(`/api/applications/${applicationId}/accept`);
@@ -62,6 +63,9 @@ export const reopenChange = (projectId: string, changeId: string, reason: string
 
 // freelancer dashboard (one call for everything on the page)
 export const getFreelancerDashboard = () => call<FreelancerDashboard>('/api/dashboard');
+
+// client dashboard (one call for everything on the page)
+export const getClientDashboard = () => call<ClientDashboard>('/api/client-dashboard');
 
 // demo and reset
 export const runCaseChecks = () => call<DemoResult>('/api/demo');

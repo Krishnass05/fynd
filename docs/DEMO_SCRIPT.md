@@ -21,8 +21,8 @@ A small cafe hires a freelancer to design a logo. Halfway through, the cafe asks
 
 | Step | Who | What to click | What to say |
 | --- | --- | --- | --- |
-| 1. The job | Client | Continue as Demo Client, then My jobs, then "Logo for a new cafe" | The client posted a job. One freelancer has applied with a price |
-| 2. Hire | Client | Accept the applicant | Accepting closes the job and opens a shared project workspace for both sides |
+| 1. The job | Client | Continue as Demo Client, then My jobs, then "Logo for a new cafe" | The client posted a job. Two freelancers applied with different prices. Open the comparison table to see them side by side |
+| 2. Hire | Client | Accept **Second Freelancer** | Accepting closes the job and opens a shared project workspace for both sides |
 | 3. Agree the scope | Freelancer | Continue as Second Freelancer, open the project, upload `signed-sow.txt` | The signed SOW is the baseline. What is included and what is excluded is now on record |
 | 4. Client asks for more | Client | Open the project, upload `amended-sow.txt` | The site compares the two documents. Nobody argued about it |
 | 5. Read the result | Client | Look at the change orders | **Brand guidelines** was excluded in the signed SOW, so it is flagged and priced at 6 hours x Rs 1000 = **Rs 6,000 before tax**. **Social media banners** is also excluded: 4 hours, Rs 4,000. **Menu design** has no hours, so it is not priced until clarified. We never guess zero |

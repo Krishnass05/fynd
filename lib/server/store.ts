@@ -31,6 +31,7 @@ function seed(): Db {
   ];
   const applications: Application[] = [
     { id: 'A1', jobId: 'J1', freelancerId: 'u_freelancer1', freelancerName: 'Demo Freelancer', pitch: 'I can deliver this in two weeks.', proposedPrice: 12000, status: 'accepted', createdAt: NOW },
+    { id: 'A3', jobId: 'J2', freelancerId: 'u_freelancer1', freelancerName: 'Demo Freelancer', pitch: 'Clean, quick logo work with two revision rounds included.', proposedPrice: 8000, status: 'pending', createdAt: NOW },
     { id: 'A2', jobId: 'J2', freelancerId: 'u_freelancer2', freelancerName: 'Second Freelancer', pitch: 'I have designed several cafe logos.', proposedPrice: 9000, status: 'pending', createdAt: NOW },
   ];
   const projects: Project[] = [

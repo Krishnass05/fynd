@@ -47,6 +47,9 @@ Status: **Done** (built), **Planned** (agreed, not built), **Open** (still to de
 | D-27 | 2026-10-17 | One navigation bar everywhere: PillNav via `AppNav`, links from `lib/nav.ts` | Requested by Krishna. A second nav is not allowed | Done |
 | D-33 | 2026-10-17 | Every page must work on a 375px phone: no sideways scroll (long words break), buttons and inputs at least 44px tall, navigation folds into a menu. Checked by measuring overflow and touch targets on all pages | Requested by Krishna. Judges and the MBA team will open it on phones | Done |
 | D-34 | 2026-10-18 | Client-side requirements are extended with 20 items (FR31 to FR50) from what Upwork shows hiring clients (public home and Hire pages). Build first: client dashboard summary, SOW-library categories, pricing insight, proposal compare, milestones. Team seats and real escrow stay out of scope | Requested by Krishna. Items that tie to the SOW library and change orders strengthen the USP. Logged-in Upwork screens were not seen, so unseen items are marked as our own ideas | Planned |
+| D-35 | 2026-10-18 | Krishna approved the two items D-03 had put out of scope: reviews (FR47) and a simulated protected-payment ledger (FR43), as small clearly labelled versions | Request on 2026-10-18. They stay Could until the Should items are done | Planned |
+| D-36 | 2026-10-18 | The SOW library is a snapshot file (`lib/data/sowLibrary.json`): 28 profiles from Harini's 15 SOWs and the rate and budget lines of Sanjana's PDF. A job started from a profile gives the project that profile's rate and hours | Gives FR35 and FR41 real numbers. Refresh the file as more SOWs are written. Figures are illustrative | Done |
+| D-37 | 2026-10-18 | Proposals are compared in a table that scrolls inside its own box on phones, with lowest price marked and each price shown against the job budget and the library price | FR38. Prices are the main thing a client compares | Done |
 
 ## Team and process
 
@@ -68,5 +71,4 @@ Status: **Done** (built), **Planned** (agreed, not built), **Open** (still to de
 | O-4 | Chat live or refresh-based? (refresh every few seconds today) | Krishna |
 | O-5 | Show a labelled test-mode payment screen, or end at the approved change order? | Krishna |
 | O-6 | Which PDF text library? | Krishna, when PDF reading is built |
-| O-8 | Bring back small, labelled versions of reviews (FR47) and a simulated protected-payment ledger (FR43), which D-03 put out of scope? | Krishna |
 | O-7 | Is the official `fixture.json` available? | Organisers |

@@ -19,8 +19,27 @@ export interface Job {
   description: string;
   budget: number;
   deadline: string; // ISO date, e.g. 2026-11-10
+  profileId?: string; // library profile the job started from (sets the project rate and hours when accepted)
+  category?: string;
   status: JobStatus;
   createdAt: string;
+}
+
+// One job profile from the team SOW library: typical rate and hours, what is usually included and excluded.
+export interface LibraryProfile {
+  id: string;
+  name: string;
+  category: string;
+  ratePerHour: number | null;
+  typicalHours: number | null;
+  deliverables: string[];
+  excluded: string[];
+  source: 'harini' | 'sanjana';
+}
+
+export interface LibraryResponse {
+  note: string;
+  profiles: LibraryProfile[];
 }
 
 export type ApplicationStatus = 'pending' | 'accepted' | 'rejected';
@@ -29,6 +48,7 @@ export interface Application {
   id: string;
   jobId: string;
   jobTitle?: string; // filled in by the dashboard endpoint
+  freelancerSkills?: string[]; // filled in by the job endpoint, for comparing proposals
   freelancerId: string;
   freelancerName: string;
   pitch: string;
@@ -164,6 +184,7 @@ export interface UploadSowResult {
 
 export interface JobDetail {
   job: Job;
+  typicalTotal: number | null; // typical price for the job's library profile, if it started from one (illustrative)
   applications: Application[]; // owner client sees all; a freelancer sees only their own
 }
 
@@ -189,6 +210,35 @@ export interface FreelancerDashboard {
   attention: AttentionItem[];
   applications: Application[];
   openJobs: Job[]; // newest open jobs the freelancer has not applied to, at most 3
+}
+
+export interface ClientDashboardProject {
+  project: Project;
+  freelancerName: string;
+  totals: Totals;
+  hasBaseline: boolean;
+  counts: { awaitingDecision: number; needsClarification: number; rejected: number; approved: number };
+}
+
+export interface ClientDashboardJob {
+  job: Job;
+  applicantCount: number;
+  pendingCount: number; // applicants the client has not decided on yet
+}
+
+export interface ClientAttentionItem {
+  kind: 'applicants' | 'change_orders' | 'no_sow' | 'clarify';
+  title: string;
+  text: string;
+  href: string;
+}
+
+// Everything the client dashboard shows, in one call.
+export interface ClientDashboard {
+  stats: { activeProjects: number; applicantsWaiting: number; awaitingDecision: number; approvedSpend: number };
+  attention: ClientAttentionItem[];
+  projects: ClientDashboardProject[];
+  jobs: ClientDashboardJob[];
 }
 
 export interface DemoStep {

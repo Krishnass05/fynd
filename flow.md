@@ -6,7 +6,7 @@ How things move through the product and through the team. Diagrams are Mermaid, 
 
 ```mermaid
 flowchart TD
-  A[Client posts a job] --> B[Freelancers apply with a pitch and price]
+  A[Client posts a job, optionally from a library profile that fills scope, rate and hours] --> B[Freelancers apply; client compares proposals side by side]
   B --> C{Client accepts one}
   C -->|accept| D[Job becomes in progress, project workspace opens, others are rejected]
   D --> E[Client and freelancer chat in the workspace]

@@ -4,12 +4,13 @@ import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
-  Application, AttentionItem, ChangeRequest, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
+  Application, AttentionItem, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
   JobStatus, Message, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
 import { parseSow, compareSow } from '@/lib/engine/sow';
+import { findProfile } from './library';
 import { db, nextId } from './store';
 
 const nowIso = () => new Date().toISOString();
@@ -56,8 +57,16 @@ export function createJob(u: User, b: Record<string, unknown>): Job {
   if (u.role !== 'client') throw forbidden('Only a client can post a job');
   const deadline = str(b.deadline, 'deadline', 20);
   if (Number.isNaN(Date.parse(deadline))) throw bad('deadline must be a date like 2026-11-10');
+  let profileId: string | undefined;
+  let category: string | undefined;
+  if (b.profileId !== undefined && b.profileId !== '') {
+    const prof = typeof b.profileId === 'string' ? findProfile(b.profileId) : undefined;
+    if (!prof) throw bad('Unknown job profile');
+    profileId = prof.id;
+    category = prof.category;
+  }
   const job: Job = {
-    id: nextId('J'), clientId: u.id, title: str(b.title, 'title', 120), description: str(b.description, 'description', 2000),
+    id: nextId('J'), clientId: u.id, profileId, category, title: str(b.title, 'title', 120), description: str(b.description, 'description', 2000),
     budget: num(b.budget, 'budget'), deadline, status: 'open', createdAt: nowIso(),
   };
   db().jobs.push(job);
@@ -71,7 +80,10 @@ export function getJob(u: User, id: string): JobDetail {
   if (u.role === 'freelancer' && job.status !== 'open' && !hasApplied(u, id)) throw notFound('Job not found');
   let applications = db().applications.filter((a) => a.jobId === id);
   if (u.role === 'freelancer') applications = applications.filter((a) => a.freelancerId === u.id);
-  return { job, applications };
+  const prof = job.profileId ? findProfile(job.profileId) : undefined;
+  const typicalTotal = prof?.ratePerHour && prof.typicalHours ? prof.ratePerHour * prof.typicalHours : null;
+  const withSkills = applications.map((a) => ({ ...a, freelancerSkills: db().users.find((x) => x.id === a.freelancerId)?.skills ?? [] }));
+  return { job, typicalTotal, applications: withSkills };
 }
 
 export function applyToJob(u: User, jobId: string, b: Record<string, unknown>): Application {
@@ -101,6 +113,10 @@ export function acceptApplication(u: User, applicationId: string): { projectId: 
     id: nextId('P'), jobId: job.id, jobTitle: job.title, clientId: job.clientId, freelancerId: app.freelancerId,
     ratePerHour: 1000, availableHours: 40, currency: 'INR', createdAt: nowIso(),
   };
+  // A job started from a library profile carries that profile's typical rate and hours into the project.
+  const prof = job.profileId ? findProfile(job.profileId) : undefined;
+  if (prof?.ratePerHour) project.ratePerHour = prof.ratePerHour;
+  if (prof?.typicalHours) project.availableHours = prof.typicalHours;
   db().projects.push(project);
   db().desks.set(project.id, new ScopeDesk({ scope: { included: [], excluded: [] }, ratePerHour: project.ratePerHour, availableHours: project.availableHours }));
   db().labels.set(project.id, {});
@@ -277,6 +293,49 @@ export function freelancerDashboard(u: User): FreelancerDashboard {
       approvedValue: projects.reduce((sum, p) => sum + p.totals.committedValue, 0),
     },
     projects, attention, applications, openJobs: open.slice(0, 3),
+  };
+}
+
+// ---- client dashboard ----
+export function clientDashboard(u: User): ClientDashboard {
+  if (u.role !== 'client') throw forbidden('This dashboard is for clients');
+  const projects: ClientDashboardProject[] = [];
+  const attention: ClientAttentionItem[] = [];
+  for (const p of listProjects(u)) {
+    const d = getProject(u, p.id);
+    const count = (s: string) => d.changeRequests.filter((c) => c.state === s).length;
+    const hasBaseline = d.sowDocuments.some((s) => s.kind === 'baseline');
+    const counts = { awaitingDecision: count('quoted'), needsClarification: count('needs_clarification'), rejected: count('rejected'), approved: count('approved') };
+    projects.push({ project: p, freelancerName: d.freelancer.name, totals: d.totals, hasBaseline, counts });
+    const href = `/client/projects/${p.id}`;
+    if (!hasBaseline) attention.push({ kind: 'no_sow', title: p.jobTitle, text: `Waiting for ${d.freelancer.name} to upload the signed SOW.`, href });
+    if (counts.awaitingDecision) {
+      attention.push({ kind: 'change_orders', title: p.jobTitle, text: `${counts.awaitingDecision} change ${counts.awaitingDecision === 1 ? 'order needs' : 'orders need'} your decision.`, href });
+    }
+    if (counts.needsClarification) {
+      attention.push({ kind: 'clarify', title: p.jobTitle, text: `${counts.needsClarification} requested ${counts.needsClarification === 1 ? 'item has' : 'items have'} no hours yet, so it cannot be priced.`, href });
+    }
+  }
+  const jobs = db().jobs
+    .filter((j) => j.clientId === u.id)
+    .map((job) => {
+      const apps = db().applications.filter((a) => a.jobId === job.id);
+      return { job, applicantCount: apps.length, pendingCount: apps.filter((a) => a.status === 'pending').length };
+    })
+    .sort((a, b) => b.job.createdAt.localeCompare(a.job.createdAt));
+  for (const j of jobs) {
+    if (j.job.status === 'open' && j.pendingCount) {
+      attention.push({ kind: 'applicants', title: j.job.title, text: `${j.pendingCount} ${j.pendingCount === 1 ? 'applicant is' : 'applicants are'} waiting for you.`, href: `/client/jobs/${j.job.id}` });
+    }
+  }
+  return {
+    stats: {
+      activeProjects: projects.length,
+      applicantsWaiting: jobs.filter((j) => j.job.status === 'open').reduce((n, j) => n + j.pendingCount, 0),
+      awaitingDecision: projects.reduce((n, p) => n + p.counts.awaitingDecision, 0),
+      approvedSpend: projects.reduce((n, p) => n + p.totals.committedValue, 0),
+    },
+    attention, projects, jobs,
   };
 }
 

@@ -28,8 +28,8 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `getMe` | `GET /api/me` | any user | `User` |
 | `updateMe` | `PUT /api/me` `{name?, skills?}` | any user | `User` |
 | `listJobs` | `GET /api/jobs?mine=1&status=open` | client (mine) or freelancer (open jobs) | `Job[]` |
-| `createJob` | `POST /api/jobs` `{title, description, budget, deadline}` | client | `Job` |
-| `getJob` | `GET /api/jobs/:id` | owner client, or freelancer | `JobDetail` (client sees all applicants, freelancer only their own) |
+| `createJob` | `POST /api/jobs` `{title, description, budget, deadline, profileId?}` | client | `Job`. With a `profileId`, accepting an applicant sets the project rate and hours from that profile |
+| `getJob` | `GET /api/jobs/:id` | owner client, or freelancer | `JobDetail`: the job, `typicalTotal` (library price, or null) and applicants with their skills (client sees all, freelancer only their own) |
 | `applyToJob` | `POST /api/jobs/:id/applications` `{pitch, proposedPrice}` | freelancer | `Application` (409 if already applied or job not open) |
 | `acceptApplication` | `POST /api/applications/:id/accept` | owner client | `{ projectId }` (closes the job, rejects other applicants, creates the project) |
 | `listProjects` | `GET /api/projects` | participant | `Project[]` |
@@ -40,6 +40,8 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `approveChange` | `POST /api/projects/:id/changes/:changeId/approve` | client | `ProjectDetail` |
 | `rejectChange` | `POST /api/projects/:id/changes/:changeId/reject` `{reason}` | client | `ProjectDetail` |
 | `reopenChange` | `POST /api/projects/:id/changes/:changeId/reopen` `{reason}` | either | `ProjectDetail` (reason required) |
+| `getClientDashboard` | `GET /api/client-dashboard` | client | `ClientDashboard` (stats, things needing attention, projects with capacity and counts, jobs with applicant counts) |
+| `getLibrary` | `GET /api/library` | any user | `LibraryResponse` (28 job profiles with typical rate, hours, deliverables and exclusions; illustrative) |
 | `getFreelancerDashboard` | `GET /api/dashboard` | freelancer | `FreelancerDashboard` (stats, projects with capacity and counts, things needing attention, applications, up to 3 open jobs) |
 | `runCaseChecks` | `GET /api/demo` | anyone | `DemoResult` (the 3 checks, in printed order) |
 | `resetData` | `POST /api/reset` | anyone (demos and tests) | `{ ok: true }` |

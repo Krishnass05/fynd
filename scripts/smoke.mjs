@@ -27,8 +27,24 @@ const seedDash = await ok('GET', '/api/dashboard', 'u_freelancer1');
 assert.equal(seedDash.stats.activeProjects, 1);
 assert.equal(seedDash.projects[0].counts.awaitingClient, 1, 'seed R1 is waiting for the client');
 assert.ok(seedDash.attention.some((a) => a.kind === 'awaiting_client'));
-assert.equal(seedDash.stats.openJobs, 1, 'seed job J2 is open');
+assert.equal(seedDash.stats.openJobs, 0, 'seed freelancer 1 already applied to the only open job J2');
 assert.equal((await call('GET', '/api/dashboard', CLIENT)).status, 403, 'dashboard is freelancer only');
+
+// client dashboard on the seed data
+const cdash = await ok('GET', '/api/client-dashboard', CLIENT);
+assert.equal(cdash.stats.activeProjects, 1);
+assert.equal(cdash.stats.awaitingDecision, 1, 'seed R1 waits for the client');
+assert.equal(cdash.stats.applicantsWaiting, 2, 'seed J2 has two pending applicants');
+assert.ok(cdash.attention.some((a) => a.kind === 'change_orders'));
+assert.ok(cdash.attention.some((a) => a.kind === 'applicants'));
+assert.equal(cdash.jobs.find((j) => j.job.id === 'J2').pendingCount, 2);
+
+// compare proposals: applicants carry skills, prices differ
+const j2 = await ok('GET', '/api/jobs/J2', CLIENT);
+assert.equal(j2.applications.length, 2);
+assert.ok(j2.applications.every((a) => Array.isArray(a.freelancerSkills)));
+assert.notEqual(j2.applications[0].proposedPrice, j2.applications[1].proposedPrice);
+assert.equal((await call('GET', '/api/client-dashboard', 'u_freelancer1')).status, 403, 'client dashboard is client only');
 
 // hiring: post, apply, accept
 const job = await ok('POST', '/api/jobs', CLIENT, { title: 'Shop website', description: 'A small shop website with a contact form.', budget: 15000, deadline: '2026-12-01' });
@@ -96,5 +112,20 @@ assert.equal((await call('POST', `/api/projects/${projectId}/sow`, CLIENT, { kin
 assert.equal((await call('GET', '/api/me', '')).status, 403);
 const demo = await ok('GET', '/api/demo');
 assert.equal(demo.allPassed, true);
+
+// SOW library: a job started from a profile carries the profile rate and hours into the project
+const lib = await ok('GET', '/api/library', CLIENT);
+assert.ok(lib.profiles.length >= 20, 'library has the team profiles');
+const php = lib.profiles.find((p) => p.id === 'php-development');
+assert.equal(php.ratePerHour, 1200);
+const pjob = await ok('POST', '/api/jobs', CLIENT, { title: 'PHP backend', description: 'Backend modules for a small shop.', budget: 48000, deadline: '2026-12-01', profileId: 'php-development' });
+assert.equal(pjob.category, php.category);
+assert.equal((await call('POST', '/api/jobs', CLIENT, { title: 'x', description: 'y', budget: 1, deadline: '2026-12-01', profileId: 'no-such-profile' })).status, 400, 'unknown profile refused');
+const papp = await ok('POST', `/api/jobs/${pjob.id}/applications`, FREE, { pitch: 'Can do.', proposedPrice: 46000 });
+const { projectId: pid2 } = await ok('POST', `/api/applications/${papp.id}/accept`, CLIENT);
+const pproj = await ok('GET', `/api/projects/${pid2}`, CLIENT);
+assert.equal(pproj.project.ratePerHour, 1200, 'rate comes from the library profile');
+assert.equal(pproj.project.availableHours, php.typicalHours, 'hours come from the library profile');
+assert.equal((await ok('GET', `/api/jobs/${pjob.id}`, CLIENT)).typicalTotal, 1200 * php.typicalHours);
 
 console.log('smoke test passed');
