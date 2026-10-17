@@ -150,7 +150,9 @@ Profiles are sample data. A freelancer edits their own profile on the Profile pa
 
 ```mermaid
 flowchart LR
-  L[Landing page] --> G[Login: Client or Freelancer, email and password]
+  H[Home page /: hero search, categories, how it works] -->|Log in or Sign up| L[Start page /start: pick Client or Freelancer]
+  H -->|search or category, not signed in| G
+  L --> G[Login: Client or Freelancer, email and password]
   G --> C[Client home: search box and client reviews, top bar with Jobs and Services menus]
   C --> CP[Avatar menu: Profile, Dashboard, Log out]
   G --> F[Freelancer home: job search and freelancer reviews, top bar with Jobs and Services menus]

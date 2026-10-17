@@ -2,7 +2,7 @@
 .greeting { margin-bottom: 4px; }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: 18px 0 8px; }
 .stat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
-.statValue { font-family: var(--font-display), Georgia, serif; font-size: 30px; line-height: 1.1; color: var(--ink-strong); }
+.statValue { font-family: var(--font-display), system-ui, sans-serif; font-size: 30px; line-height: 1.1; color: var(--ink-strong); }
 .statLabel { color: var(--muted); font-size: 13px; margin-top: 2px; }
 .attention { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .attention li { flex-wrap: wrap; display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius); background: var(--warnbg); }

@@ -33,7 +33,9 @@ function LoginForm() {
     try {
       const user = await login({ email, password, role });
       setUserId(user.id);
-      router.push(HOME[user.role]);
+      // Come back to the page that sent you here (for example a search from the home page), if it is on your side.
+      const next = params.get('next');
+      router.push(next && next.startsWith(`/${user.role}`) && !next.startsWith('//') ? next : HOME[user.role]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not log in');
       setBusy(false);
@@ -85,7 +87,7 @@ export default function LoginPage() {
       <div className="inner">
         <div className="appbar-public"><AppNav /></div>
         <Suspense fallback={null}><LoginForm /></Suspense>
-        <p className="muted" style={{ textAlign: 'center' }}><Link href="/">Back to the start page</Link></p>
+        <p className="muted" style={{ textAlign: 'center' }}><Link href="/start">Back to the start page</Link></p>
       </div>
     </main>
   );

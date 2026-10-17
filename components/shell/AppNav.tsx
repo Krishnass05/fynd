@@ -9,6 +9,7 @@ import type { Role } from '@/lib/types';
 
 const PUBLIC_ITEMS = [
   { label: 'Home', href: '/' },
+  { label: 'Start', href: '/start' },
   { label: 'Case checks', href: '/demo' },
 ];
 

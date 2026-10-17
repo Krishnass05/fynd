@@ -2,49 +2,69 @@
 
 Rules for how the app looks and moves. Sanjana owns the final look. Everyone follows these so the pages feel like one product. Colours come from the five-colour palette below; the layout and headings follow the Crafthire design. Checked against the ui-ux-pro-max rules (accessibility first, restrained motion), with animation from React Bits.
 
-## Colour palette
+## Colour palette (60 / 30 / 10)
 
-Chosen by Krishna on 18 October 2026. The site is mostly white; orange is used on some buttons only.
+Set by Krishna on 18 October 2026. Pure white dominates; charcoal gives structure; paprika is the accent.
 
-| Name | Hex | Where it is used |
-| --- | --- | --- |
-| White | `#FFFFFF` | Page background (plain white, no pattern or glow) |
-| Silver | `#CCC5B9` | Decoration, soft panels, background art |
-| Charcoal Brown | `#403D39` | Secondary text, links, navigation highlight, bars |
-| Carbon Black | `#252422` | Body text, headings, the dark button |
-| Spicy Paprika | `#EB5E28` (buttons use the darker `#C84B1A`) | Primary buttons with white text, decoration |
+| Share | Name | Hex | Where it is used |
+| --- | --- | --- | --- |
+| 60% | Pure White | `#FFFFFF` | Page backgrounds, cards, content sections, whitespace |
+| 30% | Charcoal Brown | `#403D39` | Headings, navigation, footer and CTA band, structural elements, links |
+| 10% | Spicy Paprika | `#EB5E28` | Accents: active states, indicators, focus ring in the hero, primary buttons (as a deeper paprika glass) |
+| support | Silver | `#CCC5B9` | Borders and dividers |
+| support | Carbon Black | `#252422` | High-contrast body text and icons, the footer |
 
-## Tokens (already in `app/globals.css`)
+Floral White (#FFFCF2) and the earlier palettes (Joveo, Minty Serenity) are no longer used.
+
+## Typography
+
+Inter everywhere (`app/layout.tsx`, `--font-body`; `--font-display` points at the same font). Headings 600 to 700, body 400, buttons 500. Body 15px, line height 1.55.
+
+## Tokens (in `app/globals.css`)
 
 Use the variables. Never put a raw colour in a component.
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `--bg` | `#FFFFFF` | page background, plain white |
-| `--card` | `#FFFFFF` | cards, inputs |
-| `--ink` / `--ink-strong` | `#252422` | body text / headings |
-| `--muted` | `#403D39` | secondary text |
-| `--brand` | `#403D39` | links, highlights, progress bars |
-| `--orange` | `#C84B1A` (Spicy Paprika, darkened) | primary `.btn` background, white text |
-| `--brand-soft` | `#ECE8DF` | neutral badges, bar tracks |
-| `--accent` | `#CCC5B9` | decorative tiles |
-| `--line` | `#E6E1D6` | card edges and dividers (decoration) |
-| `--line-strong` | `#8A857B` | **form field borders** |
+| `--bg`, `--card` | `#FFFFFF` | page and card background |
+| `--ink` / `--ink-strong` | `#252422` | body text |
+| `--charcoal`, `--brand`, `--muted` | `#403D39` | headings, links, secondary text, bars |
+| `--paprika` | `#EB5E28` | accents and active states (not small text: 3.4:1 on white) |
+| `--orange` | `#C84B1A` | older solid paprika, kept for pages that still use it |
+| `--silver` | `#CCC5B9` | borders and dividers |
+| `--line` | `#E6E1D6` | light card edges |
+| `--line-strong` | `#8A857B` | **form field borders** (3.6:1) |
+| `--brand-soft` | `#ECE8DF` | hover fills, neutral badges |
 | `--ok`, `--bad`, `--warn` (+ `bg`) | green, red, amber | statuses. They always come with a word |
 
-Background images: `public/bg/role-client.svg` and `role-freelancer.svg` (the pictures on the two role cards), `public/bg/hero.svg` (soft orange and silver circles behind the start page) and `public/bg/pattern.svg` (faint outline shapes on every page). They are our own drawings, not stock photos.
+## Buttons: Liquid Glass
+
+Every `.btn` is glass: a translucent fill, `backdrop-filter: blur(14px) saturate(160%)`, a fine border and a soft top highlight. There are no opaque fills; browsers without backdrop blur get a solid fallback.
+
+| Class | Use | Text |
+| --- | --- | --- |
+| `.btn` | primary action, deeper paprika glass (rgba 190, 68, 22, 0.88) | white, about 5.7:1 |
+| `.btn.secondary` | on white, clear glass with a charcoal edge | Carbon Black |
+| `.btn.dark` | charcoal glass | white |
+| `.btn.danger` | red glass | white |
+| `.btn.glass-light` | on dark or photo backgrounds (hero, CTA band) | white |
 
 ## Checked contrast (WCAG)
 
 | Pair | Ratio | Needs |
 | --- | --- | --- |
-| Carbon Black on Floral White / white | about 16 : 1 | 4.5 |
-| Charcoal Brown on Floral White | about 10 : 1 | 4.5 |
-| White on darkened Spicy Paprika #C84B1A (primary button) | 4.7 : 1 | 4.5 |
-| White on Charcoal Brown / Carbon Black | 10 to 16 : 1 | 4.5 |
-| Form field border on white | 3.4 : 1 | 3 |
+| Carbon Black on white | 15.9 : 1 | 4.5 |
+| Charcoal Brown on white | 10.9 : 1 | 4.5 |
+| White on the paprika glass button | about 5.7 : 1 | 4.5 |
+| White on Charcoal Brown / Carbon Black | 10.9 / 15.9 : 1 | 4.5 |
+| White on the hero (dark overlay over the photo) | 7 : 1 or more on the text side | 4.5 |
+| Form field border on white | 3.6 : 1 | 3 |
 
-**White on the pure Spicy Paprika #EB5E28 is only 3.4 : 1**, so buttons use a darker shade of it (#C84B1A). Orange is never used for text or links.
+**Pure Spicy Paprika #EB5E28 is only 3.4 : 1 against white**, so it is used for accents, never for small text, and buttons use a deeper paprika glass.
+
+## Home page (/)
+
+`app/page.tsx` with the parts in `components/landing/` and styles in `components/landing/landing.css`: a sticky nav (CraftHire wordmark, Find Talent, Find Work, Explore Categories, How It Works, Log in and Sign up, which open `/start`); the hero (crossfading photos under a dark overlay, a pause button, the Hire / Work toggle, search with autocomplete, trending chips); the category coverflow; How it works (For Hiring / For Finding Work); sample featured talent; a charcoal call-to-action band; the footer. Searches and category links go to the freelancer search (Hire) or the job list (Work), via the login page if nobody is signed in on that side (`?next=` brings them back). Images are local: `public/img/categories/*.svg`, `public/img/how/*.svg` (our drawings) and the two team photos in `public/bg/`. To use a video in the hero, add a muted, licensed clip and set `video` in `HERO_SLIDES` (`components/landing/data.ts`).
 
 ## Motion
 

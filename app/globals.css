@@ -1,5 +1,8 @@
-/* Colour palette: Floral White #FFFCF2, Silver #CCC5B9, Charcoal Brown #403D39, Carbon Black #252422, Spicy Paprika #EB5E28.
-   Mostly white; orange only on some buttons. Sanjana owns the final look. Keep the class names and CSS variables so other pages keep working. */
+/* Colour rule 60/30/10: Pure White #FFFFFF (60%: pages, cards, sections), Charcoal Brown #403D39 (30%: headings,
+   navigation, footer, structure), Spicy Paprika #EB5E28 (10%: accents, primary actions, active states).
+   Support: Silver #CCC5B9 (borders, dividers), Carbon Black #252422 (high-contrast text and icons).
+   Type: Inter everywhere; headings 600-700, body 400, buttons 500. Buttons are Liquid Glass (see the end of this file).
+   Sanjana owns the final look. Keep the class names and CSS variables so other pages keep working. */
 :root {
   --radius: 0.75rem;
   --bg: #ffffff; /* white */
@@ -7,8 +10,12 @@
   --ink: #252422; /* Carbon Black */
   --ink-strong: #252422;
   --muted: #403d39; /* Charcoal Brown: secondary text */
-  --line: #e6e1d6; /* decorative dividers and card edges */
-  --line-strong: #8a857b; /* form field borders (3:1 or more on white and Floral White) */
+  --line: #e6e1d6; /* decorative dividers and card edges (a light Silver) */
+  --silver: #ccc5b9; /* borders and dividers */
+  --charcoal: #403d39; /* the 30% colour */
+  --paprika: #eb5e28; /* the 10% accent: active states, highlights. Not for small text (3.4:1 on white) */
+  --font-display: var(--font-body); /* Inter for headings too */
+  --line-strong: #8a857b; /* form field borders (3.6:1 on white) */
   --brand: #403d39; /* Charcoal Brown: links, highlights, bars. White on it 11:1 */
   --orange: #c84b1a; /* Spicy Paprika, darkened so white text passes: white on it 4.7:1 (on pure #EB5E28 only 3.4:1) */
   --brand-soft: #ece8df; /* Silver tint */
@@ -21,7 +28,8 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body), system-ui, sans-serif; font-size: 15px; line-height: 1.55; }
 a { color: var(--brand); }
-h1, h2, h3 { font-family: var(--font-display), Georgia, serif; color: var(--ink-strong); letter-spacing: -0.01em; }
+h1, h2, h3 { font-family: var(--font-display), system-ui, sans-serif; color: var(--charcoal); font-weight: 700; letter-spacing: -0.02em; }
+h3 { font-weight: 600; }
 h1 { font-size: 30px; margin: 0 0 8px; }
 h2 { font-size: 20px; margin: 28px 0 10px; }
 main.page { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
@@ -30,7 +38,7 @@ main.page { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
 .topbar nav { display: flex; gap: 18px; flex: 1; flex-wrap: wrap; }
 .topbar nav a { color: var(--ink); text-decoration: none; font-weight: 500; }
 .topbar nav a:hover { color: var(--brand); }
-.brand { font-family: var(--font-display), Georgia, serif; font-weight: 700; font-size: 22px; color: var(--ink-strong); text-decoration: none; }
+.brand { font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: 22px; color: var(--ink-strong); text-decoration: none; }
 .brand::after { content: "."; color: var(--brand); }
 
 .muted { color: var(--muted); font-size: 13px; }
@@ -192,7 +200,7 @@ input, select { min-height: 44px; }
 .fcard-photo[data-tone="blue"] { --panel: #ece8df; }
 .fcard-photo[data-tone="yellow"] { --panel: #fff6dc; }
 .fcard-photo[data-tone="green"] { --panel: #f2efe8; }
-.fcard-initials { width: 76px; height: 76px; border-radius: 50%; background: rgba(251, 248, 245, 0.8); display: grid; place-items: center; font-family: var(--font-display), Georgia, serif; font-size: 28px; font-weight: 700; color: var(--ink-strong); }
+.fcard-initials { width: 76px; height: 76px; border-radius: 50%; background: rgba(251, 248, 245, 0.8); display: grid; place-items: center; font-family: var(--font-display), system-ui, sans-serif; font-size: 28px; font-weight: 700; color: var(--ink-strong); }
 .fcard-avail { position: absolute; left: 12px; top: 12px; padding: 3px 10px; border-radius: 999px; background: rgba(251, 248, 245, 0.85); font-size: 12px; font-weight: 600; color: var(--ink-strong); }
 .fcard-avail.busy { color: var(--warn); }
 .fcard-heart { position: absolute; right: 10px; top: 8px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: transparent; color: var(--ink-strong); display: grid; place-items: center; cursor: pointer; }
@@ -226,7 +234,7 @@ input, select { min-height: 44px; }
 .tile2[data-tone="blue"] { background: #ece8df; }
 .tile2[data-tone="yellow"] { background: #fff6dc; }
 .tile2[data-tone="green"] { background: #f2efe8; }
-.tile2 strong { display: block; font-family: var(--font-display), Georgia, serif; font-size: 34px; line-height: 1.1; }
+.tile2 strong { display: block; font-family: var(--font-display), system-ui, sans-serif; font-size: 34px; line-height: 1.1; }
 .tile2 > span { color: var(--muted); font-size: 14px; }
 
 /* Two columns on the dashboard, recent activity list */
@@ -260,18 +268,18 @@ input, select { min-height: 44px; }
 /* Profile page */
 .profile { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 22px; align-items: start; }
 .profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
-.profile-photo { width: 104px; height: 104px; border-radius: 22px; background: var(--brand-soft); display: grid; place-items: center; font-family: var(--font-display), Georgia, serif; font-size: 38px; font-weight: 700; color: var(--ink-strong); flex: none; }
+.profile-photo { width: 104px; height: 104px; border-radius: 22px; background: var(--brand-soft); display: grid; place-items: center; font-family: var(--font-display), system-ui, sans-serif; font-size: 38px; font-weight: 700; color: var(--ink-strong); flex: none; }
 .profile-head h1 { margin: 0; }
 .ratingbox { margin-left: auto; text-align: center; border: 1px solid var(--line); border-radius: 16px; padding: 10px 18px; background: var(--card); }
-.ratingbox strong { font-size: 26px; font-family: var(--font-display), Georgia, serif; }
+.ratingbox strong { font-size: 26px; font-family: var(--font-display), system-ui, sans-serif; }
 .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); margin: 22px 0 14px; }
 .tab { min-height: 44px; padding: 0 14px; border: 0; background: transparent; font: inherit; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; }
 .tab[aria-selected="true"] { color: var(--ink-strong); border-bottom-color: var(--ink-strong); }
 .hirecard { position: sticky; top: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 10px; }
-.hirecard .rate { font-family: var(--font-display), Georgia, serif; font-size: 28px; color: var(--ink-strong); }
+.hirecard .rate { font-family: var(--font-display), system-ui, sans-serif; font-size: 28px; color: var(--ink-strong); }
 .statrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-top: 8px; }
 .statrow div { border-left: 3px solid var(--line); padding-left: 12px; }
-.statrow strong { display: block; font-size: 22px; font-family: var(--font-display), Georgia, serif; color: var(--ink-strong); }
+.statrow strong { display: block; font-size: 22px; font-family: var(--font-display), system-ui, sans-serif; color: var(--ink-strong); }
 .statrow span { color: var(--muted); font-size: 13px; }
 @media (max-width: 900px) { .profile { grid-template-columns: minmax(0, 1fr); } .hirecard { position: static; } .ratingbox { margin-left: 0; } }
 
@@ -285,7 +293,7 @@ input, select { min-height: 44px; }
 .hero2 .cta .btn { min-height: 52px; padding: 0 26px; }
 .truth { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 32px; }
 .truth div { border-left: 2px solid var(--line-strong); padding-left: 14px; }
-.truth strong { display: block; font-family: var(--font-display), Georgia, serif; font-size: 28px; color: var(--ink-strong); }
+.truth strong { display: block; font-family: var(--font-display), system-ui, sans-serif; font-size: 28px; color: var(--ink-strong); }
 .truth span { color: var(--muted); font-size: 14px; }
 .collage { position: relative; min-height: 430px; }
 .collage .blk { position: absolute; border-radius: 22px; }
@@ -296,7 +304,7 @@ input, select { min-height: 44px; }
 .collage .main h3 { margin: 0 0 10px; font-size: 15px; color: var(--muted); font-family: var(--font-body), sans-serif; font-weight: 600; }
 .collage .line { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .collage .line:first-of-type { border-top: 0; }
-.collage .price { font-family: var(--font-display), Georgia, serif; font-size: 30px; color: var(--ink-strong); margin: 8px 0 2px; }
+.collage .price { font-family: var(--font-display), system-ui, sans-serif; font-size: 30px; color: var(--ink-strong); margin: 8px 0 2px; }
 .collage .flag { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--warnbg); color: var(--warn); font-size: 12px; font-weight: 600; }
 .collage .float { position: absolute; left: 0; bottom: 0; background: var(--card); border-radius: 16px; padding: 12px 16px; box-shadow: 0 16px 36px -20px rgba(37, 36, 34, 0.5); font-size: 14px; max-width: 220px; }
 .collage .float strong { display: block; color: var(--ink-strong); }
@@ -358,7 +366,7 @@ input, select { min-height: 44px; }
 .avatar-link:hover { box-shadow: 0 0 0 3px var(--brand-soft); }
 .avatar-link[aria-current="page"] { box-shadow: 0 0 0 2px var(--orange); }
 .profilecard { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; margin-bottom: 28px; }
-.profilecard .avatar-xl { width: 84px; height: 84px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; font-family: var(--font-display), Georgia, serif; font-size: 30px; font-weight: 700; flex: none; }
+.profilecard .avatar-xl { width: 84px; height: 84px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; font-family: var(--font-display), system-ui, sans-serif; font-size: 30px; font-weight: 700; flex: none; }
 .profilecard-main { flex: 1 1 260px; min-width: 0; }
 .profilecard-main h1 { margin: 0 0 4px; font-size: 28px; text-align: left; }
 .profile-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px 24px; margin: 18px 0 0; padding-top: 18px; border-top: 1px solid var(--line); width: 100%; }
@@ -437,3 +445,38 @@ button.avatar-link { border: 0; font: inherit; font-weight: 700; font-size: 14px
 
 .mega-grid--1 { grid-template-columns: minmax(0, 1fr); min-width: 260px; }
 .mega-grid--1 > li > a { margin: 0; padding: 10px 12px; }
+
+/* ---- Liquid Glass buttons ----------------------------------------------------------------------
+   Translucent fill, backdrop blur, a fine border and a soft top highlight. Variants:
+   .btn (primary)    paprika glass, white text   (deeper paprika so white text passes: about 5.7:1 on white)
+   .btn.secondary    clear glass for white backgrounds, Carbon Black text
+   .btn.dark         charcoal glass, white text
+   .btn.danger       red glass, white text
+   .btn.glass-light  clear glass for dark or image backgrounds (the hero, the CTA band), white text */
+.btn {
+  --glass: rgba(190, 68, 22, 0.88);
+  --glass-hover: rgba(168, 56, 14, 0.92);
+  --glass-edge: rgba(255, 255, 255, 0.3);
+  --glass-glow: rgba(190, 68, 22, 0.45);
+  background: var(--glass);
+  color: #fff;
+  font-weight: 500;
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 0 rgba(0, 0, 0, 0.06), 0 8px 22px -12px var(--glass-glow);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.btn:hover { filter: none; background: var(--glass-hover); }
+.btn:active { transform: translateY(1px); }
+.btn.secondary { --glass: rgba(64, 61, 57, 0.05); --glass-hover: rgba(64, 61, 57, 0.1); --glass-edge: rgba(64, 61, 57, 0.24); --glass-glow: rgba(37, 36, 34, 0.25); color: var(--ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 6px 18px -14px var(--glass-glow); }
+.btn.dark { --glass: rgba(64, 61, 57, 0.9); --glass-hover: rgba(37, 36, 34, 0.92); --glass-edge: rgba(255, 255, 255, 0.22); --glass-glow: rgba(37, 36, 34, 0.5); color: #fff; }
+.btn.danger { --glass: rgba(158, 47, 55, 0.88); --glass-hover: rgba(132, 36, 44, 0.92); --glass-glow: rgba(158, 47, 55, 0.4); color: #fff; }
+.btn.glass-light { --glass: rgba(255, 255, 255, 0.14); --glass-hover: rgba(255, 255, 255, 0.24); --glass-edge: rgba(255, 255, 255, 0.42); --glass-glow: rgba(0, 0, 0, 0.35); color: #fff; }
+.role-card .btn { --glass: rgba(255, 255, 255, 0.72); --glass-hover: rgba(255, 255, 255, 0.9); --glass-edge: rgba(64, 61, 57, 0.24); color: var(--ink); background: var(--glass); }
+.role-card .btn:hover { background: var(--glass-hover); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .btn { --glass: rgb(190, 68, 22); }
+  .btn.glass-light { --glass: rgba(37, 36, 34, 0.55); }
+}
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:active { transform: none; } }
