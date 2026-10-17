@@ -151,7 +151,7 @@ Profiles are sample data. A freelancer edits their own profile on the Profile pa
 ```mermaid
 flowchart LR
   L[Landing page] --> G[Login: Client or Freelancer, email and password]
-  G --> C[Client: opens on Find freelancers, top bar with Jobs and Services menus]
+  G --> C[Client home: search box and client reviews, top bar with Jobs and Services menus]
   C --> CP[Avatar: client profile with the dashboard underneath]
   G --> F[Freelancer: top bar with Services menu]
   CP --> C1[Dashboard: tiles, activity, attention]

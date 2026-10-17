@@ -55,7 +55,7 @@ export const MENUS: Record<Role, MegaMenu | null> = {
 
 // Where each side opens after login and where the logo goes. The client dashboard is not the first
 // page: it sits under the client's profile (the avatar in the top bar).
-export const HOME: Record<Role, string> = { client: '/client/freelancers', freelancer: '/freelancer' };
+export const HOME: Record<Role, string> = { client: '/client', freelancer: '/freelancer' };
 export const PROFILE: Record<Role, string> = { client: '/client/profile', freelancer: '/freelancer/profile' };
 // The link before the drop-down menus in the desktop top bar (clients have none).
 export const LEAD: Record<Role, NavItem | null> = { client: null, freelancer: { href: '/freelancer', label: 'Dashboard', icon: 'home' } };
