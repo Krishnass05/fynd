@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unified Workspace | Fynd ScopeDesk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'floral-white': '#FFFCF2',
+            'silver': '#CCC5B9',
+            'charcoal-brown': '#403D39',
+            'carbon-black': '#252422',
+            'spicy-paprika': '#EB5E28',
+          },
+          fontFamily: {
+            sans: ['Manrope', 'sans-serif'],
+            display: ['Fraunces', 'serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --floral-white: #FFFCF2;
+      --silver: #CCC5B9;
+      --charcoal-brown: #403D39;
+      --carbon-black: #252422;
+      --spicy-paprika: #EB5E28;
+    }
+    body {
+      background-color: #FFFCF2;
+      color: #252422;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid #CCC5B9;
+      background: #FFFCF2;
+      color: #403D39;
+    }
+    .badge-paprika {
+      background: #EB5E28;
+      color: #FFFFFF;
+      border-color: #EB5E28;
+    }
+    .badge-carbon {
+      background: #252422;
+      color: #FFFCF2;
+      border-color: #252422;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background-color: #EB5E28;
+      color: #FFFFFF;
+      border: 1px solid #EB5E28;
+    }
+    .btn-primary:hover {
+      background-color: #252422;
+      border-color: #252422;
+    }
+    .btn-secondary {
+      background-color: #FFFCF2;
+      color: #252422;
+      border: 1px solid #CCC5B9;
+    }
+    .btn-secondary:hover {
+      background-color: #CCC5B9;
+    }
+    .btn-dark {
+      background-color: #252422;
+      color: #FFFCF2;
+      border: 1px solid #252422;
+    }
+    .btn-dark:hover {
+      background-color: #403D39;
+    }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="min-h-screen bg-floral-white flex flex-col">
+  <!-- Global Top Bar -->
+  <header class="border-b border-silver bg-white px-6 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../../index.html" class="font-display font-bold text-xl text-carbon-black tracking-tight flex items-center gap-2">
+          <span>Fynd ScopeDesk</span>
+        </a>
+        <span class="badge badge-carbon">[Standalone HTML]</span>
+      </div>
+      <nav class="flex items-center gap-4 text-xs font-semibold">
+        <a href="../../index.html" class="text-charcoal-brown hover:text-spicy-paprika">Main App</a>
+        <a href="../../app/(client)/client/page.html" class="text-charcoal-brown hover:text-spicy-paprika">Client Portal</a>
+        <a href="../../app/(freelancer)/freelancer/page.html" class="text-charcoal-brown hover:text-spicy-paprika">Freelancer Portal</a>
+        <a href="../../components/workspace/UnifiedWorkspace.html" class="text-charcoal-brown hover:text-spicy-paprika">Unified Workspace</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6">
+    <div id="root">
+      
+    </div>
+  </main>
+
+  <footer class="border-t border-silver bg-white text-center py-4 text-xs text-charcoal-brown">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6">
+      <span>Fynd ScopeDesk - Standalone View</span>
+      <span>5-Color Palette: Floral White, Silver, Charcoal Brown, Carbon Black, Spicy Paprika</span>
+      <span>Zero Emojis</span>
+    </div>
+  </footer>
+
+  <script type="text/babel">
+
+    function UnifiedWorkspaceView() {
+      const [messages, setMessages] = React.useState([]);
+      const [chatInput, setChatInput] = React.useState('');
+      const [scopeVersion, setScopeVersion] = React.useState(1);
+      const [remainingHours, setRemainingHours] = React.useState(2);
+      const [requests, setRequests] = React.useState([
+        { id: 'R1', text: 'Add payment checkout', hours: 6, cost: 6000, status: 'pending', flag: 'Explicit Exclusion Override' },
+        { id: 'R2', text: 'Fix broken contact form', hours: 2, cost: 0, status: 'pending', flag: 'Internal Defect Rework' }
+      ]);
+
+      const handleSendMessage = (customText) => {
+        const text = customText || chatInput;
+        if (!text.trim()) return;
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setMessages(prev => [...prev, { id: Date.now(), sender: 'Freelancer_Dev', text, time: now }]);
+        setChatInput('');
+      };
+
+      const handleAiExtract = () => {
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setMessages(prev => [
+          ...prev,
+          { id: Date.now(), sender: 'Freelancer_Dev', text: '@AI Analyze chat and quote scope variance', time: now },
+          { id: Date.now() + 1, sender: 'Meta_AI', text: '[@AI] Scanned messages against SOW v1.\n\n• Baseline Included: "one landing page", "contact form"\n• Baseline Excluded: "payment checkout"\n\nDetected Exclusion Override: R1 ("Add payment checkout") for 6h @ ₹1,000/hr = ₹6,000 before taxes.', time: now }
+        ]);
+      };
+
+      const handleApprove = (id) => {
+        setRequests(requests.map(r => r.id === id ? { ...r, status: 'approved' } : r));
+        setScopeVersion(v => v + 1);
+      };
+
+      const handleReject = (id) => {
+        setRequests(requests.map(r => r.id === id ? { ...r, status: 'rejected' } : r));
+        setScopeVersion(v => v + 1);
+      };
+
+      return (
+        <div class="grid grid-cols-12 gap-6 h-[720px]">
+          <!-- Left: Chat Panel -->
+          <div class="col-span-7 bg-white border border-silver rounded-2xl flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-silver flex items-center justify-between bg-floral-white">
+              <div>
+                <span class="badge badge-paprika mb-1">[Project Chat]</span>
+                <h2 class="font-bold text-sm text-carbon-black">Chat with Client_A</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="badge badge-carbon">[Quota: 0/5 Calls Used]</span>
+                <a href="../../components/call/Call.html" class="btn btn-secondary text-xs py-1 px-3">[Call] Start Call</a>
+              </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-floral-white/30">
+              {messages.length === 0 ? (
+                <div class="h-full flex flex-col items-center justify-center text-center p-6 text-charcoal-brown space-y-2">
+                  <span class="badge badge-carbon">[Empty Workspace Chat]</span>
+                  <p class="text-xs">Type below or trigger @AI assistant.</p>
+                  <button onClick={() => handleSendMessage('Hello Client_A! Ready to start on the landing page.')} class="btn btn-secondary text-xs">
+                    Say Hello
+                  </button>
+                </div>
+              ) : (
+                messages.map(m => (
+                  <div key={m.id} class={'p-3 rounded-xl max-w-lg text-xs space-y-1 ' + (m.sender === 'Meta_AI' ? 'bg-floral-white border-2 border-spicy-paprika mx-auto' : 'bg-white border border-silver')}>
+                    <div class="flex justify-between font-bold text-carbon-black text-[11px]">
+                      <span>{m.sender}</span>
+                      <span class="text-charcoal-brown font-normal">{m.time}</span>
+                    </div>
+                    <div class="whitespace-pre-wrap">{m.text}</div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <!-- Quick AI Bar -->
+            <div class="p-2 border-t border-silver bg-floral-white flex gap-2">
+              <button onClick={handleAiExtract} class="btn btn-secondary py-1 text-xs">@AI Extract Scope Requests</button>
+              <button onClick={() => handleSendMessage('@AI Compare Baseline SOW v1')} class="btn btn-secondary py-1 text-xs">@AI Compare Baseline</button>
+            </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} class="p-3 border-t border-silver flex gap-2 bg-white">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder="Type message or @AI query..."
+                class="flex-1 px-3 py-2 border border-silver rounded-lg text-xs bg-floral-white font-semibold focus:outline-none"
+              />
+              <button type="submit" class="btn btn-primary text-xs">Send</button>
+            </form>
+          </div>
+
+          <!-- Right: ScopeDesk Drawer -->
+          <div class="col-span-5 bg-white border border-silver rounded-2xl p-5 flex flex-col overflow-y-auto space-y-4">
+            <div class="flex items-center justify-between border-b border-silver pb-3">
+              <div>
+                <span class="badge badge-carbon">[Scope Engine]</span>
+                <h3 class="font-bold text-base text-carbon-black mt-1">ScopeDesk (SOW v{scopeVersion})</h3>
+              </div>
+              <span class="badge badge-paprika font-bold">{remainingHours}h remaining</span>
+            </div>
+
+            <!-- Boundaries -->
+            <div class="p-3 bg-floral-white border border-silver rounded-xl text-xs space-y-2">
+              <div class="font-bold text-carbon-black">SOW v1 Scope Boundaries:</div>
+              <div class="flex gap-2">
+                <span class="badge badge-carbon">[In: landing page, form]</span>
+                <span class="badge badge-paprika">[Out: payment checkout]</span>
+              </div>
+            </div>
+
+            <!-- Requests -->
+            <div class="space-y-3 flex-1 overflow-y-auto">
+              <div class="font-bold text-xs text-carbon-black">Change Orders ({requests.length}):</div>
+              {requests.map(r => (
+                <div key={r.id} class="p-3 border border-silver rounded-xl bg-floral-white text-xs space-y-2">
+                  <div class="flex justify-between items-center">
+                    <strong class="text-carbon-black">{r.id}: {r.text}</strong>
+                    <span class="badge">{r.status.toUpperCase()}</span>
+                  </div>
+                  <div class="text-[11px] text-spicy-paprika font-bold">{r.flag}</div>
+                  <div class="flex justify-between text-[11px] text-charcoal-brown">
+                    <span>Effort: {r.hours}h</span>
+                    <span>Cost: ₹{r.cost.toLocaleString()} before tax</span>
+                  </div>
+                  {r.status === 'pending' ? (
+                    <div class="flex justify-end gap-2 pt-1 border-t border-silver">
+                      <button onClick={() => handleApprove(r.id)} class="btn btn-primary py-1 px-3 text-xs">[Approve]</button>
+                      <button onClick={() => handleReject(r.id)} class="btn btn-secondary py-1 px-3 text-xs">[Reject]</button>
+                    </div>
+                  ) : (
+                    <div class="text-[11px] text-charcoal-brown font-bold text-right">[{r.status === 'approved' ? 'Committed into SOW' : 'Rejected - 0h booked'}]</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.render(<UnifiedWorkspaceView />, document.getElementById('root'));
+  
+</script>
+</body>
+</html>

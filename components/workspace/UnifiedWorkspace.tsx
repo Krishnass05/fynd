@@ -199,7 +199,7 @@ export default function UnifiedWorkspace({
     const { clean, wasRedacted } = redactContacts(raw);
     if (wasRedacted) {
       setRedactionNotice(
-        '⚠️ Privacy Guard: Personal email or phone number detected & redacted (***REDACTED***) to prevent off-platform leakage.'
+        '[Alert] Privacy Guard: Personal email or phone number detected & redacted (***REDACTED***) to prevent off-platform leakage.'
       );
       setTimeout(() => setRedactionNotice(null), 6000);
     }
@@ -240,11 +240,11 @@ export default function UnifiedWorkspace({
       // Meta AI response comparing chat with baseline fixture.json
       const responseText =
         aiMode === 'semantic'
-          ? `🤖 @AI (Semantic Parser): Scanned 3 chat messages against baseline SOW v1.\n\n` +
+          ? `[@AI] (Semantic Parser): Scanned 3 chat messages against baseline SOW v1.\n\n` +
             `• Baseline In-Scope: "one landing page", "contact form"\n` +
             `• Baseline Excluded: "payment checkout"\n\n` +
             `Detected Scope Request: Client requested "payment checkout" in chat. This matches an EXPLICIT EXCLUSION in fixture.json. Generated formal quote for ScopeDesk R1 (6 hours × ₹1,000/hr = ₹6,000 before taxes).`
-          : `🤖 @AI (Deterministic Rule Engine): Pattern matched token "payment checkout" against excluded array.\n\n` +
+          : `[@AI] (Deterministic Rule Engine): Pattern matched token "payment checkout" against excluded array.\n\n` +
             `• Rule Triggered: EXCLUSION_OVERRIDE_FLAG\n` +
             `• Proposed Request: R1 ("Add payment checkout")\n` +
             `• Pricing: 6 hrs @ ₹1,000/hr = ₹6,000 before taxes.\n` +
@@ -326,7 +326,7 @@ export default function UnifiedWorkspace({
       {
         id: `msg-${Date.now()}`,
         sender: 'Freelancer_Dev',
-        text: `✅ Scope Change Approved: ${req.id} ("${req.text}") for ${req.hours}h (${money(req.billableTotal)} before tax). Baseline version advanced to v${scopeVersion + 1}.`,
+        text: `[Approved] Scope Change Approved: ${req.id} ("${req.text}") for ${req.hours}h (${money(req.billableTotal)} before tax). Baseline version advanced to v${scopeVersion + 1}.`,
         timestamp: now,
       },
     ]);
@@ -352,7 +352,7 @@ export default function UnifiedWorkspace({
       {
         id: `msg-${Date.now()}`,
         sender: 'Freelancer_Dev',
-        text: `❌ Scope Change Rejected: ${req.id} ("${req.text}"). Reason: "${reason}". (0h booked, ₹0 billed). Version advanced to v${scopeVersion + 1}.`,
+        text: `[Rejected] Scope Change Rejected: ${req.id} ("${req.text}"). Reason: "${reason}". (0h booked, ₹0 billed). Version advanced to v${scopeVersion + 1}.`,
         timestamp: now,
       },
     ]);
@@ -380,7 +380,7 @@ export default function UnifiedWorkspace({
       {
         id: `msg-${Date.now()}`,
         sender: 'Freelancer_Dev',
-        text: `❓ Clarification Requested for ${req.id} ("${req.text}"): ${note}`,
+        text: `[Clarification] Clarification Requested for ${req.id} ("${req.text}"): ${note}`,
         timestamp: now,
       },
     ]);
@@ -431,7 +431,7 @@ export default function UnifiedWorkspace({
 
     if (duplicateCount > 0 && addedCount === 0) {
       setImportNotification(
-        `🛡️ Deduplication Block: Request(s) already exist in ScopeDesk. Blocked duplicate import to prevent double-charging or double-booking effort.`
+        `[Block] Deduplication Block: Request(s) already exist in ScopeDesk. Blocked duplicate import to prevent double-charging or double-booking effort.`
       );
     } else {
       setImportNotification(`Successfully imported ${addedCount} request(s). (${duplicateCount} duplicate(s) skipped)`);
@@ -589,7 +589,7 @@ export default function UnifiedWorkspace({
               }}
               title="Browser WebRTC Call Quota: 5 free audio calls per workspace. Video unlocked on Pro."
             >
-              {isSubscribedState ? '★ Pro: Unlimited Calls' : `Calls: ${callCountState}/5 Used`}
+              {isSubscribedState ? '[PRO] Unlimited Calls' : `Calls: ${callCountState}/5 Used`}
             </span>
 
             {/* Start Call Button */}
@@ -607,7 +607,7 @@ export default function UnifiedWorkspace({
                 border: 'none',
               }}
             >
-              📞 [ Start Call ]
+              [Call] Start Call
             </button>
 
             {onClose ? (
@@ -617,7 +617,7 @@ export default function UnifiedWorkspace({
                 className="btn secondary pill-sm"
                 style={{ padding: '6px 12px', color: 'var(--seashell)', borderColor: 'var(--lilac-ash)' }}
               >
-                ✕ Close
+                Close
               </button>
             ) : null}
           </div>
@@ -691,7 +691,7 @@ export default function UnifiedWorkspace({
         >
           {messages.length === 0 ? (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: 'var(--muted)' }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}>💬</div>
+              <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>[Empty Workspace]</div>
               <strong style={{ color: 'var(--carbon-black)', fontSize: 15, marginBottom: 6 }}>Project Chat is Empty</strong>
               <p style={{ fontSize: 13, maxWidth: 360, margin: '0 0 16px', lineHeight: 1.5 }}>
                 Start typing below or type <strong>@AI</strong> to extract scope changes and estimate variance pricing.
@@ -701,7 +701,7 @@ export default function UnifiedWorkspace({
                 className="btn secondary pill-sm"
                 onClick={() => handleSendMessage("Hello! I reviewed the baseline SOW and I am ready to begin work on the landing page.")}
               >
-                👋 Say Hello
+                Say Hello
               </button>
             </div>
           ) : (
@@ -725,7 +725,7 @@ export default function UnifiedWorkspace({
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ fontSize: 16 }}>🤖</span>
+                      <span style={{ fontSize: 13, fontWeight: 700 }}>[@AI]</span>
                       <strong style={{ color: 'var(--space-indigo)', fontSize: 13 }}>Meta AI ScopeDesk Assistant</strong>
                       <span className="badge pro" style={{ fontSize: 10, padding: '1px 6px' }}>Offline Verified</span>
                     </div>
@@ -811,7 +811,7 @@ export default function UnifiedWorkspace({
                         fontWeight: 600,
                       }}
                     >
-                      🔒 Contact info masked by privacy filter
+                      [Privacy] Contact info masked by privacy filter
                     </div>
                   ) : null}
                 </div>
@@ -835,7 +835,7 @@ export default function UnifiedWorkspace({
                 border: '1px solid var(--line)',
               }}
             >
-              🤖 Meta AI is extracting scope changes and comparing against SOW v1...
+              [AI] Meta AI is extracting scope changes and comparing against SOW v1...
             </div>
           ) : null}
           <div ref={chatScrollRef} />
@@ -870,7 +870,7 @@ export default function UnifiedWorkspace({
               gap: 4,
             }}
           >
-            ✨ @AI Extract Scope Requests
+            @AI Extract Scope Requests
           </button>
           <button
             type="button"
@@ -890,7 +890,7 @@ export default function UnifiedWorkspace({
               gap: 4,
             }}
           >
-            📋 @AI Compare Baseline
+            @AI Compare Baseline
           </button>
           <button
             type="button"
@@ -910,7 +910,7 @@ export default function UnifiedWorkspace({
               gap: 4,
             }}
           >
-            💰 @AI Generate Quote
+            @AI Generate Quote
           </button>
         </div>
 
@@ -947,7 +947,7 @@ export default function UnifiedWorkspace({
             }}
             title="Click to insert @AI assistant command"
           >
-            🤖 @AI
+            @AI
           </button>
 
           <input
@@ -999,7 +999,7 @@ export default function UnifiedWorkspace({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <span className="badge pro">Case C35 Engine</span>
+              <span className="badge pro">Scope Engine</span>
               <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--space-indigo)' }}>
                 SOW Version v{scopeVersion}
               </span>
@@ -1017,7 +1017,7 @@ export default function UnifiedWorkspace({
             title="Download full evidence package: starting state, negotiated scope, call audit, and final capacity snapshot"
             style={{ fontWeight: 700 }}
           >
-            📥 [ Export Versioned Evidence JSON ]
+            [Export] [ Export Versioned Evidence JSON ]
           </button>
         </div>
 
@@ -1113,12 +1113,12 @@ export default function UnifiedWorkspace({
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {includedScope.map((inc) => (
               <span key={inc} className="badge good" style={{ fontSize: 11 }}>
-                ✓ Included: {inc}
+                [In] Included: {inc}
               </span>
             ))}
             {excludedScope.map((exc) => (
               <span key={exc} className="badge bad" style={{ fontSize: 11 }}>
-                ✕ Excluded: {exc}
+                [Out] Excluded: {exc}
               </span>
             ))}
           </div>
@@ -1144,7 +1144,7 @@ export default function UnifiedWorkspace({
               }}
               title="Test Deduplication Hash: attempts to re-import R1 and R2 to prove double-booking is blocked"
             >
-              🔄 Re-Import R1/R2 (Dedup Test)
+              [Sync] Re-Import R1/R2 (Dedup Test)
             </button>
             <button
               type="button"
@@ -1216,7 +1216,7 @@ export default function UnifiedWorkspace({
                       border: '1px solid var(--lilac-ash)',
                     }}
                   >
-                    ⚡ {r.anomalyFlag}
+                    [Flag] {r.anomalyFlag}
                   </div>
                 ) : null}
 
@@ -1274,14 +1274,14 @@ export default function UnifiedWorkspace({
                       onClick={() => handleApprove(r)}
                       title="Approve scope change: advances version to v2, deducts hours from capacity, adds to committed work"
                     >
-                      ✓ [ Approve ]
+                      [ Approve ]
                     </button>
                   </div>
                 ) : (
                   <div style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'right' }}>
                     {isApproved
-                      ? `✓ Committed into SOW v${r.version}. Remaining capacity: ${remainingHours}h`
-                      : `✕ Rejected (v${r.version}): 0h committed, ₹0 billed.`}
+                      ? `[Committed] Committed into SOW v${r.version}. Remaining capacity: ${remainingHours}h`
+                      : `[Rejected] (v${r.version}): 0h committed, ₹0 billed.`}
                   </div>
                 )}
               </div>
@@ -1335,7 +1335,7 @@ export default function UnifiedWorkspace({
                   overflow: 'hidden',
                 }}
               >
-                <div style={{ fontSize: 48, marginBottom: 8 }}>📹</div>
+                <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>[Video Stream]</div>
                 <div style={{ fontWeight: 700, fontSize: 16 }}>HD Peer-to-Peer Video Stream Active</div>
                 <div style={{ fontSize: 12, color: 'var(--almond-silk)' }}>
                   Encrypted browser WebRTC session between Freelancer_Dev and Client_A
@@ -1406,7 +1406,7 @@ export default function UnifiedWorkspace({
                 onClick={() => setIsMuted(!isMuted)}
                 style={{ borderRadius: 999 }}
               >
-                {isMuted ? '🔇 Unmute Mic' : '🎤 Mute Mic'}
+                {isMuted ? 'Unmute Mic' : 'Mute Mic'}
               </button>
 
               {/* Video Camera Toggle: Locked on Free, Unlocked on Pro */}
@@ -1420,7 +1420,7 @@ export default function UnifiedWorkspace({
                     borderRadius: 999,
                   }}
                 >
-                  {isVideoActive ? '📷 Turn Camera Off' : '📹 Turn Camera On'}
+                  {isVideoActive ? 'Turn Camera Off' : 'Turn Camera On'}
                 </button>
               ) : (
                 <div style={{ display: 'inline-block', position: 'relative' }}>
@@ -1431,7 +1431,7 @@ export default function UnifiedWorkspace({
                     title="Video calling is a Pro Subscription feature. Free tier includes 5 audio-only calls."
                     style={{ borderRadius: 999, opacity: 0.6 }}
                   >
-                    🔒 Video (Pro Only)
+                    [Pro] Video (Pro Only)
                   </button>
                 </div>
               )}
@@ -1443,7 +1443,7 @@ export default function UnifiedWorkspace({
                 onClick={() => handleEndCall(false)}
                 style={{ borderRadius: 999 }}
               >
-                🔴 End Call
+                End Call
               </button>
             </div>
 
@@ -1465,7 +1465,7 @@ export default function UnifiedWorkspace({
                 onClick={() => handleEndCall(true)}
                 style={{ fontWeight: 700 }}
               >
-                ⚡ [ Simulate Call End (+1 Call Count) ]
+                [Simulate Call End (+1 Call Count)]
               </button>
               <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>
                 Quickly tests calls 1 through 6 during grading to trigger paywall.
@@ -1491,7 +1491,7 @@ export default function UnifiedWorkspace({
             }}
           >
             <div style={{ textAlign: 'center', marginBottom: 20 }}>
-              <div style={{ fontSize: 36, marginBottom: 8 }}>🔒</div>
+              <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>[LOCKED]</div>
               <h2 style={{ margin: '0 0 6px', fontSize: 22, color: 'var(--space-indigo)' }}>
                 You&apos;ve used all 5 Free Audio Calls on this workspace.
               </h2>
@@ -1537,12 +1537,12 @@ export default function UnifiedWorkspace({
                 }}
               >
                 <div style={{ fontWeight: 700, color: 'var(--space-indigo)', marginBottom: 4 }}>
-                  📊 MBA Unit Economics Analysis:
+                  MBA Unit Economics Analysis:
                 </div>
                 <div style={{ color: 'var(--dusty-grape)', lineHeight: 1.45 }}>
                   • <strong>Near-Zero Cost-to-Serve:</strong> Browser-native P2P WebRTC uses ephemeral signaling (~₹0.08 per call bandwidth).
                   <br />
-                  • <strong>High Agency ROI:</strong> ScopeDesk recovers over ₹6,000 per single caught scope leak (e.g. Case C35 R1 checkout override).
+                  • <strong>High Agency ROI:</strong> ScopeDesk recovers over ₹6,000 per single caught scope leak (e.g. R1 checkout override).
                   <br />
                   • <strong>Gross Margin:</strong> 98.4% SaaS margin per agency seat.
                 </div>
@@ -1552,10 +1552,10 @@ export default function UnifiedWorkspace({
               <div style={{ fontSize: 13, color: 'var(--space-indigo)' }}>
                 <div style={{ fontWeight: 700, marginBottom: 6 }}>Included in Pro Seat:</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <div>✓ <strong>Unlimited WebRTC Audio Calls</strong> across all project workspaces</div>
-                  <div>✓ <strong>HD Peer-to-Peer Video Calling Toggle Unlocked</strong> (defaults camera-off for privacy)</div>
-                  <div>✓ <strong>Unlimited WhatsApp Meta-AI Scope Extractions</strong> and automated quote generation</div>
-                  <div>✓ <strong>Tamper-Proof Versioned Evidence Export</strong> with call logs</div>
+                  <div>[x] <strong>Unlimited WebRTC Audio Calls</strong> across all project workspaces</div>
+                  <div>[x] <strong>HD Peer-to-Peer Video Calling Toggle Unlocked</strong> (defaults camera-off for privacy)</div>
+                  <div>[x] <strong>Unlimited WhatsApp Meta-AI Scope Extractions</strong> and automated quote generation</div>
+                  <div>[x] <strong>Tamper-Proof Versioned Evidence Export</strong> with call logs</div>
                 </div>
               </div>
             </div>
@@ -1583,7 +1583,7 @@ export default function UnifiedWorkspace({
                   fontSize: 14,
                 }}
               >
-                ★ [ Upgrade Seat Now (Instant Demo Unlock) ]
+                [Upgrade Seat Now (Instant Demo Unlock)]
               </button>
             </div>
           </div>

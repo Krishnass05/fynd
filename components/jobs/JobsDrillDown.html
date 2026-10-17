@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jobs Drill-Down | Fynd ScopeDesk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'floral-white': '#FFFCF2',
+            'silver': '#CCC5B9',
+            'charcoal-brown': '#403D39',
+            'carbon-black': '#252422',
+            'spicy-paprika': '#EB5E28',
+          },
+          fontFamily: {
+            sans: ['Manrope', 'sans-serif'],
+            display: ['Fraunces', 'serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --floral-white: #FFFCF2;
+      --silver: #CCC5B9;
+      --charcoal-brown: #403D39;
+      --carbon-black: #252422;
+      --spicy-paprika: #EB5E28;
+    }
+    body {
+      background-color: #FFFCF2;
+      color: #252422;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid #CCC5B9;
+      background: #FFFCF2;
+      color: #403D39;
+    }
+    .badge-paprika {
+      background: #EB5E28;
+      color: #FFFFFF;
+      border-color: #EB5E28;
+    }
+    .badge-carbon {
+      background: #252422;
+      color: #FFFCF2;
+      border-color: #252422;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background-color: #EB5E28;
+      color: #FFFFFF;
+      border: 1px solid #EB5E28;
+    }
+    .btn-primary:hover {
+      background-color: #252422;
+      border-color: #252422;
+    }
+    .btn-secondary {
+      background-color: #FFFCF2;
+      color: #252422;
+      border: 1px solid #CCC5B9;
+    }
+    .btn-secondary:hover {
+      background-color: #CCC5B9;
+    }
+    .btn-dark {
+      background-color: #252422;
+      color: #FFFCF2;
+      border: 1px solid #252422;
+    }
+    .btn-dark:hover {
+      background-color: #403D39;
+    }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="min-h-screen bg-floral-white flex flex-col">
+  <!-- Global Top Bar -->
+  <header class="border-b border-silver bg-white px-6 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../../index.html" class="font-display font-bold text-xl text-carbon-black tracking-tight flex items-center gap-2">
+          <span>Fynd ScopeDesk</span>
+        </a>
+        <span class="badge badge-carbon">[Standalone HTML]</span>
+      </div>
+      <nav class="flex items-center gap-4 text-xs font-semibold">
+        <a href="../../index.html" class="text-charcoal-brown hover:text-spicy-paprika">Main App</a>
+        <a href="../../app/(client)/client/page.html" class="text-charcoal-brown hover:text-spicy-paprika">Client Portal</a>
+        <a href="../../app/(freelancer)/freelancer/page.html" class="text-charcoal-brown hover:text-spicy-paprika">Freelancer Portal</a>
+        <a href="../../components/workspace/UnifiedWorkspace.html" class="text-charcoal-brown hover:text-spicy-paprika">Unified Workspace</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6">
+    <div id="root">
+      
+    </div>
+  </main>
+
+  <footer class="border-t border-silver bg-white text-center py-4 text-xs text-charcoal-brown">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6">
+      <span>Fynd ScopeDesk - Standalone View</span>
+      <span>5-Color Palette: Floral White, Silver, Charcoal Brown, Carbon Black, Spicy Paprika</span>
+      <span>Zero Emojis</span>
+    </div>
+  </footer>
+
+  <script type="text/babel">
+
+    function JobsDrillDownView() {
+      const [domain, setDomain] = React.useState('all');
+      const jobs = [
+        { id: 'j1', domain: 'web', title: 'Responsive Landing Page & WebRTC Calling', rate: 1000, hours: 10, budget: 10000 },
+        { id: 'j2', domain: 'web', title: 'Full Stack Next.js Contract', rate: 1200, hours: 20, budget: 24000 },
+        { id: 'j3', domain: 'design', title: 'Design System & Figma Tokens', rate: 1100, hours: 15, budget: 16500 },
+        { id: 'j4', domain: 'ai', title: 'NLP Scope Extraction Assistant', rate: 1500, hours: 25, budget: 37500 },
+        { id: 'j5', domain: 'ecommerce', title: 'Headless Storefront Integration', rate: 1300, hours: 30, budget: 39000 }
+      ];
+
+      const filtered = domain === 'all' ? jobs : jobs.filter(j => j.domain === domain);
+
+      return (
+        <div class="space-y-6">
+          <div class="flex items-center justify-between bg-white border border-silver rounded-2xl p-6">
+            <div>
+              <span class="badge badge-paprika mb-2">[Jobs Catalog Drill-Down]</span>
+              <h1 class="text-2xl font-display font-bold text-carbon-black">Job Catalog &amp; Domain Categories</h1>
+              <p class="text-xs text-charcoal-brown">Filter opportunities across domains with verified SOW terms.</p>
+            </div>
+            <a href="../../components/workspace/UnifiedWorkspace.html" class="btn btn-primary text-xs">Open Workspace →</a>
+          </div>
+
+          <div class="flex gap-2 bg-white p-3 border border-silver rounded-xl">
+            {['all', 'web', 'design', 'ai', 'ecommerce'].map(d => (
+              <button
+                key={d}
+                onClick={() => setDomain(d)}
+                class={'px-4 py-1.5 rounded-full text-xs font-bold transition-all ' + (domain === d ? 'bg-carbon-black text-white' : 'bg-floral-white text-charcoal-brown border border-silver')}
+              >
+                {d === 'all' ? 'All Domains' : d.toUpperCase()}
+              </button>
+            ))}
+          </div>
+
+          <div class="space-y-4">
+            {filtered.map(j => (
+              <div key={j.id} class="bg-white border border-silver rounded-xl p-5 flex items-center justify-between">
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="badge badge-carbon">[{j.domain.toUpperCase()}]</span>
+                    <strong class="text-carbon-black text-sm">{j.title}</strong>
+                  </div>
+                  <div class="text-xs text-charcoal-brown">
+                    Rate: ₹{j.rate}/hr &nbsp;|&nbsp; Capacity: {j.hours}h &nbsp;|&nbsp; Budget: ₹{j.budget.toLocaleString()} before tax
+                  </div>
+                </div>
+                <a href="../../app/(freelancer)/freelancer/jobs/[id]/page.html" class="btn btn-secondary text-xs">View SOW Details →</a>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.render(<JobsDrillDownView />, document.getElementById('root'));
+  
+</script>
+</body>
+</html>

@@ -140,10 +140,10 @@ export default function JobsDrillDown({ onOpenWorkspace }: JobsDrillDownProps) {
   const activeJob = JOBS_CATALOG.find((j) => j.id === selectedJobId) || JOBS_CATALOG[0];
 
   const domains: Array<{ id: DomainCategory; label: string; icon: string; count: number }> = [
-    { id: 'web', label: 'Web Development', icon: '🌐', count: 2 },
-    { id: 'design', label: 'UI/UX Design', icon: '🎨', count: 1 },
-    { id: 'ai', label: 'AI/ML & Data Science', icon: '🤖', count: 1 },
-    { id: 'ecommerce', label: 'E-Commerce', icon: '🛍️', count: 1 },
+    { id: 'web', label: 'Web Development', icon: '[Web]', count: 2 },
+    { id: 'design', label: 'UI/UX Design', icon: '[UI]', count: 1 },
+    { id: 'ai', label: 'AI/ML & Data Science', icon: '[AI]', count: 1 },
+    { id: 'ecommerce', label: 'E-Commerce', icon: '[Shop]', count: 1 },
   ];
 
   return (
@@ -175,7 +175,7 @@ export default function JobsDrillDown({ onOpenWorkspace }: JobsDrillDownProps) {
             transition: 'all 0.15s ease',
           }}
         >
-          👁️ Recently Viewed Jobs
+          Recently Viewed Jobs
         </button>
         <button
           type="button"
@@ -193,7 +193,7 @@ export default function JobsDrillDown({ onOpenWorkspace }: JobsDrillDownProps) {
             transition: 'all 0.15s ease',
           }}
         >
-          🔍 Find New Jobs
+          Find New Jobs
         </button>
         <button
           type="button"
@@ -211,7 +211,7 @@ export default function JobsDrillDown({ onOpenWorkspace }: JobsDrillDownProps) {
             transition: 'all 0.15s ease',
           }}
         >
-          💼 Already Working On Jobs (Case C35)
+          Already Working On Jobs
         </button>
       </div>
 
@@ -350,12 +350,12 @@ export default function JobsDrillDown({ onOpenWorkspace }: JobsDrillDownProps) {
             }}
           >
             <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--space-indigo)', marginBottom: 10 }}>
-              📋 Baseline Scope &amp; Legal Exclusions (SOW v1)
+              [SOW] Baseline Scope &amp; Legal Exclusions (SOW v1)
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--space-indigo)', marginBottom: 6 }}>
-                  ✅ INCLUDED SCOPE:
+                  [Included] INCLUDED SCOPE:
                 </div>
                 <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--dusty-grape)' }}>
                   {activeJob.includedScope.map((item, idx) => (
@@ -367,7 +367,7 @@ export default function JobsDrillDown({ onOpenWorkspace }: JobsDrillDownProps) {
               </div>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--space-indigo)', marginBottom: 6 }}>
-                  🚫 EXCLUDED SCOPE (Requires Scope Change):
+                  [Excluded] EXCLUDED SCOPE (Requires Scope Change):
                 </div>
                 <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--dusty-grape)' }}>
                   {activeJob.excludedScope.map((item, idx) => (
@@ -450,7 +450,7 @@ export default function JobsDrillDown({ onOpenWorkspace }: JobsDrillDownProps) {
               cursor: 'pointer',
             }}
           >
-            🚀 [ Accept Job / Open Project Workspace ]
+            [Open] [ Accept Job / Open Project Workspace ]
           </button>
         </div>
       </div>

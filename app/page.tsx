@@ -144,7 +144,7 @@ export default function Home() {
                     gap: 4,
                   }}
                 >
-                  <span style={{ fontSize: 22 }}>💻</span>
+                  <span style={{ fontSize: 13, fontWeight: 700 }}>[Freelancer]</span>
                   <span>Freelancer</span>
                   <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--dusty-grape)' }}>
                     Discover jobs &amp; negotiate scope
@@ -168,7 +168,7 @@ export default function Home() {
                     gap: 4,
                   }}
                 >
-                  <span style={{ fontSize: 22 }}>💼</span>
+                  <span style={{ fontSize: 13, fontWeight: 700 }}>[Client]</span>
                   <span>Client</span>
                   <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--dusty-grape)' }}>
                     Post jobs &amp; approve orders
@@ -196,7 +196,7 @@ export default function Home() {
                 }}
               />
               <p style={{ margin: '6px 0 0', fontSize: 12, color: 'var(--dusty-grape)' }}>
-                🔒 Privacy Guarantee: No personal email or phone number is stored, requested, or exposed.
+                [Privacy Guarantee] No personal email or phone number is stored, requested, or exposed.
               </p>
             </div>
 

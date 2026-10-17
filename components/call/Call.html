@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Call Component | Fynd ScopeDesk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'floral-white': '#FFFCF2',
+            'silver': '#CCC5B9',
+            'charcoal-brown': '#403D39',
+            'carbon-black': '#252422',
+            'spicy-paprika': '#EB5E28',
+          },
+          fontFamily: {
+            sans: ['Manrope', 'sans-serif'],
+            display: ['Fraunces', 'serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --floral-white: #FFFCF2;
+      --silver: #CCC5B9;
+      --charcoal-brown: #403D39;
+      --carbon-black: #252422;
+      --spicy-paprika: #EB5E28;
+    }
+    body {
+      background-color: #FFFCF2;
+      color: #252422;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid #CCC5B9;
+      background: #FFFCF2;
+      color: #403D39;
+    }
+    .badge-paprika {
+      background: #EB5E28;
+      color: #FFFFFF;
+      border-color: #EB5E28;
+    }
+    .badge-carbon {
+      background: #252422;
+      color: #FFFCF2;
+      border-color: #252422;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background-color: #EB5E28;
+      color: #FFFFFF;
+      border: 1px solid #EB5E28;
+    }
+    .btn-primary:hover {
+      background-color: #252422;
+      border-color: #252422;
+    }
+    .btn-secondary {
+      background-color: #FFFCF2;
+      color: #252422;
+      border: 1px solid #CCC5B9;
+    }
+    .btn-secondary:hover {
+      background-color: #CCC5B9;
+    }
+    .btn-dark {
+      background-color: #252422;
+      color: #FFFCF2;
+      border: 1px solid #252422;
+    }
+    .btn-dark:hover {
+      background-color: #403D39;
+    }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="min-h-screen bg-floral-white flex flex-col">
+  <!-- Global Top Bar -->
+  <header class="border-b border-silver bg-white px-6 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../../index.html" class="font-display font-bold text-xl text-carbon-black tracking-tight flex items-center gap-2">
+          <span>Fynd ScopeDesk</span>
+        </a>
+        <span class="badge badge-carbon">[Standalone HTML]</span>
+      </div>
+      <nav class="flex items-center gap-4 text-xs font-semibold">
+        <a href="../../index.html" class="text-charcoal-brown hover:text-spicy-paprika">Main App</a>
+        <a href="../../app/(client)/client/page.html" class="text-charcoal-brown hover:text-spicy-paprika">Client Portal</a>
+        <a href="../../app/(freelancer)/freelancer/page.html" class="text-charcoal-brown hover:text-spicy-paprika">Freelancer Portal</a>
+        <a href="../../components/workspace/UnifiedWorkspace.html" class="text-charcoal-brown hover:text-spicy-paprika">Unified Workspace</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6">
+    <div id="root">
+      
+    </div>
+  </main>
+
+  <footer class="border-t border-silver bg-white text-center py-4 text-xs text-charcoal-brown">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6">
+      <span>Fynd ScopeDesk - Standalone View</span>
+      <span>5-Color Palette: Floral White, Silver, Charcoal Brown, Carbon Black, Spicy Paprika</span>
+      <span>Zero Emojis</span>
+    </div>
+  </footer>
+
+  <script type="text/babel">
+
+    function CallComponentView() {
+      const [callCount, setCallCount] = React.useState(0);
+      const [inCall, setInCall] = React.useState(false);
+      const [paywall, setPaywall] = React.useState(false);
+
+      const startCall = () => {
+        if (callCount >= 5) {
+          setPaywall(true);
+        } else {
+          setInCall(true);
+        }
+      };
+
+      const endCall = () => {
+        setInCall(false);
+        const next = callCount + 1;
+        setCallCount(next);
+        if (next >= 5) {
+          setPaywall(true);
+        }
+      };
+
+      return (
+        <div class="max-w-2xl mx-auto bg-white border border-silver rounded-2xl p-8 shadow-sm space-y-6 text-center">
+          <div class="border-b border-silver pb-4">
+            <span class="badge badge-carbon mb-2">[WebRTC Calling]</span>
+            <h1 class="text-2xl font-display font-bold text-carbon-black">In-App WebRTC Call (Call.tsx)</h1>
+            <p class="text-xs text-charcoal-brown mt-1">Freemium audio calling gate (5 free calls per workspace) and video Pro paywall.</p>
+          </div>
+
+          <div class="p-6 bg-floral-white border border-silver rounded-xl space-y-4">
+            <div class="text-xs font-bold text-carbon-black">
+              Calls Quota: <span class="text-spicy-paprika">{callCount}/5 Calls Used</span>
+            </div>
+
+            {inCall ? (
+              <div class="space-y-4">
+                <div class="w-20 h-20 mx-auto rounded-full bg-carbon-black text-floral-white flex items-center justify-center font-bold text-sm animate-pulse">
+                  [In Call]
+                </div>
+                <div class="text-xs text-charcoal-brown">Encrypted peer session active with Client_A</div>
+                <button onClick={endCall} class="btn btn-primary text-xs">End Call</button>
+              </div>
+            ) : (
+              <button onClick={startCall} class="btn btn-primary text-sm py-3 px-6">
+                [Call] Start Call
+              </button>
+            )}
+          </div>
+
+          {paywall && (
+            <div class="p-6 border-2 border-spicy-paprika rounded-xl bg-floral-white space-y-3">
+              <span class="badge badge-paprika font-bold">[LOCKED]</span>
+              <h3 class="text-base font-bold text-carbon-black">5 Free Calls Limit Reached</h3>
+              <p class="text-xs text-charcoal-brown">Upgrade to Pro Seat (₹499/mo) for unlimited audio &amp; HD video calling.</p>
+              <button onClick={() => { setPaywall(false); setCallCount(0); }} class="btn btn-dark text-xs">
+                [Upgrade Pro Seat (Demo Unlock)]
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<CallComponentView />, document.getElementById('root'));
+  
+</script>
+</body>
+</html>

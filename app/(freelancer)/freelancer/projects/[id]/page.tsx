@@ -44,7 +44,7 @@ export default function FreelancerProject() {
             }}
             onClick={() => setViewMode('interactive')}
           >
-            ⚡ Unified Workspace (Chat, Call &amp; ScopeDesk)
+            [Live] Unified Workspace (Chat, Call &amp; ScopeDesk)
           </button>
           <button
             type="button"
@@ -56,7 +56,7 @@ export default function FreelancerProject() {
             }}
             onClick={() => setViewMode('documents')}
           >
-            📄 SOW Uploads &amp; Change Orders
+            [Docs] SOW Uploads &amp; Change Orders
           </button>
         </div>
       </div>

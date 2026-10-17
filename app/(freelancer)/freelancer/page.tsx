@@ -67,7 +67,7 @@ export default function FreelancerPortal() {
   const notifications = [
     {
       id: 'n1',
-      icon: '🔔',
+      icon: '[Scope]',
       title: 'Scope Request R1 Received',
       desc: 'Client_A submitted "Add payment checkout" (6 hrs) flagged as Exclusion Override.',
       time: '5m ago',
@@ -75,14 +75,14 @@ export default function FreelancerPortal() {
     },
     {
       id: 'n2',
-      icon: '📞',
+      icon: '[Call]',
       title: 'Incoming WebRTC Call Ready',
       desc: 'Browser-native peer room projectFor(P1) available for audio call.',
       time: '12m ago',
     },
     {
       id: 'n3',
-      icon: '⚠️',
+      icon: '[Quota]',
       title: 'Free Call Quota Warning',
       desc: isSubscribed
         ? 'Pro Seat Active: Unlimited calls unlocked.'
@@ -91,14 +91,14 @@ export default function FreelancerPortal() {
     },
     {
       id: 'n4',
-      icon: '📝',
+      icon: '[SOW]',
       title: 'Baseline SOW v1 Locked',
       desc: 'Included: 1 landing page, contact form. Excluded: payment checkout.',
       time: '1h ago',
     },
     {
       id: 'n5',
-      icon: '🤖',
+      icon: '[AI]',
       title: 'WhatsApp Meta-AI Available',
       desc: 'Type @AI in chat to extract scope changes and calculate variance pricing.',
       time: '2h ago',
@@ -143,7 +143,7 @@ export default function FreelancerPortal() {
               transition: 'all 0.15s ease',
             }}
           >
-            📊 Dashboard
+            Dashboard
           </button>
           <button
             type="button"
@@ -163,7 +163,7 @@ export default function FreelancerPortal() {
               transition: 'all 0.15s ease',
             }}
           >
-            🔍 Jobs (Drill-Down Flow)
+            Jobs (Drill-Down Flow)
           </button>
           <button
             type="button"
@@ -183,7 +183,7 @@ export default function FreelancerPortal() {
               transition: 'all 0.15s ease',
             }}
           >
-            👤 Profile
+            Profile
           </button>
         </div>
 
@@ -202,7 +202,7 @@ export default function FreelancerPortal() {
             onClick={() => setIsWorkspaceOpen(true)}
             style={{ background: 'var(--brand)', color: '#FFFFFF' }}
           >
-            🚀 Open Project Workspace
+            [Workspace] Open Project Workspace
           </button>
         )}
       </div>
@@ -243,7 +243,7 @@ export default function FreelancerPortal() {
           >
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <span style={{ fontSize: 16 }}>📋</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>[Tasks]</span>
                 <h3 style={{ margin: 0, fontSize: 15, color: 'var(--space-indigo)' }}>
                   Task List Panel
                 </h3>
@@ -344,7 +344,7 @@ export default function FreelancerPortal() {
                       </span>
                       {task.isScopeChange ? (
                         <div style={{ fontSize: 10, color: 'var(--dusty-grape)', fontWeight: 600 }}>
-                          ⚡ Scope Change (+{task.hours}h)
+                          [Change] Scope Change (+{task.hours}h)
                         </div>
                       ) : null}
                     </div>
@@ -360,13 +360,13 @@ export default function FreelancerPortal() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--dusty-grape)' }}>
-                  <span>✓</span> <strong>M1:</strong> SOW &amp; Wireframes (Done)
+                  <span>[Done]</span> <strong>M1:</strong> SOW &amp; Wireframes (Done)
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--space-indigo)' }}>
-                  <span>▶</span> <strong>M2:</strong> Contact Form Validation (In Progress)
+                  <span>[Active]</span> <strong>M2:</strong> Contact Form Validation (In Progress)
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--muted)' }}>
-                  <span>⏳</span> <strong>M3:</strong> Scope Change R1 (Pending Approval)
+                  <span>[Pending]</span> <strong>M3:</strong> Scope Change R1 (Pending Approval)
                 </div>
               </div>
             </div>
@@ -463,7 +463,7 @@ export default function FreelancerPortal() {
                         fontWeight: 700,
                       }}
                     >
-                      🚀 [ Open Project Workspace ]
+                      [Open] [ Open Project Workspace ]
                     </button>
                   </div>
 
@@ -618,7 +618,7 @@ export default function FreelancerPortal() {
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                       <span className="badge pro">Platform Verified Freelancer</span>
                       <span style={{ fontSize: 12, color: 'var(--muted)' }}>
-                        🔒 Privacy-First Platform Profile
+                        [Privacy] Privacy-First Platform Profile
                       </span>
                     </div>
                   </div>
@@ -644,7 +644,7 @@ export default function FreelancerPortal() {
                   </div>
                   <div style={{ background: 'var(--seashell)', padding: 14, borderRadius: 12, border: '1px solid var(--line)' }}>
                     <div style={{ fontSize: 12, color: 'var(--muted)' }}>Performance Rating</div>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--space-indigo)' }}>4.9 ★★★★★</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--space-indigo)' }}>4.9 / 5.0</div>
                     <div style={{ fontSize: 11, color: 'var(--dusty-grape)' }}>14 Completed Scopes</div>
                   </div>
                 </div>
@@ -683,7 +683,7 @@ export default function FreelancerPortal() {
           >
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <span style={{ fontSize: 16 }}>🔔</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>[Alerts]</span>
                 <h3 style={{ margin: 0, fontSize: 15, color: 'var(--space-indigo)' }}>
                   Notifications Panel
                 </h3>

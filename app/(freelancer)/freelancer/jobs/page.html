@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jobs Discovery | Fynd ScopeDesk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'floral-white': '#FFFCF2',
+            'silver': '#CCC5B9',
+            'charcoal-brown': '#403D39',
+            'carbon-black': '#252422',
+            'spicy-paprika': '#EB5E28',
+          },
+          fontFamily: {
+            sans: ['Manrope', 'sans-serif'],
+            display: ['Fraunces', 'serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --floral-white: #FFFCF2;
+      --silver: #CCC5B9;
+      --charcoal-brown: #403D39;
+      --carbon-black: #252422;
+      --spicy-paprika: #EB5E28;
+    }
+    body {
+      background-color: #FFFCF2;
+      color: #252422;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid #CCC5B9;
+      background: #FFFCF2;
+      color: #403D39;
+    }
+    .badge-paprika {
+      background: #EB5E28;
+      color: #FFFFFF;
+      border-color: #EB5E28;
+    }
+    .badge-carbon {
+      background: #252422;
+      color: #FFFCF2;
+      border-color: #252422;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background-color: #EB5E28;
+      color: #FFFFFF;
+      border: 1px solid #EB5E28;
+    }
+    .btn-primary:hover {
+      background-color: #252422;
+      border-color: #252422;
+    }
+    .btn-secondary {
+      background-color: #FFFCF2;
+      color: #252422;
+      border: 1px solid #CCC5B9;
+    }
+    .btn-secondary:hover {
+      background-color: #CCC5B9;
+    }
+    .btn-dark {
+      background-color: #252422;
+      color: #FFFCF2;
+      border: 1px solid #252422;
+    }
+    .btn-dark:hover {
+      background-color: #403D39;
+    }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="min-h-screen bg-floral-white flex flex-col">
+  <!-- Global Top Bar -->
+  <header class="border-b border-silver bg-white px-6 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../../../../index.html" class="font-display font-bold text-xl text-carbon-black tracking-tight flex items-center gap-2">
+          <span>Fynd ScopeDesk</span>
+        </a>
+        <span class="badge badge-carbon">[Standalone HTML]</span>
+      </div>
+      <nav class="flex items-center gap-4 text-xs font-semibold">
+        <a href="../../../../index.html" class="text-charcoal-brown hover:text-spicy-paprika">Main App</a>
+        <a href="../../../../app/(client)/client/page.html" class="text-charcoal-brown hover:text-spicy-paprika">Client Portal</a>
+        <a href="../../../../app/(freelancer)/freelancer/page.html" class="text-charcoal-brown hover:text-spicy-paprika">Freelancer Portal</a>
+        <a href="../../../../components/workspace/UnifiedWorkspace.html" class="text-charcoal-brown hover:text-spicy-paprika">Unified Workspace</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6">
+    <div id="root">
+      
+    </div>
+  </main>
+
+  <footer class="border-t border-silver bg-white text-center py-4 text-xs text-charcoal-brown">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6">
+      <span>Fynd ScopeDesk - Standalone View</span>
+      <span>5-Color Palette: Floral White, Silver, Charcoal Brown, Carbon Black, Spicy Paprika</span>
+      <span>Zero Emojis</span>
+    </div>
+  </footer>
+
+  <script type="text/babel">
+
+    function FreelancerJobsView() {
+      const domains = [
+        { id: 'all', label: 'All Domains' },
+        { id: 'web', label: 'Web Development' },
+        { id: 'design', label: 'UI/UX Design' },
+        { id: 'ai', label: 'AI/ML & Data' },
+        { id: 'ecommerce', label: 'E-Commerce' }
+      ];
+
+      return (
+        <div class="space-y-6">
+          <div class="flex items-center justify-between bg-white border border-silver rounded-2xl p-6">
+            <div>
+              <span class="badge badge-paprika mb-2">[Job Catalog]</span>
+              <h1 class="text-2xl font-display font-bold text-carbon-black">Discover Jobs</h1>
+              <p class="text-xs text-charcoal-brown">Inspect verified baseline SOWs, rates, and explicit exclusions.</p>
+            </div>
+            <a href="../../../../app/(freelancer)/freelancer/page.html" class="btn btn-secondary text-xs">← Back to Portal</a>
+          </div>
+
+          <div class="flex gap-2">
+            {domains.map(d => (
+              <button key={d.id} class="px-4 py-1.5 border border-silver rounded-full text-xs font-bold bg-white hover:bg-floral-white text-carbon-black">
+                {d.label}
+              </button>
+            ))}
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-white border border-silver rounded-2xl p-6 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="badge badge-carbon">[Web Development]</span>
+                  <h3 class="font-bold text-base text-carbon-black">Responsive Landing Page &amp; WebRTC Calling</h3>
+                </div>
+                <span class="text-sm font-extrabold text-carbon-black">₹10,000 (₹1,000/hr)</span>
+              </div>
+              <p class="text-xs text-charcoal-brown leading-relaxed">
+                Build a modern responsive landing page, contact form validation, and integrate browser-native WebRTC calling.
+              </p>
+              <div class="pt-2 flex justify-between items-center border-t border-silver">
+                <span class="text-xs text-charcoal-brown">Client: Client_A · Baseline: 10 Hours</span>
+                <a href="../../../../app/(freelancer)/freelancer/jobs/[id]/page.html" class="btn btn-primary text-xs">Inspect SOW &amp; Apply →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.render(<FreelancerJobsView />, document.getElementById('root'));
+  
+</script>
+</body>
+</html>

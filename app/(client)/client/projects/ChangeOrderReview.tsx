@@ -180,13 +180,13 @@ export default function ChangeOrderReview({
                             }`}
                             title={f.message}
                           >
-                            <span>⚠️</span>
+                            <span>[Alert]</span>
                             <span>{f.message}</span>
                           </div>
                         ))}
                         {c.warnings.map((w, wIdx) => (
                           <div key={wIdx} className={`${styles.flagBadge} ${styles.flagBadgeDanger}`}>
-                            <span>🛑</span>
+                            <span>[Flag]</span>
                             <span>{w}</span>
                           </div>
                         ))}

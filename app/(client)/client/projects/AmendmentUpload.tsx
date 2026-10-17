@@ -200,7 +200,7 @@ export default function AmendmentUpload({ projectId, onDone }: AmendmentUploadPr
       <ErrorMessage message={error} />
 
       <div className={styles.dropZone} onClick={() => document.getElementById('amendment-file-input')?.click()}>
-        <span className={styles.dropZoneIcon} aria-hidden="true">📄</span>
+        <span className={styles.dropZoneIcon} aria-hidden="true">[SOW]</span>
         <div>
           <label htmlFor="amendment-file-input" className={styles.fileInputLabel}>
             Click to browse or drop an amended SOW

@@ -89,7 +89,7 @@ export default function Profile() {
               <Button type="submit">Save Profile Changes</Button>
               {saved ? (
                 <span style={{ fontSize: 13, color: 'var(--space-indigo)', fontWeight: 600 }}>
-                  ✓ Profile saved successfully.
+                  [OK] Profile saved successfully.
                 </span>
               ) : null}
             </div>
@@ -106,7 +106,7 @@ export default function Profile() {
               color: 'var(--dusty-grape)',
             }}
           >
-            🔒 <strong>Privacy Guard Guarantee:</strong> All client communications remain within the Fynd ScopeDesk
+            [Privacy] <strong>Privacy Guard Guarantee:</strong> All client communications remain within the Fynd ScopeDesk
             environment. Browser-native WebRTC peer signaling is encrypted and ephemeral. Contact details are never exposed.
           </div>
         </Card>

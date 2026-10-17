@@ -15,7 +15,7 @@
   <!-- Babel Standalone via CDN -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Strict 5-Color Palette Configuration:
+  <!-- Strict 5-Color Palette Configuration (NO EMOJIS, CLEAN ENTERPRISE DESIGN):
        1. Floral White:   #FFFCF2 (Luxurious misty off-white canvas)
        2. ~Silver:        #CCC5B9 (Lustrous metallic sheen, soft borders & dividers)
        3. ~Charcoal Brown:#403D39 (Cool deep earth, dark headers, secondary text)
@@ -141,8 +141,8 @@
       return `${id}::${text.trim().toLowerCase()}::${hours}`;
     }
 
-    // Rich Multi-Domain Jobs Catalog
-    const JOBS_CATALOG = [
+    // Initial Jobs Catalog (NO EMOJIS)
+    const INITIAL_JOBS_CATALOG = [
       {
         id: 'J_FLAGSHIP',
         projectId: 'P1',
@@ -162,6 +162,7 @@
         isFlagship: true,
         isRecent: true,
         isActive: true,
+        status: 'assigned'
       },
       {
         id: 'J_WEB_2',
@@ -181,6 +182,7 @@
         skills: ['Next.js', 'TypeScript', 'Tailwind', 'REST API'],
         isRecent: false,
         isActive: false,
+        status: 'open'
       },
       {
         id: 'J_UIUX_1',
@@ -200,6 +202,7 @@
         skills: ['Figma', 'UI Design', 'Design Systems', 'Accessibility'],
         isRecent: true,
         isActive: false,
+        status: 'open'
       },
       {
         id: 'J_UIUX_2',
@@ -219,6 +222,7 @@
         skills: ['Illustrator', 'Figma', 'Vector Art', 'Branding'],
         isRecent: false,
         isActive: false,
+        status: 'open'
       },
       {
         id: 'J_AI_1',
@@ -238,6 +242,7 @@
         skills: ['Python', 'Embeddings', 'LangChain', 'FastAPI'],
         isRecent: true,
         isActive: false,
+        status: 'open'
       },
       {
         id: 'J_AI_2',
@@ -257,6 +262,7 @@
         skills: ['PyTorch', 'Computer Vision', 'ONNX', 'Python'],
         isRecent: false,
         isActive: false,
+        status: 'open'
       },
       {
         id: 'J_ECOM_1',
@@ -276,6 +282,7 @@
         skills: ['React', 'State Management', 'E-Commerce', 'GraphQL'],
         isRecent: false,
         isActive: false,
+        status: 'open'
       },
       {
         id: 'J_ECOM_2',
@@ -295,6 +302,7 @@
         skills: ['Next.js', 'Storefront API', 'Tailwind', 'TypeScript'],
         isRecent: true,
         isActive: false,
+        status: 'open'
       },
     ];
 
@@ -304,13 +312,24 @@
       const [currentView, setCurrentView] = useState('auth'); // 'auth' | 'portal'
       const [userRole, setUserRole] = useState('freelancer'); // 'freelancer' | 'client'
       const [anonymousHandle, setAnonymousHandle] = useState('Freelancer_Dev');
-      const [portalTab, setPortalTab] = useState('dashboard'); // 'dashboard' | 'jobs' | 'profile'
+      const [portalTab, setPortalTab] = useState('dashboard'); // 'dashboard' | 'jobs' | 'post-job' | 'profile'
       const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
 
-      // Jobs Discovery & Domain Filter State
+      // Jobs Catalog State
+      const [jobsCatalog, setJobsCatalog] = useState(INITIAL_JOBS_CATALOG);
       const [jobSubTab, setJobSubTab] = useState('find'); // 'recent' | 'find' | 'working'
       const [selectedDomain, setSelectedDomain] = useState('all'); // 'all' | 'web' | 'design' | 'ai' | 'ecommerce'
       const [selectedJobId, setSelectedJobId] = useState('J_FLAGSHIP');
+
+      // Client "Post a Job" Form State
+      const [newJobTitle, setNewJobTitle] = useState('');
+      const [newJobDomain, setNewJobDomain] = useState('web');
+      const [newJobDescription, setNewJobDescription] = useState('');
+      const [newJobBudget, setNewJobBudget] = useState(12000);
+      const [newJobHours, setNewJobHours] = useState(12);
+      const [newJobDeadline, setNewJobDeadline] = useState('2026-12-01');
+      const [newJobIncluded, setNewJobIncluded] = useState('responsive layout, form validation');
+      const [newJobExcluded, setNewJobExcluded] = useState('payment gateway, third-party hosting');
 
       // Freemium WebRTC Call & Subscription State
       const [callCount, setCallCount] = useState(0);
@@ -378,13 +397,13 @@
       const [uploadedFileName, setUploadedFileName] = useState('');
       const [uploadDiffResult, setUploadDiffResult] = useState(null);
 
-      // Notifications Feed
+      // Notifications Feed (NO EMOJIS)
       const [notifications, setNotifications] = useState([
-        { id: 'n1', icon: '🔔', title: 'Scope Request R1 Received', desc: 'Client submitted "Add payment checkout" (6 hrs) flagged as Exclusion Override.', time: '5m ago', urgent: true },
-        { id: 'n2', icon: '📞', title: 'WebRTC Audio Channel Ready', desc: 'Browser-native peer room available for encrypted calls.', time: '12m ago' },
-        { id: 'n3', icon: '⚠️', title: 'Free Call Quota Reminder', desc: '5 free audio calls available on this workspace. Video unlocked on Pro.', time: '25m ago' },
-        { id: 'n4', icon: '📝', title: 'Baseline SOW v1 Locked', desc: 'Included: 1 landing page, contact form. Excluded: payment checkout.', time: '1h ago' },
-        { id: 'n5', icon: '🤖', title: 'Meta-AI Scope Assistant Online', desc: 'Type @AI in chat to extract scope changes and calculate variance pricing.', time: '2h ago' }
+        { id: 'n1', tag: 'SCOPE', title: 'Scope Request R1 Received', desc: 'Client submitted "Add payment checkout" (6 hrs) flagged as Exclusion Override.', time: '5m ago', urgent: true },
+        { id: 'n2', tag: 'CALL', title: 'WebRTC Audio Channel Ready', desc: 'Browser-native peer room available for encrypted calls.', time: '12m ago' },
+        { id: 'n3', tag: 'QUOTA', title: 'Free Call Quota Reminder', desc: '5 free audio calls available on this workspace. Video unlocked on Pro.', time: '25m ago' },
+        { id: 'n4', tag: 'SOW', title: 'Baseline SOW v1 Locked', desc: 'Included: 1 landing page, contact form. Excluded: payment checkout.', time: '1h ago' },
+        { id: 'n5', tag: 'AI', title: 'Meta-AI Scope Assistant Online', desc: 'Type @AI in chat to extract scope changes and calculate variance pricing.', time: '2h ago' }
       ]);
 
       // Capacity Calculations
@@ -420,9 +439,11 @@
         if (userRole === 'freelancer') {
           setUserRole('client');
           setAnonymousHandle('Client_A');
+          setPortalTab('dashboard');
         } else {
           setUserRole('freelancer');
           setAnonymousHandle('Freelancer_Dev');
+          setPortalTab('dashboard');
         }
       }
 
@@ -440,7 +461,7 @@
 
         const { clean, wasRedacted } = redactContacts(raw);
         if (wasRedacted) {
-          setRedactionNotice('⚠️ Privacy Guard: Personal email or phone number detected & redacted (***REDACTED***) to prevent off-platform leakage.');
+          setRedactionNotice('[Privacy Guard] Personal email or phone number detected & redacted (***REDACTED***) to prevent off-platform leakage.');
           setTimeout(() => setRedactionNotice(null), 6000);
         }
 
@@ -456,7 +477,7 @@
         setChatInput('');
       }
 
-      // Meta AI Scope Extraction
+      // Meta AI Scope Extraction (NO EMOJIS)
       function executeMetaAi(promptText) {
         setIsAiThinking(true);
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -474,11 +495,11 @@
         setTimeout(() => {
           setIsAiThinking(false);
           const aiResponse = aiMode === 'semantic'
-            ? `🤖 @AI (Semantic Parser): Scanned chat history against baseline SOW v1.\n\n` +
+            ? `@AI (Semantic Parser): Scanned chat history against baseline SOW v1.\n\n` +
               `• Baseline In-Scope: "one landing page", "contact form"\n` +
               `• Baseline Excluded: "payment checkout"\n\n` +
               `Detected Request: Client requested "payment checkout". This matches an EXPLICIT EXCLUSION in baseline SOW. Generated formal ScopeDesk quote: R1 (6 hours × ₹1,000/hr = ₹6,000 before taxes).`
-            : `🤖 @AI (Deterministic Rule Engine): Pattern matched token "payment checkout" in exclusion dictionary.\n\n` +
+            : `@AI (Deterministic Rule Engine): Pattern matched token "payment checkout" in exclusion dictionary.\n\n` +
               `• Rule Triggered: EXCLUSION_OVERRIDE_FLAG\n` +
               `• Item: R1 ("Add payment checkout")\n` +
               `• Calculation: 6 hrs @ ₹1,000/hr = ₹6,000 before taxes.\n` +
@@ -536,7 +557,7 @@
         setIsSubscribed(true);
         setShowPaywallModal(false);
         setIsCallActive(true);
-        showToast('★ Pro Seat Activated! Unlimited calls and HD video calling unlocked.');
+        showToast('[Pro] Seat Activated! Unlimited calls and HD video calling unlocked.');
       }
 
       // Scope Desk Actions
@@ -564,7 +585,7 @@
           {
             id: `msg_appr_${Date.now()}`,
             sender: userRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A',
-            text: `✅ Scope Change Approved: ${req.id} ("${req.text}") for ${req.hours}h (${money(req.billableTotal)} before tax). Baseline version advanced to v${scopeVersion + 1}.`,
+            text: `[Approved] Scope Change Approved: ${req.id} ("${req.text}") for ${req.hours}h (${money(req.billableTotal)} before tax). Baseline version advanced to v${scopeVersion + 1}.`,
             timestamp: timeStr
           }
         ]);
@@ -585,7 +606,7 @@
           {
             id: `msg_rej_${Date.now()}`,
             sender: userRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A',
-            text: `❌ Scope Change Rejected: ${req.id} ("${req.text}"). Reason: "${reason}". (0h booked, ₹0 billed). Version advanced to v${scopeVersion + 1}.`,
+            text: `[Rejected] Scope Change Rejected: ${req.id} ("${req.text}"). Reason: "${reason}". (0h booked, ₹0 billed). Version advanced to v${scopeVersion + 1}.`,
             timestamp: timeStr
           }
         ]);
@@ -608,7 +629,7 @@
           {
             id: `msg_clar_${Date.now()}`,
             sender: userRole === 'freelancer' ? 'Freelancer_Dev' : 'Client_A',
-            text: `❓ Clarification Requested for ${req.id} ("${req.text}"): ${note}`,
+            text: `[Clarify] Clarification Requested for ${req.id} ("${req.text}"): ${note}`,
             timestamp: timeStr
           }
         ]);
@@ -657,13 +678,13 @@
         });
 
         if (dups > 0 && added === 0) {
-          showToast('🛡️ Deduplication Block: Request(s) already exist. Blocked duplicate import to prevent double-charging or double-booking.');
+          showToast('[Deduplication Block] Request(s) already exist. Blocked duplicate import to prevent double-charging or double-booking.');
         } else {
           showToast(`Imported ${added} request(s) (${dups} duplicate(s) blocked).`);
         }
       }
 
-      // SOW Upload Handler (PDF, MD, TXT)
+      // SOW Upload Handler (.pdf, .md, .txt)
       function handleSowFileUpload(e) {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -678,7 +699,6 @@
         }
 
         setUploadedFileName(file.name);
-        // Simulate SOW Comparison Analysis
         setUploadDiffResult({
           file: file.name,
           comparedAgainst: 'Baseline SOW v1',
@@ -689,6 +709,39 @@
           totalDeltaHours: 8,
           totalBillableIncrease: 6000
         });
+      }
+
+      // Client: Handle Post Job Submit
+      function handlePostJobSubmit(e) {
+        e.preventDefault();
+        if (!newJobTitle.trim()) return;
+
+        const newJob = {
+          id: `J_${Date.now()}`,
+          projectId: `P_${Date.now().toString().slice(-4)}`,
+          title: newJobTitle.trim(),
+          domain: newJobDomain,
+          categoryName: newJobDomain === 'web' ? 'Web Development' : newJobDomain === 'design' ? 'UI/UX Design' : newJobDomain === 'ai' ? 'AI/ML & Data Science' : 'E-Commerce',
+          clientHandle: anonymousHandle,
+          description: newJobDescription.trim(),
+          hourlyRate: Math.round(Number(newJobBudget) / Math.max(1, Number(newJobHours))),
+          availableHours: Number(newJobHours),
+          budget: Number(newJobBudget),
+          deadline: newJobDeadline,
+          includedScope: newJobIncluded.split(',').map(s => s.trim()).filter(Boolean),
+          excludedScope: newJobExcluded.split(',').map(s => s.trim()).filter(Boolean),
+          skills: ['React', 'TypeScript', 'Tailwind', 'ScopeDesk'],
+          isFlagship: false,
+          isRecent: true,
+          isActive: false,
+          status: 'open'
+        };
+
+        setJobsCatalog(prev => [newJob, ...prev]);
+        showToast(`Job "${newJob.title}" posted successfully!`);
+        setNewJobTitle('');
+        setNewJobDescription('');
+        setPortalTab('dashboard');
       }
 
       // Evidence Export JSON
@@ -737,11 +790,11 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('📥 Evidence JSON export downloaded successfully.');
+        showToast('Evidence JSON export downloaded successfully.');
       }
 
       // Filtered Jobs List for Jobs Tab
-      const filteredJobs = JOBS_CATALOG.filter(job => {
+      const filteredJobs = jobsCatalog.filter(job => {
         if (jobSubTab === 'working') {
           return job.isActive;
         }
@@ -749,24 +802,22 @@
           if (selectedDomain === 'all') return job.isRecent;
           return job.isRecent && job.domain === selectedDomain;
         }
-        // 'find' sub-tab
         if (selectedDomain === 'all') return true;
         return job.domain === selectedDomain;
       });
 
-      const currentSelectedJob = JOBS_CATALOG.find(j => j.id === selectedJobId) || JOBS_CATALOG[0];
+      const currentSelectedJob = jobsCatalog.find(j => j.id === selectedJobId) || jobsCatalog[0];
 
       const domainCategories = [
-        { id: 'all', label: 'All Domains', icon: '⚡', count: JOBS_CATALOG.length },
-        { id: 'web', label: 'Web Development', icon: '🌐', count: JOBS_CATALOG.filter(j => j.domain === 'web').length },
-        { id: 'design', label: 'UI/UX Design', icon: '🎨', count: JOBS_CATALOG.filter(j => j.domain === 'design').length },
-        { id: 'ai', label: 'AI/ML & Data', icon: '🤖', count: JOBS_CATALOG.filter(j => j.domain === 'ai').length },
-        { id: 'ecommerce', label: 'E-Commerce', icon: '🛍️', count: JOBS_CATALOG.filter(j => j.domain === 'ecommerce').length },
+        { id: 'all', label: 'All Domains', tag: 'ALL', count: jobsCatalog.length },
+        { id: 'web', label: 'Web Development', tag: 'WEB', count: jobsCatalog.filter(j => j.domain === 'web').length },
+        { id: 'design', label: 'UI/UX Design', tag: 'DESIGN', count: jobsCatalog.filter(j => j.domain === 'design').length },
+        { id: 'ai', label: 'AI/ML & Data', tag: 'AI', count: jobsCatalog.filter(j => j.domain === 'ai').length },
+        { id: 'ecommerce', label: 'E-Commerce', tag: 'ECOM', count: jobsCatalog.filter(j => j.domain === 'ecommerce').length },
       ];
 
       // ============================================================
-      // VIEW 1: AUTHENTICATION / START VIEW
-      // (Cleaned: Removed 3 bottom cards, removed Evaluator buttons, removed Case 35)
+      // VIEW 1: AUTHENTICATION / START VIEW (NO EMOJIS)
       // ============================================================
       if (currentView === 'auth') {
         return (
@@ -805,9 +856,9 @@
                           : 'border-silver/60 bg-white text-charcoal-brown hover:border-silver'
                       }`}
                     >
-                      <span className="text-2xl">💻</span>
-                      <span className="text-xs font-bold">Freelancer</span>
-                      <span className="text-[10px] text-charcoal-brown/80">Discover & negotiate</span>
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-carbon-black bg-silver/30 px-2 py-0.5 rounded">Freelancer</span>
+                      <span className="text-xs font-bold mt-1">Discover & Negotiate</span>
+                      <span className="text-[10px] text-charcoal-brown/80">Deliver projects</span>
                     </button>
 
                     <button
@@ -819,9 +870,9 @@
                           : 'border-silver/60 bg-white text-charcoal-brown hover:border-silver'
                       }`}
                     >
-                      <span className="text-2xl">💼</span>
-                      <span className="text-xs font-bold">Client</span>
-                      <span className="text-[10px] text-charcoal-brown/80">Post & approve scope</span>
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-carbon-black bg-silver/30 px-2 py-0.5 rounded">Client</span>
+                      <span className="text-xs font-bold mt-1">Post & Approve Scope</span>
+                      <span className="text-[10px] text-charcoal-brown/80">Manage contracts</span>
                     </button>
                   </div>
                 </div>
@@ -839,7 +890,7 @@
                     required
                   />
                   <p className="text-[11px] text-charcoal-brown/80 mt-1.5 flex items-center gap-1">
-                    <span>🔒</span> Zero personal email or phone number exposed.
+                    <span>[Privacy]</span> Zero personal email or phone number exposed.
                   </p>
                 </div>
 
@@ -870,19 +921,18 @@
       const callsLeft = Math.max(0, 5 - callCount);
 
       // ============================================================
-      // VIEW 2: MAIN PORTAL VIEW (TopBar + 3-Column Layout for Dashboard, Jobs, Profile)
+      // VIEW 2: MAIN PORTAL VIEW (TopBar + 3-Column Layout, NO EMOJIS)
       // ============================================================
       return (
         <div className="min-h-screen bg-floral-white flex flex-col">
-          {/* Toast Notification */}
+          {/* Toast Notification (NO EMOJIS) */}
           {toastNotification && (
             <div className="fixed top-4 right-4 z-50 bg-carbon-black text-floral-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 border border-silver animate-bounce">
-              <span>🔔</span> {toastNotification}
+              <span>[Alert]</span> {toastNotification}
             </div>
           )}
 
           {/* TOP NAVIGATION BAR */}
-          {/* Note: Call quota badge is REMOVED from topbar, visible ONLY in chat workspace */}
           <header className="sticky top-0 z-40 bg-white border-b border-silver shadow-sm px-6 py-3 flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-6">
               <div 
@@ -895,7 +945,7 @@
                 <span className="font-serif font-bold text-xl text-carbon-black tracking-tight">Fynd ScopeDesk</span>
               </div>
 
-              {/* Navigation Tabs (Dashboard, Jobs, Profile) */}
+              {/* Navigation Tabs based on Role */}
               <nav className="flex items-center gap-1">
                 <button
                   type="button"
@@ -908,32 +958,62 @@
                 >
                   Dashboard
                 </button>
-                <button
-                  type="button"
-                  onClick={() => { setPortalTab('jobs'); setIsWorkspaceOpen(false); }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
-                    portalTab === 'jobs' && !isWorkspaceOpen
-                      ? 'bg-carbon-black text-floral-white shadow-sm'
-                      : 'text-charcoal-brown hover:bg-silver/20'
-                  }`}
-                >
-                  Jobs
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setPortalTab('profile'); setIsWorkspaceOpen(false); }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
-                    portalTab === 'profile' && !isWorkspaceOpen
-                      ? 'bg-carbon-black text-floral-white shadow-sm'
-                      : 'text-charcoal-brown hover:bg-silver/20'
-                  }`}
-                >
-                  Profile
-                </button>
+
+                {userRole === 'freelancer' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => { setPortalTab('jobs'); setIsWorkspaceOpen(false); }}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                        portalTab === 'jobs' && !isWorkspaceOpen
+                          ? 'bg-carbon-black text-floral-white shadow-sm'
+                          : 'text-charcoal-brown hover:bg-silver/20'
+                      }`}
+                    >
+                      Find Jobs
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setPortalTab('profile'); setIsWorkspaceOpen(false); }}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                        portalTab === 'profile' && !isWorkspaceOpen
+                          ? 'bg-carbon-black text-floral-white shadow-sm'
+                          : 'text-charcoal-brown hover:bg-silver/20'
+                      }`}
+                    >
+                      Profile
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => { setPortalTab('jobs'); setIsWorkspaceOpen(false); }}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                        portalTab === 'jobs' && !isWorkspaceOpen
+                          ? 'bg-carbon-black text-floral-white shadow-sm'
+                          : 'text-charcoal-brown hover:bg-silver/20'
+                      }`}
+                    >
+                      Browse Talent
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setPortalTab('post-job'); setIsWorkspaceOpen(false); }}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                        portalTab === 'post-job' && !isWorkspaceOpen
+                          ? 'bg-carbon-black text-floral-white shadow-sm'
+                          : 'text-charcoal-brown hover:bg-silver/20'
+                      }`}
+                    >
+                      + Post Job
+                    </button>
+                  </>
+                )}
 
                 {isWorkspaceOpen && (
-                  <span className="ml-2 px-3 py-1 rounded-full text-[11px] font-bold bg-spicy-paprika text-white animate-pulse">
-                    ● Active Project Workspace
+                  <span className="ml-2 px-3 py-1 rounded-full text-[11px] font-bold bg-spicy-paprika text-white">
+                    [Active Project Workspace]
                   </span>
                 )}
               </nav>
@@ -942,7 +1022,7 @@
             <div className="flex items-center gap-3">
               {/* Anonymous Display Name */}
               <span className="bg-floral-white text-carbon-black border border-silver px-3 py-1 rounded-full text-xs font-bold">
-                {anonymousHandle}
+                {anonymousHandle} ({userRole === 'freelancer' ? 'Freelancer' : 'Client'})
               </span>
 
               {/* Quick Role Switcher */}
@@ -952,7 +1032,7 @@
                 className="px-3 py-1 rounded-full text-xs font-bold border border-silver bg-white text-charcoal-brown hover:border-carbon-black hover:text-carbon-black transition-all"
                 title={`Switch role to ${userRole === 'freelancer' ? 'Client' : 'Freelancer'}`}
               >
-                ⇄ Switch to {userRole === 'freelancer' ? 'Client' : 'Freelancer'}
+                Switch to {userRole === 'freelancer' ? 'Client' : 'Freelancer'}
               </button>
 
               {/* Sign Out to Auth */}
@@ -995,7 +1075,7 @@
                       onClick={() => setShowSowUploadModal(true)}
                       className="px-3 py-1.5 rounded-xl border border-silver bg-floral-white hover:bg-silver/30 text-carbon-black text-xs font-bold transition-all flex items-center gap-1.5"
                     >
-                      <span>📄</span> Upload Amended SOW
+                      Upload Amended SOW
                     </button>
                   </div>
                 </div>
@@ -1004,7 +1084,7 @@
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-[calc(100vh-175px)] min-h-[680px]">
                   {/* LEFT PANE: Real-Time Chat (7 Cols) */}
                   <div className="lg:col-span-7 bg-white border-2 border-silver rounded-2xl flex flex-col overflow-hidden shadow-sm">
-                    {/* Chat Header WITH CALL CONTROLS */}
+                    {/* Chat Header WITH CALL CONTROLS (NO EMOJIS) */}
                     <div className="bg-carbon-black text-floral-white px-5 py-3.5 flex items-center justify-between border-b border-charcoal-brown">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-spicy-paprika text-white font-bold text-sm flex items-center justify-center">
@@ -1028,15 +1108,15 @@
                             ? 'bg-spicy-paprika text-white border-spicy-paprika'
                             : 'bg-charcoal-brown text-floral-white border-silver/40'
                         }`}>
-                          {isSubscribed ? '★ Pro: Unlimited Calls' : `Calls: ${callCount}/5 Used (${callsLeft} left)`}
+                          {isSubscribed ? '[Pro] Unlimited Calls' : `Calls: ${callCount}/5 Used (${callsLeft} left)`}
                         </span>
 
                         <button
                           type="button"
                           onClick={handleStartCall}
-                          className="px-3.5 py-1.5 rounded-full bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
+                          className="px-3.5 py-1.5 rounded-full bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all"
                         >
-                          <span>📞</span> [ Start Call ]
+                          [ Start Call ]
                         </button>
                       </div>
                     </div>
@@ -1063,12 +1143,12 @@
                       </div>
                     )}
 
-                    {/* Messages Feed - STARTS EMPTY IF NO MESSAGES */}
+                    {/* Messages Feed - STARTS EMPTY IF NO MESSAGES (NO EMOJIS) */}
                     <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 custom-scrollbar bg-white">
                       {messages.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center my-auto">
-                          <div className="w-14 h-14 rounded-full bg-silver/20 flex items-center justify-center text-3xl mb-3 text-charcoal-brown">
-                            💬
+                          <div className="w-12 h-12 rounded-xl bg-silver/20 flex items-center justify-center text-xs font-bold text-charcoal-brown mb-3 border border-silver">
+                            CHAT
                           </div>
                           <h4 className="font-serif font-bold text-sm text-carbon-black mb-1">Project Chat is Empty</h4>
                           <p className="text-xs text-charcoal-brown max-w-sm mb-4 leading-relaxed">
@@ -1080,14 +1160,14 @@
                               onClick={() => handleSendMessage("Hello! I reviewed the baseline SOW and I am ready to begin work on the landing page.")}
                               className="text-[11px] px-3.5 py-1.5 rounded-full border border-silver bg-floral-white hover:bg-silver/30 text-carbon-black font-semibold transition-all"
                             >
-                              👋 Say Hello
+                              Say Hello
                             </button>
                             <button
                               type="button"
                               onClick={() => executeMetaAi('Compare project requirements against baseline SOW')}
                               className="text-[11px] px-3.5 py-1.5 rounded-full bg-carbon-black text-floral-white font-semibold hover:bg-charcoal-brown transition-all"
                             >
-                              🤖 Run @AI Scope Check
+                              Run @AI Scope Check
                             </button>
                           </div>
                         </div>
@@ -1101,7 +1181,7 @@
                               <div key={m.id} className="max-w-[92%] mx-auto bg-floral-white border-2 border-silver rounded-2xl p-4 my-1 shadow-sm">
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-1.5">
-                                    <span>🤖</span>
+                                    <span className="text-[10px] font-bold bg-carbon-black text-floral-white px-1.5 py-0.5 rounded">AI</span>
                                     <span className="font-bold text-xs text-carbon-black">Meta-AI Scope Assistant</span>
                                     <span className="text-[10px] bg-carbon-black text-floral-white px-1.5 py-0.2 rounded font-bold">Verified</span>
                                   </div>
@@ -1144,7 +1224,7 @@
                                 <div>{m.text}</div>
                                 {m.redacted && (
                                   <div className={`text-[10px] mt-1 font-semibold ${isMe ? 'text-silver' : 'text-spicy-paprika'}`}>
-                                    🔒 Masked by privacy filter
+                                    [Privacy] Masked by filter
                                   </div>
                                 )}
                               </div>
@@ -1156,34 +1236,34 @@
 
                       {isAiThinking && (
                         <div className="self-center bg-floral-white border border-silver px-4 py-1.5 rounded-full text-xs font-semibold text-charcoal-brown animate-pulse">
-                          🤖 Meta-AI is analyzing chat history against SOW v1...
+                          Meta-AI is analyzing chat history against SOW v1...
                         </div>
                       )}
                       <div ref={chatEndRef} />
                     </div>
 
-                    {/* Floating @AI Prompt Pills */}
+                    {/* Floating @AI Prompt Pills (NO EMOJIS) */}
                     <div className="bg-floral-white border-t border-silver px-4 py-2 flex items-center gap-2 overflow-x-auto custom-scrollbar">
                       <button
                         type="button"
                         onClick={() => executeMetaAi('Extract scope change requests from chat')}
                         className="px-3 py-1 rounded-full bg-white border border-silver text-carbon-black text-xs font-semibold whitespace-nowrap hover:bg-silver/20 transition-all"
                       >
-                        ✨ @AI Extract Scope
+                        @AI Extract Scope
                       </button>
                       <button
                         type="button"
                         onClick={() => executeMetaAi('Compare against baseline SOW')}
                         className="px-3 py-1 rounded-full bg-white border border-silver text-carbon-black text-xs font-semibold whitespace-nowrap hover:bg-silver/20 transition-all"
                       >
-                        📋 @AI Compare SOW
+                        @AI Compare SOW
                       </button>
                       <button
                         type="button"
                         onClick={() => executeMetaAi('Generate Scope Change Quote for R1')}
                         className="px-3 py-1 rounded-full bg-white border border-silver text-carbon-black text-xs font-semibold whitespace-nowrap hover:bg-silver/20 transition-all"
                       >
-                        💰 @AI Quote R1
+                        @AI Quote R1
                       </button>
                     </div>
 
@@ -1198,7 +1278,7 @@
                         className="bg-carbon-black hover:bg-charcoal-brown text-floral-white px-3 py-2 rounded-xl text-xs font-bold transition-all"
                         title="Insert @AI prompt token"
                       >
-                        🤖 @AI
+                        @AI
                       </button>
 
                       <input
@@ -1218,7 +1298,7 @@
                     </form>
                   </div>
 
-                  {/* RIGHT PANE: Interactive Scope Change Desk Drawer (5 Cols) */}
+                  {/* RIGHT PANE: Interactive Scope Change Desk Drawer (5 Cols, NO EMOJIS) */}
                   <div className="lg:col-span-5 bg-white border-2 border-silver rounded-2xl p-5 flex flex-col gap-4 overflow-y-auto custom-scrollbar shadow-sm">
                     <div className="flex justify-between items-start">
                       <div>
@@ -1235,7 +1315,7 @@
                         className="px-2.5 py-1.5 rounded-xl border border-silver bg-floral-white hover:bg-silver/30 text-carbon-black text-xs font-bold transition-all flex items-center gap-1"
                         title="Download complete versioned evidence JSON package"
                       >
-                        <span>📥</span> Export JSON
+                        Export JSON
                       </button>
                     </div>
 
@@ -1276,18 +1356,18 @@
                       </div>
                     </div>
 
-                    {/* Baseline SOW Scope Boundaries */}
+                    {/* Baseline SOW Scope Boundaries (NO EMOJIS) */}
                     <div className="text-xs">
                       <div className="font-bold text-carbon-black mb-1.5">SOW v1 Scope Boundaries:</div>
                       <div className="flex flex-wrap gap-1.5">
                         {FIXTURE_DATA.scope.included.map(item => (
                           <span key={item} className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-white text-carbon-black border border-silver">
-                            ✓ In: {item}
+                            In: {item}
                           </span>
                         ))}
                         {FIXTURE_DATA.scope.excluded.map(item => (
                           <span key={item} className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-spicy-paprika/15 text-carbon-black border border-spicy-paprika">
-                            ✕ Out: {item}
+                            Out: {item}
                           </span>
                         ))}
                       </div>
@@ -1308,7 +1388,7 @@
                           className="px-2 py-1 rounded bg-floral-white hover:bg-silver/30 border border-silver text-[11px] font-bold text-carbon-black transition-all"
                           title="Verify deduplication hash blocks re-importing R1/R2"
                         >
-                          🔄 Dedup Test
+                          Dedup Test
                         </button>
                         <button
                           type="button"
@@ -1322,7 +1402,7 @@
                       </div>
                     </div>
 
-                    {/* Request Cards */}
+                    {/* Request Cards (NO EMOJIS) */}
                     <div className="flex flex-col gap-2.5">
                       {requests.map(r => {
                         const isAppr = r.status === 'approved';
@@ -1354,7 +1434,7 @@
 
                             {r.anomalyFlag && (
                               <div className="text-[11px] font-bold text-spicy-paprika bg-spicy-paprika/10 px-2 py-1 rounded-md mb-2 border border-spicy-paprika/30">
-                                ⚡ {r.anomalyFlag}
+                                [Flag] {r.anomalyFlag}
                               </div>
                             )}
 
@@ -1393,12 +1473,12 @@
                                   onClick={() => handleApprove(r)}
                                   className="px-3 py-1 rounded-lg bg-spicy-paprika hover:bg-[#d14d1b] text-white text-xs font-bold transition-all shadow-sm"
                                 >
-                                  ✓ [ Approve ]
+                                  [ Approve ]
                                 </button>
                               </div>
                             ) : (
                               <div className="text-[11px] text-charcoal-brown text-right font-medium">
-                                {isAppr ? `✓ Committed into SOW v${r.version}. Remaining capacity: ${remainingHours}h` : `✕ Rejected (v${r.version}): 0h committed, ₹0 billed.`}
+                                {isAppr ? `[Committed] Included in SOW v${r.version}. Remaining capacity: ${remainingHours}h` : `[Rejected] (v${r.version}): 0h committed, ₹0 billed.`}
                               </div>
                             )}
                           </div>
@@ -1411,14 +1491,14 @@
             ) : (
               // ============================================================
               // STEP 2 & 3: 3-COLUMN PORTAL (LEFT SIDEBAR + CENTER + RIGHT SIDEBAR)
-              // The Sidebars remain beside Dashboard, Jobs, and Profile!
+              // (Sidebars remain beside Dashboard, Jobs, and Profile! NO EMOJIS)
               // ============================================================
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                {/* 1. LEFT SIDEBAR: Task List Panel (3 Cols) */}
+                {/* 1. LEFT SIDEBAR: Task List Panel (3 Cols, NO EMOJIS) */}
                 <aside className="lg:col-span-3 bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col gap-5 sticky top-20">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">📋</span>
+                      <span className="text-xs font-bold bg-carbon-black text-floral-white px-2 py-0.5 rounded">TASKS</span>
                       <h3 className="font-serif font-bold text-sm text-carbon-black">Task List Panel</h3>
                     </div>
                     <p className="text-xs text-charcoal-brown">Committed work items & capacity</p>
@@ -1461,7 +1541,7 @@
                               {t.label}
                             </span>
                             {t.isScopeChange && (
-                              <div className="text-[10px] text-spicy-paprika font-bold mt-0.5">⚡ Scope Change (+{t.hours}h)</div>
+                              <div className="text-[10px] text-spicy-paprika font-bold mt-0.5">[Scope Change] (+{t.hours}h)</div>
                             )}
                           </div>
                         </label>
@@ -1474,19 +1554,19 @@
                     <div className="font-bold text-carbon-black mb-2">Active Milestones:</div>
                     <div className="flex flex-col gap-1.5 text-charcoal-brown">
                       <div className="flex items-center gap-1.5 font-medium">
-                        <span className="text-carbon-black font-bold">✓</span> M1: SOW & Wireframes (Done)
+                        <span className="text-carbon-black font-bold">[Done]</span> M1: SOW & Wireframes
                       </div>
                       <div className="flex items-center gap-1.5 font-bold text-spicy-paprika">
-                        <span>▶</span> M2: Contact Form Integration (Active)
+                        <span>[Active]</span> M2: Contact Form Integration
                       </div>
                       <div className="flex items-center gap-1.5 opacity-70">
-                        <span>⏳</span> M3: Payment Checkout (Pending Approval)
+                        <span>[Pending]</span> M3: Payment Checkout
                       </div>
                     </div>
                   </div>
                 </aside>
 
-                {/* 2. CENTER CONTENT AREA (6 Cols) - Changes based on portalTab */}
+                {/* 2. CENTER CONTENT AREA (6 Cols) - Dynamically Renders Tab */}
                 <main className="lg:col-span-6 flex flex-col gap-5">
                   {portalTab === 'dashboard' && (
                     <>
@@ -1530,7 +1610,7 @@
                         </div>
                       </div>
 
-                      {/* Flagship Active Project Card */}
+                      {/* Active Project Card */}
                       <div className="bg-white border-2 border-silver rounded-2xl p-6 shadow-sm">
                         <div className="flex justify-between items-start mb-3">
                           <div>
@@ -1545,9 +1625,9 @@
                           <button
                             type="button"
                             onClick={() => setIsWorkspaceOpen(true)}
-                            className="px-4 py-2 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
+                            className="px-4 py-2 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-sm transition-all"
                           >
-                            <span>🚀</span> [ Open Project Workspace ]
+                            [ Open Project Workspace ]
                           </button>
                         </div>
 
@@ -1602,18 +1682,18 @@
                   )}
 
                   {portalTab === 'jobs' && (
-                    /* DYNAMIC & WORKING JOBS TAB DRILL-DOWN FLOW */
+                    /* DYNAMIC JOBS DISCOVERY & DRILL-DOWN FLOW (NO EMOJIS) */
                     <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-5">
                       <div>
                         <h2 className="font-serif text-xl font-bold text-carbon-black mb-1">
-                          Freelancer Job Discovery Flow
+                          Job Discovery Flow
                         </h2>
                         <p className="text-xs text-charcoal-brown">
-                          Explore domain categories, inspect baseline scope and exclusions, and accept work.
+                          Explore domain categories, inspect baseline deliverables and exclusions, and review projects.
                         </p>
                       </div>
 
-                      {/* 1. Sub-Navigation Tabs (WORKING & INTERACTIVE) */}
+                      {/* Sub-Navigation Tabs */}
                       <div className="flex bg-floral-white p-1 rounded-xl border border-silver gap-1">
                         <button
                           type="button"
@@ -1624,7 +1704,7 @@
                               : 'text-charcoal-brown hover:bg-silver/20'
                           }`}
                         >
-                          👁️ Recently Viewed ({JOBS_CATALOG.filter(j => j.isRecent).length})
+                          Recently Viewed ({jobsCatalog.filter(j => j.isRecent).length})
                         </button>
                         <button
                           type="button"
@@ -1635,7 +1715,7 @@
                               : 'text-charcoal-brown hover:bg-silver/20'
                           }`}
                         >
-                          🔍 Find New Jobs ({JOBS_CATALOG.length})
+                          Find New Jobs ({jobsCatalog.length})
                         </button>
                         <button
                           type="button"
@@ -1646,11 +1726,11 @@
                               : 'text-charcoal-brown hover:bg-silver/20'
                           }`}
                         >
-                          💼 Active Projects ({JOBS_CATALOG.filter(j => j.isActive).length})
+                          Active Projects ({jobsCatalog.filter(j => j.isActive).length})
                         </button>
                       </div>
 
-                      {/* 2. Domain Filter Grid (WORKING & INTERACTIVE) */}
+                      {/* Domain Categories Filter Grid */}
                       <div>
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-xs font-bold text-carbon-black uppercase tracking-wider">
@@ -1675,8 +1755,7 @@
                                 type="button"
                                 onClick={() => {
                                   setSelectedDomain(cat.id);
-                                  // Auto-select the first job of the domain
-                                  const match = JOBS_CATALOG.find(j => cat.id === 'all' || j.domain === cat.id);
+                                  const match = jobsCatalog.find(j => cat.id === 'all' || j.domain === cat.id);
                                   if (match) setSelectedJobId(match.id);
                                 }}
                                 className={`p-3 rounded-xl border-2 flex flex-col items-center text-center transition-all ${
@@ -1685,7 +1764,7 @@
                                     : 'border-silver/60 bg-white hover:border-silver'
                                 }`}
                               >
-                                <span className="text-2xl mb-1">{cat.icon}</span>
+                                <span className="text-[10px] font-bold text-spicy-paprika tracking-wider mb-1">[{cat.tag}]</span>
                                 <span className={`font-bold text-xs ${isSelected ? 'text-carbon-black' : 'text-charcoal-brown'}`}>
                                   {cat.label}
                                 </span>
@@ -1696,7 +1775,7 @@
                         </div>
                       </div>
 
-                      {/* 3. Filtered Jobs Listing Selector */}
+                      {/* Matching Jobs Selector List */}
                       <div>
                         <div className="text-xs font-bold text-carbon-black uppercase tracking-wider mb-2">
                           Matching Jobs ({filteredJobs.length})
@@ -1732,7 +1811,7 @@
                         </div>
                       </div>
 
-                      {/* 4. Selected Job Detailed Drill-Down View */}
+                      {/* Selected Job Detailed Drill-Down Card */}
                       <div className="border border-silver rounded-2xl p-5 bg-floral-white flex flex-col gap-3.5">
                         <div className="flex justify-between items-start">
                           <div>
@@ -1758,7 +1837,7 @@
                         {/* Baseline Scope & Exclusions Breakdown */}
                         <div className="bg-white border border-silver rounded-xl p-3.5 text-xs grid grid-cols-2 gap-3">
                           <div>
-                            <div className="font-bold text-carbon-black mb-1">✅ INCLUDED SCOPE:</div>
+                            <div className="font-bold text-carbon-black mb-1">INCLUDED SCOPE:</div>
                             <ul className="list-disc pl-4 text-charcoal-brown text-[11px] space-y-0.5">
                               {currentSelectedJob.includedScope.map(inc => (
                                 <li key={inc}><strong>{inc}</strong></li>
@@ -1766,7 +1845,7 @@
                             </ul>
                           </div>
                           <div>
-                            <div className="font-bold text-carbon-black mb-1">🚫 EXCLUDED SCOPE:</div>
+                            <div className="font-bold text-carbon-black mb-1">EXCLUDED SCOPE:</div>
                             <ul className="list-disc pl-4 text-charcoal-brown text-[11px] space-y-0.5">
                               {currentSelectedJob.excludedScope.map(exc => (
                                 <li key={exc} className="line-through">{exc}</li>
@@ -1780,7 +1859,7 @@
 
                         {/* Required Skills Badges */}
                         <div>
-                          <div className="text-[11px] font-bold text-charcoal-brown mb-1.5">Required Skills Badges:</div>
+                          <div className="text-[11px] font-bold text-charcoal-brown mb-1.5">Required Skills:</div>
                           <div className="flex flex-wrap gap-1.5">
                             {currentSelectedJob.skills.map(s => (
                               <span key={s} className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-silver/30 text-carbon-black border border-silver">
@@ -1794,16 +1873,137 @@
                         <button
                           type="button"
                           onClick={() => setIsWorkspaceOpen(true)}
-                          className="w-full py-3 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs uppercase tracking-wide shadow-md transition-all flex items-center justify-center gap-2 mt-2"
+                          className="w-full py-3 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs uppercase tracking-wide shadow-md transition-all mt-2"
                         >
-                          <span>🚀</span> [ Accept Job / Open Project Workspace ]
+                          [ Accept Job / Open Project Workspace ]
                         </button>
                       </div>
                     </div>
                   )}
 
+                  {portalTab === 'post-job' && (
+                    /* CLIENT: POST A JOB FORM (NO EMOJIS) */
+                    <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-5">
+                      <div>
+                        <h2 className="font-serif text-xl font-bold text-carbon-black mb-1">
+                          Post a New Job
+                        </h2>
+                        <p className="text-xs text-charcoal-brown">
+                          Create a new contract listing with locked baseline deliverables and explicit exclusions.
+                        </p>
+                      </div>
+
+                      <form onSubmit={handlePostJobSubmit} className="flex flex-col gap-4 text-xs">
+                        <div>
+                          <label className="block font-bold text-carbon-black uppercase mb-1">Job Title</label>
+                          <input
+                            type="text"
+                            value={newJobTitle}
+                            onChange={(e) => setNewJobTitle(e.target.value)}
+                            placeholder="e.g. Next.js Marketing Website & Blog"
+                            className="w-full p-2.5 border border-silver rounded-xl bg-floral-white text-carbon-black font-medium focus:outline-none focus:border-carbon-black"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-bold text-carbon-black uppercase mb-1">Domain Category</label>
+                            <select
+                              value={newJobDomain}
+                              onChange={(e) => setNewJobDomain(e.target.value)}
+                              className="w-full p-2.5 border border-silver rounded-xl bg-floral-white text-carbon-black font-medium focus:outline-none focus:border-carbon-black"
+                            >
+                              <option value="web">Web Development</option>
+                              <option value="design">UI/UX Design</option>
+                              <option value="ai">AI/ML & Data Science</option>
+                              <option value="ecommerce">E-Commerce</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block font-bold text-carbon-black uppercase mb-1">Deadline</label>
+                            <input
+                              type="date"
+                              value={newJobDeadline}
+                              onChange={(e) => setNewJobDeadline(e.target.value)}
+                              className="w-full p-2.5 border border-silver rounded-xl bg-floral-white text-carbon-black font-medium focus:outline-none focus:border-carbon-black"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-bold text-carbon-black uppercase mb-1">Total Budget (INR)</label>
+                            <input
+                              type="number"
+                              min="1000"
+                              step="500"
+                              value={newJobBudget}
+                              onChange={(e) => setNewJobBudget(Number(e.target.value))}
+                              className="w-full p-2.5 border border-silver rounded-xl bg-floral-white text-carbon-black font-medium focus:outline-none focus:border-carbon-black"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-bold text-carbon-black uppercase mb-1">Baseline Hours Capacity</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="100"
+                              value={newJobHours}
+                              onChange={(e) => setNewJobHours(Number(e.target.value))}
+                              className="w-full p-2.5 border border-silver rounded-xl bg-floral-white text-carbon-black font-medium focus:outline-none focus:border-carbon-black"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block font-bold text-carbon-black uppercase mb-1">Full Description</label>
+                          <textarea
+                            rows="3"
+                            value={newJobDescription}
+                            onChange={(e) => setNewJobDescription(e.target.value)}
+                            placeholder="Detailed explanation of requirements and deliverables..."
+                            className="w-full p-2.5 border border-silver rounded-xl bg-floral-white text-carbon-black font-medium focus:outline-none focus:border-carbon-black"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-bold text-carbon-black uppercase mb-1">Included Deliverables (comma separated)</label>
+                            <input
+                              type="text"
+                              value={newJobIncluded}
+                              onChange={(e) => setNewJobIncluded(e.target.value)}
+                              className="w-full p-2.5 border border-silver rounded-xl bg-floral-white text-carbon-black font-medium focus:outline-none focus:border-carbon-black"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-bold text-carbon-black uppercase mb-1">Excluded Items (triggers scope change)</label>
+                            <input
+                              type="text"
+                              value={newJobExcluded}
+                              onChange={(e) => setNewJobExcluded(e.target.value)}
+                              className="w-full p-2.5 border border-silver rounded-xl bg-floral-white text-carbon-black font-medium focus:outline-none focus:border-carbon-black"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="w-full py-3 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all mt-2"
+                        >
+                          Post Job to Marketplace →
+                        </button>
+                      </form>
+                    </div>
+                  )}
+
                   {portalTab === 'profile' && (
-                    /* PROFILE VIEW */
+                    /* PROFILE VIEW (NO EMOJIS) */
                     <div className="bg-white border border-silver rounded-2xl p-6 shadow-sm flex flex-col gap-5">
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-full bg-carbon-black text-floral-white font-black text-xl flex items-center justify-center shadow-sm">
@@ -1815,7 +2015,7 @@
                             <span className="text-[10px] bg-silver/40 text-carbon-black px-2 py-0.5 rounded font-bold uppercase">
                               Platform Verified
                             </span>
-                            <span className="text-xs text-charcoal-brown">🔒 Privacy-Guarded Identity</span>
+                            <span className="text-xs text-charcoal-brown">[Privacy-Guarded Identity]</span>
                           </div>
                         </div>
                       </div>
@@ -1833,7 +2033,7 @@
                         </div>
                         <div className="p-3 bg-floral-white rounded-xl border border-silver">
                           <div className="text-[10px] text-charcoal-brown font-bold">Rating</div>
-                          <div className="text-base font-bold text-spicy-paprika">4.9 ★</div>
+                          <div className="text-base font-bold text-spicy-paprika">4.9 / 5.0</div>
                           <div className="text-[10px] text-charcoal-brown">14 projects</div>
                         </div>
                       </div>
@@ -1852,11 +2052,11 @@
                   )}
                 </main>
 
-                {/* 3. RIGHT SIDEBAR: Notifications Panel (3 Cols) */}
+                {/* 3. RIGHT SIDEBAR: Notifications Panel (3 Cols, NO EMOJIS) */}
                 <aside className="lg:col-span-3 bg-white border border-silver rounded-2xl p-5 shadow-sm flex flex-col gap-4 sticky top-20">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">🔔</span>
+                      <span className="text-xs font-bold bg-carbon-black text-floral-white px-2 py-0.5 rounded">ALERTS</span>
                       <h3 className="font-serif font-bold text-sm text-carbon-black">Notifications Panel</h3>
                     </div>
                     <p className="text-xs text-charcoal-brown">Real-time workspace alerts</p>
@@ -1872,7 +2072,7 @@
                       >
                         <div className="flex justify-between items-center">
                           <span className="font-bold text-carbon-black flex items-center gap-1.5">
-                            <span>{n.icon}</span> {n.title}
+                            <span className="font-mono text-[10px] text-spicy-paprika font-bold">[{n.tag}]</span> {n.title}
                           </span>
                           <span className="text-[10px] text-charcoal-brown">{n.time}</span>
                         </div>
@@ -1886,7 +2086,7 @@
                     onClick={() => setIsWorkspaceOpen(true)}
                     className="w-full py-2.5 rounded-xl bg-carbon-black hover:bg-charcoal-brown text-floral-white font-bold text-xs uppercase tracking-wide transition-all mt-2 shadow-sm"
                   >
-                    🚀 Open Project Workspace
+                    Open Project Workspace
                   </button>
                 </aside>
               </div>
@@ -1894,7 +2094,7 @@
           </div>
 
           {/* ============================================================
-              MODAL 1: In-App WebRTC Peer-to-Peer Call Modal
+              MODAL 1: In-App WebRTC Peer Call Modal (NO EMOJIS)
              ============================================================ */}
           {isCallActive && (
             <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
@@ -1909,10 +2109,10 @@
                   </span>
                 </div>
 
-                {/* Call Stage */}
+                {/* Call Stage (NO EMOJIS) */}
                 {isVideoActive ? (
                   <div className="h-52 bg-carbon-black rounded-xl flex flex-col items-center justify-center text-floral-white p-4 border border-charcoal-brown">
-                    <span className="text-5xl mb-2">📹</span>
+                    <div className="text-xs font-bold bg-spicy-paprika text-white px-3 py-1 rounded mb-2">HD VIDEO STREAM</div>
                     <div className="font-bold text-sm">HD Peer-to-Peer Video Stream Active</div>
                     <div className="text-xs text-silver mt-1">Encrypted WebRTC between Freelancer_Dev and Client_A</div>
                   </div>
@@ -1945,14 +2145,14 @@
                   Call Duration: {Math.floor(callTimer / 60)}:{(callTimer % 60).toString().padStart(2, '0')}
                 </div>
 
-                {/* Controls */}
+                {/* Controls (NO EMOJIS) */}
                 <div className="flex items-center justify-center gap-3 flex-wrap">
                   <button
                     type="button"
                     onClick={() => setIsMuted(!isMuted)}
                     className="px-4 py-2 rounded-full border border-silver bg-floral-white text-carbon-black font-bold text-xs hover:bg-silver/30 transition-all"
                   >
-                    {isMuted ? '🔇 Unmute Mic' : '🎤 Mute Mic'}
+                    {isMuted ? 'Unmute Mic' : 'Mute Mic'}
                   </button>
 
                   {/* Video Toggle (Locked on Free, Unlocked on Pro) */}
@@ -1962,7 +2162,7 @@
                       onClick={() => setIsVideoActive(!isVideoActive)}
                       className="px-4 py-2 rounded-full bg-carbon-black text-floral-white font-bold text-xs hover:bg-charcoal-brown transition-all"
                     >
-                      {isVideoActive ? '📷 Turn Camera Off' : '📹 Turn Camera On'}
+                      {isVideoActive ? 'Turn Camera Off' : 'Turn Camera On'}
                     </button>
                   ) : (
                     <button
@@ -1971,7 +2171,7 @@
                       title="Video calling is a Pro Subscription feature. Free tier includes 5 audio-only calls."
                       className="px-4 py-2 rounded-full border border-silver bg-floral-white text-charcoal-brown/50 font-bold text-xs opacity-60 cursor-not-allowed"
                     >
-                      🔒 Video (Pro Only)
+                      Video (Pro Only)
                     </button>
                   )}
 
@@ -1980,7 +2180,7 @@
                     onClick={() => handleEndCall(false)}
                     className="px-5 py-2 rounded-full bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-md transition-all"
                   >
-                    🔴 End Call
+                    End Call
                   </button>
                 </div>
 
@@ -1992,7 +2192,7 @@
                     className="px-3 py-1 rounded-lg bg-white border border-silver text-carbon-black font-extrabold text-xs hover:bg-silver/20 shadow-sm transition-all"
                     title="Simulate call end to test calls 1 through 6"
                   >
-                    ⚡ [ Simulate Call End (+1 Call Count) ]
+                    [ Simulate Call End (+1 Call Count) ]
                   </button>
                   <div className="text-[10px] text-charcoal-brown mt-1">
                     Calls used: {callCount}/5 ({callsLeft} free left). Triggers paywall on 6th call.
@@ -2003,13 +2203,15 @@
           )}
 
           {/* ============================================================
-              MODAL 2: 6th Call Paywall & Per-Seat Subscription Modal
+              MODAL 2: 6th Call Paywall Modal (NO EMOJIS)
              ============================================================ */}
           {showPaywallModal && (
             <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
               <div className="bg-white border-2 border-silver rounded-2xl max-w-lg w-full p-7 shadow-2xl flex flex-col gap-5">
                 <div className="text-center">
-                  <span className="text-4xl block mb-2">🔒</span>
+                  <div className="text-xs font-bold bg-carbon-black text-floral-white px-3 py-1 rounded inline-block mb-2">
+                    PRO ACCESS REQUIRED
+                  </div>
                   <h2 className="font-serif text-xl font-bold text-carbon-black mb-1">
                     You&apos;ve used all 5 Free Audio Calls on this workspace.
                   </h2>
@@ -2032,7 +2234,7 @@
                   </div>
 
                   <div className="bg-white border border-silver rounded-lg p-3 text-xs leading-relaxed text-charcoal-brown">
-                    <div className="font-bold text-carbon-black mb-1">📊 Unit Economics & ROI:</div>
+                    <div className="font-bold text-carbon-black mb-1">Unit Economics & ROI:</div>
                     <div>• <strong>Near-Zero Cost-to-Serve:</strong> Browser P2P WebRTC uses ephemeral signaling (~₹0.08 per call bandwidth).</div>
                     <div>• <strong>High Agency ROI:</strong> ScopeDesk recovers over ₹6,000 per caught scope leak.</div>
                     <div>• <strong>Gross Margin:</strong> 98.4% SaaS margin per agency seat.</div>
@@ -2040,10 +2242,10 @@
 
                   <div className="text-xs text-carbon-black space-y-1 font-medium">
                     <div className="font-bold">Unlocked Features:</div>
-                    <div>✓ Unlimited Audio Calls across all project workspaces</div>
-                    <div>✓ HD Peer-to-Peer Video Calling Toggle Unlocked</div>
-                    <div>✓ Unlimited Meta-AI Scope Extractions</div>
-                    <div>✓ Tamper-Proof Versioned Evidence Export</div>
+                    <div>• Unlimited Audio Calls across all project workspaces</div>
+                    <div>• HD Peer-to-Peer Video Calling Toggle Unlocked</div>
+                    <div>• Unlimited Meta-AI Scope Extractions</div>
+                    <div>• Tamper-Proof Versioned Evidence Export</div>
                   </div>
                 </div>
 
@@ -2060,7 +2262,7 @@
                     onClick={handleUpgradeProSeat}
                     className="flex-[1.5] py-2.5 rounded-xl bg-spicy-paprika hover:bg-[#d14d1b] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
                   >
-                    ★ [ Upgrade Seat Now (Instant Unlock) ]
+                    [ Upgrade Seat Now (Instant Unlock) ]
                   </button>
                 </div>
               </div>
@@ -2068,7 +2270,7 @@
           )}
 
           {/* ============================================================
-              MODAL 3: Rejection Reason Dialog
+              MODAL 3: Rejection Reason Dialog (NO EMOJIS)
              ============================================================ */}
           {rejectionModalRequest && (
             <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
@@ -2107,7 +2309,7 @@
           )}
 
           {/* ============================================================
-              MODAL 4: Clarification Notes Dialog
+              MODAL 4: Clarification Notes Dialog (NO EMOJIS)
              ============================================================ */}
           {clarifyModalRequest && (
             <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
@@ -2146,7 +2348,7 @@
           )}
 
           {/* ============================================================
-              MODAL 5: SOW Upload & Comparison Dialog (.pdf, .md, .txt)
+              MODAL 5: SOW Upload & Comparison Dialog (NO EMOJIS)
              ============================================================ */}
           {showSowUploadModal && (
             <div className="fixed inset-0 z-50 bg-carbon-black/75 backdrop-blur-sm flex items-center justify-center p-4">
@@ -2160,7 +2362,7 @@
                     onClick={() => { setShowSowUploadModal(false); setUploadDiffResult(null); }}
                     className="text-charcoal-brown hover:text-carbon-black font-bold text-sm"
                   >
-                    ✕
+                    [Close]
                   </button>
                 </div>
 
@@ -2177,9 +2379,11 @@
                     className="hidden"
                   />
                   <label htmlFor="sowFileInput" className="cursor-pointer flex flex-col items-center">
-                    <span className="text-3xl mb-1">📄</span>
+                    <div className="text-xs font-bold text-carbon-black bg-silver/30 px-3 py-1 rounded mb-1">
+                      SELECT FILE (.pdf, .md, .txt)
+                    </div>
                     <span className="text-xs font-bold text-carbon-black">
-                      {uploadedFileName ? `Selected: ${uploadedFileName}` : 'Click to select .pdf, .md, or .txt file'}
+                      {uploadedFileName ? `Selected: ${uploadedFileName}` : 'Click to choose SOW file'}
                     </span>
                     <span className="text-[10px] text-charcoal-brown mt-1">Maximum size 5 MB</span>
                   </label>
@@ -2215,7 +2419,7 @@
                         ]);
                         setShowSowUploadModal(false);
                         setUploadDiffResult(null);
-                        showToast('✓ SOW Diff items imported into ScopeDesk!');
+                        showToast('SOW Diff items imported into ScopeDesk.');
                       }}
                       className="w-full py-2 bg-spicy-paprika text-white font-bold text-xs rounded-lg mt-1 hover:bg-[#d14d1b]"
                     >

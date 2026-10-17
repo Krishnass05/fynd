@@ -348,7 +348,7 @@ export default function Call({ projectId, role, peerName }: CallProps) {
             fontWeight: 700,
           }}
         >
-          {subscribed ? '★ Pro: Unlimited Calls' : `Free Tier: ${callsLeft}/5 Audio Calls Left`}
+          {subscribed ? '[PRO] Unlimited Calls' : `Free Tier: ${callsLeft}/5 Audio Calls Left`}
         </span>
       </div>
 
@@ -364,7 +364,7 @@ export default function Call({ projectId, role, peerName }: CallProps) {
             className={`${styles.avatar} ${avatarLive ? styles.avatarLive : ''} ${avatarRinging ? styles.avatarRinging : ''}`}
             aria-hidden="true"
           >
-            {isVideoOn ? '📹' : initials(peerName)}
+            {isVideoOn ? '[Video]' : initials(peerName)}
           </div>
           <div className={styles.peerName}>{peerName}</div>
           <div className={styles.callStatus} aria-live="polite">{status}</div>
@@ -379,7 +379,7 @@ export default function Call({ projectId, role, peerName }: CallProps) {
         <div className={styles.controls} style={{ flexWrap: 'wrap', gap: 8 }}>
           {phase === 'idle' && (
             <Button onClick={startCallAsCaller}>
-              📞 Start a call
+              [Call] Start Call
             </Button>
           )}
           {phase === 'ringing-out' && <Button variant="danger" onClick={hangup}>Cancel call</Button>}
@@ -409,7 +409,7 @@ export default function Call({ projectId, role, peerName }: CallProps) {
                   title={`Video calling is a Pro Subscription feature. Free tier includes 5 audio-only calls (Call ${Math.min(5, callCount + 1)} of 5).`}
                   style={{ opacity: 0.6, cursor: 'not-allowed' }}
                 >
-                  🔒 Video (Pro Feature)
+                  [Pro] Video (Pro Feature)
                 </button>
               )}
               {sharing
@@ -434,7 +434,7 @@ export default function Call({ projectId, role, peerName }: CallProps) {
             }}
             title="Increment call counter to quickly test calls 1 through 6 during grading"
           >
-            ⚡ [ Simulate Call End (+1 Call Count) ]
+            [Simulate Call End (+1 Count)]
           </button>
         </div>
       </div>
@@ -447,7 +447,7 @@ export default function Call({ projectId, role, peerName }: CallProps) {
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: 540 }}>
             <div style={{ textAlign: 'center', marginBottom: 18 }}>
-              <div style={{ fontSize: 36, marginBottom: 6 }}>🔒</div>
+              <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 6 }}>[LOCKED]</div>
               <h2 style={{ margin: '0 0 6px', color: 'var(--space-indigo)' }}>
                 You&apos;ve used all 5 Free Audio Calls on this workspace.
               </h2>
@@ -465,9 +465,9 @@ export default function Call({ projectId, role, peerName }: CallProps) {
                 <strong>MBA Unit Economics:</strong> Browser-native WebRTC peer-to-peer costs ~₹0.08/call bandwidth vs. ₹6,000+ agency revenue recovered per caught scope change.
               </div>
               <div style={{ fontSize: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <div>✓ Unlimited WebRTC Audio Calls</div>
-                <div>✓ HD Peer-to-Peer Video Calling Toggle Unlocked</div>
-                <div>✓ Unlimited @AI Scope Extractions</div>
+                <div>[x] Unlimited WebRTC Audio Calls</div>
+                <div>[x] HD Peer-to-Peer Video Calling Toggle Unlocked</div>
+                <div>[x] Unlimited @AI Scope Extractions</div>
               </div>
             </div>
 
@@ -484,7 +484,7 @@ export default function Call({ projectId, role, peerName }: CallProps) {
                 }}
                 style={{ flex: 1.5 }}
               >
-                ★ [ Upgrade Seat Now (Instant Demo Unlock) ]
+                [Upgrade Seat Now (Instant Demo Unlock)]
               </Button>
             </div>
           </div>

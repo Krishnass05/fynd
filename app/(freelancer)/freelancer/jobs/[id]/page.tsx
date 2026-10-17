@@ -77,7 +77,7 @@ export default function JobApply() {
                   fontWeight: 700,
                 }}
               >
-                🚀 [ Accept Job / Open Project Workspace ]
+                [Open] [ Accept Job / Open Project Workspace ]
               </button>
             ) : null}
           </div>
@@ -97,12 +97,12 @@ export default function JobApply() {
               }}
             >
               <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--space-indigo)', marginBottom: 10 }}>
-                📋 Baseline Scope &amp; Legal Exclusions (Case C35 Fixture Data)
+                [SOW] Baseline Scope &amp; Legal Exclusions (Fixture Data)
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--space-indigo)', marginBottom: 6 }}>
-                    ✅ INCLUDED SCOPE:
+                    [Included] INCLUDED SCOPE:
                   </div>
                   <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--dusty-grape)' }}>
                     {(fixture.scope?.included || ['one landing page', 'contact form']).map((item, idx) => (
@@ -114,7 +114,7 @@ export default function JobApply() {
                 </div>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--space-indigo)', marginBottom: 6 }}>
-                    🚫 EXCLUDED SCOPE (Out of scope):
+                    [Excluded] EXCLUDED SCOPE (Out of scope):
                   </div>
                   <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--dusty-grape)' }}>
                     {(fixture.scope?.excluded || ['payment checkout']).map((item, idx) => (
@@ -165,7 +165,7 @@ export default function JobApply() {
                   fontWeight: 700,
                 }}
               >
-                🚀 [ Accept Job / Open Project Workspace ]
+                [Open] [ Accept Job / Open Project Workspace ]
               </button>
             </Card>
           ) : data.job.status === 'open' ? (
