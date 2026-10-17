@@ -1,18 +1,18 @@
-/* Colour palette: Space Indigo #22223B, Dusty Grape #4A4E69, Lilac Ash #9A8C98, Almond Silk #C9ADA7, Seashell #F2E9E4.
+/* Colour palette taken from joveo.com: warm cream #FFFDF9, near-black #1A1818, purple #5A54BD, lavender #DDDBFF, teal #6BB3CD.
    Sanjana owns the final look. Keep the class names and CSS variables so other pages keep working. */
 :root {
   --radius: 0.75rem;
-  --bg: #f2e9e4; /* Seashell */
-  --card: #fbf8f5; /* a lighter tint of Seashell */
-  --ink: #22223b; /* Space Indigo */
-  --ink-strong: #22223b; /* Space Indigo */
-  --muted: #4a4e69; /* Dusty Grape: 6.8:1 on Seashell */
-  --line: #e0d0cb; /* a light Almond Silk: decorative dividers and card edges */
-  --line-strong: #7e707c; /* a darker Lilac Ash for form field borders: 3.9:1 on Seashell (WCAG 1.4.11 needs 3:1). Lilac Ash itself is only 2.7:1, so it is for decoration only */
-  --brand: #4a4e69; /* Dusty Grape: primary buttons, links, highlights. White on it is 8.1:1 */
-  --brand-soft: #e6d9d4; /* Almond Silk, lightened */
-  --accent: #c9ada7; /* Almond Silk */
-  --lilac: #9a8c98; /* Lilac Ash: decoration only */
+  --bg: #fffdf9; /* cream */
+  --card: #ffffff;
+  --ink: #1a1818; /* near-black: 17.4:1 on cream */
+  --ink-strong: #111111;
+  --muted: #444444; /* secondary text: 9.6:1 on cream */
+  --line: #e8e6e0; /* decorative dividers and card edges */
+  --line-strong: #858a87; /* form field borders: 3.5:1 on cream and white (WCAG 1.4.11 needs 3:1). Joveo's own light grey #D0D5D2 is only 1.5:1, so it is not used for fields */
+  --brand: #5a54bd; /* purple: primary buttons, links, highlights. White on it is 6.1:1, as link text on cream 6.0:1 */
+  --brand-soft: #dddbff; /* lavender tint */
+  --accent: #6bb3cd; /* teal: decoration only, 2.3:1 as text */
+  --teal: #4a90a4; /* darker teal: decoration only, 3.6:1 as text */
   --ok: #2f6b4f; --okbg: #dce8df; /* status colours stay recognisable: the palette has no green or red */
   --bad: #9e2f37; --badbg: #f1d9d9;
   --warn: #7a5200; --warnbg: #f3e4c4;
@@ -57,7 +57,7 @@ label.field { display: block; margin-bottom: 14px; font-size: 13px; color: var(-
 .bubble { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 12px; }
 
 /* Start page (hero and role cards) */
-.welcome { min-height: 100vh; background: linear-gradient(180deg, #e6d9d4, var(--bg) 70%); }
+.welcome { min-height: 100vh; background: linear-gradient(180deg, #dddbff, var(--bg) 70%); }
 .welcome .inner { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
 .hero { text-align: center; padding: 56px 0 32px; }
 .hero h1 { font-size: clamp(34px, 6vw, 54px); line-height: 1.1; margin: 0 0 12px; }
@@ -66,7 +66,7 @@ label.field { display: block; margin-bottom: 14px; font-size: 13px; color: var(-
 .role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 28px; }
 .hero h1 p { margin: 0; justify-content: center; color: inherit; font-size: inherit; max-width: none; }
 .role-card { padding: 14px; border-radius: 20px; }
-.role-tile { height: 120px; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--lilac)); display: grid; place-items: center; color: var(--ink-strong); }
+.role-tile { height: 120px; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--teal)); display: grid; place-items: center; color: var(--ink-strong); }
 .role-tile svg { width: 52px; height: 52px; }
 
 /* Keyboard users can jump past the menu */
@@ -84,10 +84,10 @@ label.field { display: block; margin-bottom: 14px; font-size: 13px; color: var(-
 /* Pastel card (Card in components/ui): coloured panel on top, white footer strip underneath */
 .btn.dark { background: var(--ink-strong); color: #fff; }
 .pcard { --panel: var(--brand-soft); background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 4px; margin-bottom: 14px; box-shadow: 0 10px 28px -20px rgba(20, 40, 30, 0.35); }
-.pcard[data-tone="pink"] { --panel: #ebd9d5; } /* Almond Silk tint */
-.pcard[data-tone="blue"] { --panel: #dddce6; } /* Dusty Grape tint */
-.pcard[data-tone="yellow"] { --panel: #f5ebdd; } /* warm Seashell tint */
-.pcard[data-tone="green"] { --panel: #e3dce0; } /* Lilac Ash tint */
+.pcard[data-tone="pink"] { --panel: #e9e7ff; } /* lavender */
+.pcard[data-tone="blue"] { --panel: #d8edf4; } /* teal tint */
+.pcard[data-tone="yellow"] { --panel: #f3efe4; } /* warm cream */
+.pcard[data-tone="green"] { --panel: #e3eaf0; } /* slate tint */
 .pcard-panel { position: relative; background: var(--panel); border-radius: 18px; padding: 18px 20px; }
 .pcard-pill { display: inline-block; margin-bottom: 14px; padding: 3px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.6); color: var(--ink-strong); font-size: 12px; font-weight: 600; }
 .pcard-title { margin: 0 0 6px; font-size: 20px; }
@@ -155,7 +155,7 @@ input, select { min-height: 44px; }
 .sidebar-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .sidebar-link { display: flex; gap: 10px; align-items: center; padding: 10px 12px; min-height: 44px; border-radius: 12px; color: var(--ink); text-decoration: none; font-weight: 500; transition: background-color 0.18s ease; }
 .sidebar-link:hover { background: var(--brand-soft); }
-.sidebar-link[aria-current="page"] { background: var(--card); box-shadow: inset 0 0 0 1px var(--line), 0 1px 2px rgba(34, 34, 59, 0.08); color: var(--ink-strong); font-weight: 600; }
+.sidebar-link[aria-current="page"] { background: var(--card); box-shadow: inset 0 0 0 1px var(--line), 0 1px 2px rgba(26, 24, 24, 0.08); color: var(--ink-strong); font-weight: 600; }
 .sidebar-foot { margin-top: auto; color: var(--muted); }
 .shell-main { min-width: 0; }
 .shell-main main.page { max-width: 1100px; margin: 0; }
@@ -181,12 +181,12 @@ input, select { min-height: 44px; }
 /* ---- Marketplace look: freelancer cards, chips, stat tiles, activity, stepper, profile, landing ---- */
 
 /* Freelancer card */
-.fcard { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 8px 24px -18px rgba(34, 34, 59, 0.35); }
+.fcard { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 8px 24px -18px rgba(26, 24, 24, 0.35); }
 .fcard-photo { --panel: var(--brand-soft); position: relative; height: 132px; background: var(--panel); display: grid; place-items: center; }
-.fcard-photo[data-tone="pink"] { --panel: #ebd9d5; }
-.fcard-photo[data-tone="blue"] { --panel: #dddce6; }
-.fcard-photo[data-tone="yellow"] { --panel: #f5ebdd; }
-.fcard-photo[data-tone="green"] { --panel: #e3dce0; }
+.fcard-photo[data-tone="pink"] { --panel: #e9e7ff; }
+.fcard-photo[data-tone="blue"] { --panel: #d8edf4; }
+.fcard-photo[data-tone="yellow"] { --panel: #f3efe4; }
+.fcard-photo[data-tone="green"] { --panel: #e3eaf0; }
 .fcard-initials { width: 76px; height: 76px; border-radius: 50%; background: rgba(251, 248, 245, 0.8); display: grid; place-items: center; font-family: var(--font-display), Georgia, serif; font-size: 28px; font-weight: 700; color: var(--ink-strong); }
 .fcard-avail { position: absolute; left: 12px; top: 12px; padding: 3px 10px; border-radius: 999px; background: rgba(251, 248, 245, 0.85); font-size: 12px; font-weight: 600; color: var(--ink-strong); }
 .fcard-avail.busy { color: var(--warn); }
@@ -217,10 +217,10 @@ input, select { min-height: 44px; }
 /* Tinted stat tiles (dashboard) */
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 14px; margin: 18px 0; }
 .tile2 { border-radius: 18px; padding: 18px 20px; background: var(--brand-soft); color: var(--ink-strong); }
-.tile2[data-tone="pink"] { background: #ebd9d5; }
-.tile2[data-tone="blue"] { background: #dddce6; }
-.tile2[data-tone="yellow"] { background: #f5ebdd; }
-.tile2[data-tone="green"] { background: #e3dce0; }
+.tile2[data-tone="pink"] { background: #e9e7ff; }
+.tile2[data-tone="blue"] { background: #d8edf4; }
+.tile2[data-tone="yellow"] { background: #f3efe4; }
+.tile2[data-tone="green"] { background: #e3eaf0; }
 .tile2 strong { display: block; font-family: var(--font-display), Georgia, serif; font-size: 34px; line-height: 1.1; }
 .tile2 > span { color: var(--muted); font-size: 14px; }
 
@@ -285,14 +285,14 @@ input, select { min-height: 44px; }
 .collage { position: relative; min-height: 430px; }
 .collage .blk { position: absolute; border-radius: 22px; }
 .collage .b1 { right: 4%; top: 0; width: 46%; height: 52%; background: var(--accent); }
-.collage .b2 { left: 0; bottom: 4%; width: 34%; height: 34%; background: #e3dce0; }
+.collage .b2 { left: 0; bottom: 4%; width: 34%; height: 34%; background: #e3eaf0; }
 .collage .b3 { right: 0; bottom: 0; width: 32%; height: 34%; background: var(--brand); }
-.collage .main { position: absolute; left: 10%; top: 8%; width: 74%; background: var(--card); border-radius: 22px; padding: 20px; box-shadow: 0 24px 50px -24px rgba(34, 34, 59, 0.45); }
+.collage .main { position: absolute; left: 10%; top: 8%; width: 74%; background: var(--card); border-radius: 22px; padding: 20px; box-shadow: 0 24px 50px -24px rgba(26, 24, 24, 0.45); }
 .collage .main h3 { margin: 0 0 10px; font-size: 15px; color: var(--muted); font-family: var(--font-body), sans-serif; font-weight: 600; }
 .collage .line { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .collage .line:first-of-type { border-top: 0; }
 .collage .price { font-family: var(--font-display), Georgia, serif; font-size: 30px; color: var(--ink-strong); margin: 8px 0 2px; }
 .collage .flag { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--warnbg); color: var(--warn); font-size: 12px; font-weight: 600; }
-.collage .float { position: absolute; left: 0; bottom: 0; background: var(--card); border-radius: 16px; padding: 12px 16px; box-shadow: 0 16px 36px -20px rgba(34, 34, 59, 0.5); font-size: 14px; max-width: 220px; }
+.collage .float { position: absolute; left: 0; bottom: 0; background: var(--card); border-radius: 16px; padding: 12px 16px; box-shadow: 0 16px 36px -20px rgba(26, 24, 24, 0.5); font-size: 14px; max-width: 220px; }
 .collage .float strong { display: block; color: var(--ink-strong); }
 @media (max-width: 860px) { .hero2 { grid-template-columns: minmax(0, 1fr); gap: 22px; } .collage { min-height: 340px; } }

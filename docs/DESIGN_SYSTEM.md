@@ -1,18 +1,18 @@
 # Design system
 
-Rules for how the app looks and moves. Sanjana owns the final look. Everyone follows these so the pages feel like one product. Colours come from the five-colour palette below; the layout and headings follow the Crafthire design. Checked against the ui-ux-pro-max rules (accessibility first, restrained motion), with animation from React Bits.
+Rules for how the app looks and moves. Sanjana owns the final look. Everyone follows these so the pages feel like one product. Colours come from the Joveo palette below; the layout and headings follow the Crafthire design. Checked against the ui-ux-pro-max rules (accessibility first, restrained motion), with animation from React Bits.
 
 ## Colour palette
 
-Five colours, chosen by Krishna. Everything on screen comes from these or a lighter or darker tint of them.
+Taken from joveo.com on 18 October 2026 (Krishna's request). Everything on screen comes from these or a tint of them.
 
 | Name | Hex | Where it is used |
 | --- | --- | --- |
-| Space Indigo | `#22223B` | Body text, headings, the dark button |
-| Dusty Grape | `#4A4E69` | Primary buttons, links, the highlight in the navigation, secondary text |
-| Lilac Ash | `#9A8C98` | Decoration only (the start page gradient, the corner of the role tiles) |
-| Almond Silk | `#C9ADA7` | Soft panels, tags, dividers (lightened) |
-| Seashell | `#F2E9E4` | Page background |
+| Cream | `#FFFDF9` | Page background |
+| Near-black | `#1A1818` | Body text, headings, the dark button |
+| Purple | `#5A54BD` | Primary buttons, links, the highlight in the navigation |
+| Lavender | `#DDDBFF` | Soft panels, neutral badges, bar tracks |
+| Teal | `#6BB3CD` | Decoration only (avatars, the corner of the role tiles) |
 
 ## Tokens (already in `app/globals.css`)
 
@@ -20,20 +20,20 @@ Use the variables. Never put a raw colour in a component.
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `--bg` | `#F2E9E4` Seashell | page background |
-| `--card` | `#FBF8F5` (a lighter Seashell) | cards, inputs |
-| `--ink` / `--ink-strong` | `#22223B` Space Indigo | body text / headings |
-| `--muted` | `#4A4E69` Dusty Grape | secondary text |
-| `--brand` | `#4A4E69` Dusty Grape | primary buttons, links, highlights |
-| `--brand-soft` | `#E6D9D4` | neutral badges, bar tracks |
-| `--accent` | `#C9ADA7` Almond Silk | decorative tiles |
-| `--lilac` | `#9A8C98` Lilac Ash | decoration only, never text or field borders |
-| `--line` | `#E0D0CB` | card edges and dividers (decoration) |
-| `--line-strong` | `#7E707C` (a darker Lilac Ash) | **form field borders** |
-| `--ok`, `--bad`, `--warn` (+ `bg`) | green, red, amber | statuses. The palette has no green or red, so these stay recognisable and always come with a word |
+| `--bg` | `#FFFDF9` cream | page background |
+| `--card` | `#FFFFFF` | cards, inputs |
+| `--ink` / `--ink-strong` | `#1A1818` / `#111111` | body text / headings |
+| `--muted` | `#444444` | secondary text |
+| `--brand` | `#5A54BD` purple | primary buttons, links, highlights |
+| `--brand-soft` | `#DDDBFF` lavender | neutral badges, bar tracks |
+| `--accent` | `#6BB3CD` teal | decorative tiles and avatars |
+| `--teal` | `#4A90A4` | decoration only, never text |
+| `--line` | `#E8E6E0` | card edges and dividers (decoration) |
+| `--line-strong` | `#858A87` | **form field borders** |
+| `--ok`, `--bad`, `--warn` (+ `bg`) | green, red, amber | statuses. They always come with a word |
 | `--radius` | `0.75rem` | cards and fields; buttons are pills |
 
-Card tints (`data-tone`): pink is an Almond Silk tint, blue a Dusty Grape tint, yellow a warm Seashell tint, green a Lilac Ash tint. The names are kept so older code keeps working; the colours come from the palette.
+Card tints (`data-tone`): pink is a lavender tint, blue a teal tint, yellow a warm cream tint, green a slate tint. The names are kept so older code keeps working; the colours come from the palette.
 
 Typography: Fraunces for headings (`--font-display`), Manrope for text (`--font-body`). Body 15px, line height 1.55. Spacing in steps of 4 and 8.
 
@@ -41,17 +41,18 @@ Typography: Fraunces for headings (`--font-display`), Manrope for text (`--font-
 
 | Pair | Ratio | Needs |
 | --- | --- | --- |
-| Space Indigo on Seashell / card | 12.9 / 14.6 : 1 | 4.5 |
-| Dusty Grape (secondary text) on Seashell / card | 6.8 / 7.7 : 1 | 4.5 |
-| White on Dusty Grape (primary button) | 8.1 : 1 | 4.5 |
-| White on Space Indigo (dark button) | 15.4 : 1 | 4.5 |
-| Links (Dusty Grape) on Seashell | 6.8 : 1 | 4.5 |
-| Space Indigo on the four card tints | 11.3 to 13.1 : 1 | 4.5 |
-| Dusty Grape on the four card tints | 6.0 to 6.9 : 1 | 4.5 |
+| Near-black on cream / white | 17.4 / 17.7 : 1 | 4.5 |
+| Secondary text (#444) on cream / white | 9.6 / 9.7 : 1 | 4.5 |
+| White on purple (primary button) | 6.1 : 1 | 4.5 |
+| White on near-black (dark button) | 17.7 : 1 | 4.5 |
+| Links (purple) on cream | 6.0 : 1 | 4.5 |
+| Purple on lavender | 4.55 : 1 | 4.5 |
+| Near-black on the four card tints | 14.6 to 15.4 : 1 | 4.5 |
+| Secondary text on the four card tints | 8.0 to 8.5 : 1 | 4.5 |
 | Status badges (good, bad, warn) | 5.0 to 5.5 : 1 | 4.5 |
-| Form field border (`--line-strong`) on Seashell / card | 3.9 / 4.4 : 1 | 3 |
+| Form field border (`--line-strong`) on cream / white | 3.5 / 3.5 : 1 | 3 |
 
-**Lilac Ash itself is only 2.7 : 1 on Seashell.** Use it for decoration, never for text and never to outline a form field. The thin `--line` border is for card edges only, never for a field or a control.
+**Joveo's teal is only 2.3 : 1 on cream (3.6 : 1 for the darker one).** Use it for decoration, never for text. Joveo's own light grey field border (#D0D5D2) is 1.5 : 1, so we use a darker grey for fields. The thin `--line` border is for card edges only, never for a field or a control.
 
 ## Motion
 
@@ -68,7 +69,7 @@ Typography: Fraunces for headings (`--font-display`), Manrope for text (`--font-
 | `BlurText` | start page headline | one reveal on load, readable by screen readers |
 | `CountUp` | dashboard numbers | shows that figures are live, ends on the real value |
 | `SpotlightCard` | role cards, project cards | a soft glow under the pointer, also appears on keyboard focus |
-| `PillNav` | the navigation bar on every page | marks the current page, fills the hovered link with Dusty Grape, folds into a menu button on phones |
+| `PillNav` | the navigation bar on every page | marks the current page, fills the hovered link with purple, folds into a menu button on phones |
 
 Source: reactbits.dev (MIT with Commons Clause: free to use inside our product). The files were copied unchanged. Only these four are installed on purpose. FadeContent and similar pull in GSAP, and the WebGL backgrounds cost a lot of battery, so we left them out. To add another, copy it into `components/fx/`, recolour it with our tokens, and check it for reduced motion first.
 
@@ -96,7 +97,7 @@ Building blocks, in `app/globals.css`: `.tiles` and `.tile2` (tinted number tile
 
 ## Navigation
 
-Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `PillNav` in our colours (light Seashell bar, Dusty Grape highlight, light theme). `TopBar` puts it next to the user name and "Switch user" on the client and freelancer sides, and the start page and case-checks page show it on its own. The links come from `lib/nav.ts`. To add a page to the menu, add it there and nowhere else. Do not build a second nav.
+Every page uses the same bar: `components/shell/AppNav.tsx` wraps React Bits `PillNav` in our colours (white bar, purple highlight, light theme). `TopBar` puts it next to the user name and "Switch user" on the client and freelancer sides, and the start page and case-checks page show it on its own. The links come from `lib/nav.ts`. To add a page to the menu, add it there and nowhere else. Do not build a second nav.
 
 ## Component rules
 
@@ -129,4 +130,4 @@ Every page is checked at 375px wide (a small phone), with long unbroken titles a
 
 ## History
 
-The first look was green and cream, taken from the Crafthire design. On 18 October 2026 Krishna replaced it with the five-colour palette above (decision D-40). The ui-ux-pro-max tool had also suggested a blue and green SaaS palette; we did not use it.
+The first look was green and cream, taken from the Crafthire design. On 18 October 2026 Krishna replaced it with a five-colour palette, and later the same day with the Joveo palette above (decisions D-40 and D-44). The ui-ux-pro-max tool had also suggested a blue and green SaaS palette; we did not use it.

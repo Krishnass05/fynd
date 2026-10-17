@@ -12,9 +12,9 @@ const PUBLIC_ITEMS = [
   { label: 'Case checks', href: '/demo' },
 ];
 
-// Our palette as hex (PillNav needs hex to pick readable label colours).
-const BRAND = '#4a4e69'; // Dusty Grape
-const INK = '#22223b'; // Space Indigo
+// Our palette (from joveo.com) as hex (PillNav needs hex to pick readable label colours).
+const BRAND = '#5a54bd'; // purple
+const INK = '#1a1818'; // near-black
 
 const Mark = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -40,7 +40,7 @@ export default function AppNav({ role }: { role?: Role }) {
       linkComponent={Link}
       theme="light"
       surface="solid"
-      barColor="#fbf8f5"
+      barColor="#ffffff"
       textColor={INK}
       highlightColor={BRAND}
       itemStyle="pill"
