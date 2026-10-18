@@ -165,6 +165,22 @@ const spokenMail = await ok('POST', `/api/projects/${projectId}/messages`, CLIEN
 assert.equal(spokenMail.redacted, true, 'a spoken email address is hidden');
 assert.ok((await ok('POST', `/api/projects/${projectId}/messages`, CLIENT, { body: 'ping me on whatsapp' })).warning, 'asking to move off the platform is flagged');
 
+// a number sent one digit per message is caught once the pieces add up, and the earlier pieces are hidden too;
+// the other person's replies in between do not break the run
+const piece = (b, who = FREE) => ok('POST', `/api/projects/${projectId}/messages`, who, { body: b });
+for (const d of ['nine', 'eight', 'zer']) assert.equal((await piece(d)).redacted, undefined, 'a few digits alone are fine');
+await piece('what?', CLIENT);
+assert.equal((await piece('four')).redacted, undefined);
+await piece('two');
+const sixth = await piece('six');
+assert.equal(sixth.redacted, true, 'the sixth digit completes a phone number');
+assert.ok(sixth.hiddenKinds.includes('phone number (sent in pieces)'));
+assert.equal((await piece('one')).redacted, true, 'the rest of the number stays hidden');
+const afterPieces = await ok('GET', `/api/projects/${projectId}/messages`, CLIENT);
+assert.ok(!afterPieces.some((m) => m.senderId === FREE && /^(nine|eight|zer|four|two|six|one)$/.test(m.body)), 'none of the pieces can be read');
+assert.ok(afterPieces.some((m) => m.body === 'what?'), 'the other person\'s message is untouched');
+assert.equal((await piece('Sounds good, see you Monday')).redacted, undefined, 'normal chat carries on');
+
 // calls: ringing, signalling, live captions, and the call ending when contact details are said
 const ring = await ok('POST', `/api/projects/${projectId}/call`, CLIENT, { mode: 'video' });
 assert.equal(JSON.parse(ring.payload).mode, 'video');

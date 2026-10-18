@@ -12,7 +12,7 @@ import { bad, conflict, forbidden, notFound } from './errors';
 import { matchesAllWords } from '@/lib/search';
 import { COMPANIES, PORTFOLIO, REVIEWS } from '@/lib/data/sampleProfiles';
 import { requestRole } from './context';
-import { inspectSpeech, scrub, HIDDEN } from '@/lib/engine/guard';
+import { inspectSpeech, scrub, numberFragment, splitNumber, HIDDEN } from '@/lib/engine/guard';
 import { review as aiReview } from '@/lib/engine/aiguard';
 import { parseSow, compareSow } from '@/lib/engine/sow';
 import { checkSplit, defaultSplit } from '@/lib/milestones';
@@ -344,6 +344,30 @@ export function listMessages(u: User, projectId: string): Message[] {
   return db().messages.filter((m) => m.projectId === projectId);
 }
 
+const SPLIT_KIND = 'phone number (sent in pieces)';
+const SPLIT_WINDOW_MS = 15 * 60_000;
+
+// This person's latest messages in the project that are only part of a number, newest last. Messages from the
+// other person in between do not break the run; any other message from this person does, and so does a gap of
+// more than 15 minutes. `continues` is true when the run already ended in pieces that were hidden.
+function splitPieces(u: User, projectId: string) {
+  const pieces: { msg: Message; piece: { digits: number; spoken: boolean } }[] = [];
+  const mine = db().messages.filter((m) => m.projectId === projectId && m.senderId === u.id);
+  let continues = false;
+  let after = Date.now();
+  for (let i = mine.length - 1; i >= 0; i -= 1) {
+    const m = mine[i];
+    const at = Date.parse(m.sentAt);
+    if (after - at > SPLIT_WINDOW_MS) break;
+    if (m.hiddenKinds?.includes(SPLIT_KIND)) { continues = true; break; }
+    const piece = numberFragment(m.body);
+    if (!piece) break;
+    pieces.unshift({ msg: m, piece });
+    after = at;
+  }
+  return { pieces, continues };
+}
+
 export async function sendMessage(u: User, projectId: string, b: Record<string, unknown>): Promise<Message> {
   projectFor(u, projectId);
   const text = str(b.body, 'message', 2000);
@@ -354,6 +378,16 @@ export async function sendMessage(u: User, projectId: string, b: Record<string, 
   let kinds = g.kinds;
   // If the rules found nothing, an AI model (when a key is set) gets a second look. If it flags the message, the
   // whole message is hidden. With no key, or if the model is slow or down, only the rules decide.
+  // A number sent one piece per message ("eight", "one", "zero", ...): read this person's recent number-only
+  // messages together. If they add up to a phone number, hide this one and the earlier pieces.
+  const piece = !redacted ? numberFragment(text) : null;
+  if (piece) {
+    const split = splitPieces(u, projectId);
+    if (split.continues || splitNumber([...split.pieces.map((p) => p.piece), piece])) {
+      split.pieces.forEach(({ msg }) => { msg.body = HIDDEN; msg.redacted = true; msg.hiddenKinds = [SPLIT_KIND]; });
+      body = HIDDEN; redacted = true; kinds = [SPLIT_KIND];
+    }
+  }
   if (!redacted) {
     const ai = await aiReview(text, { env: process.env });
     if (ai?.flag) { body = `${HIDDEN} (hidden by the AI check)`; redacted = true; kinds = [`AI check: ${ai.reasons.join('; ')}`]; }

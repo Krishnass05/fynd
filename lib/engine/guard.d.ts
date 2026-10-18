@@ -16,3 +16,12 @@ export interface SpeechResult {
   safeText: string; // the caption with details hidden, safe to show and save
 }
 export function inspectSpeech(text: string): SpeechResult;
+
+export interface NumberFragment {
+  digits: number; // how many digits the message holds
+  spoken: boolean; // true if any were written as words
+}
+// The whole message is only part of a number ("eight", "98", "zer"), or null.
+export function numberFragment(text: string): NumberFragment | null;
+// Several number-only messages in a row, oldest first: do they add up to a phone number?
+export function splitNumber(pieces: NumberFragment[]): boolean;
