@@ -16,3 +16,8 @@
 .history summary { cursor: pointer; font-size: 14px; color: var(--muted); }
 .history ul { margin: 8px 0 0; padding-left: 18px; font-size: 13px; display: grid; gap: 4px; }
 .table td :global(.badge) { white-space: nowrap; }
+.guide { font-size: 14px; }
+.guide summary { cursor: pointer; font-weight: 600; }
+.guide ul { margin: 8px 0; padding-left: 18px; display: grid; gap: 4px; }
+.guide code { font-size: 13px; }
+.sample { margin: 8px 0 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); font-size: 13px; line-height: 1.5; white-space: pre-wrap; overflow-x: auto; }

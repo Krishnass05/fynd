@@ -1,0 +1,28 @@
+Statement of Work: Website for Sunrise Bakery
+Client: Sunrise Bakery
+Freelancer: (the person you hired on Crewmate)
+Rate: Rs 1000/hr
+Start: 1 November 2026
+Deadline: 30 November 2026
+
+How to write your SOW for Crewmate
+Put each piece of work on its own line starting with "- ", under one of the headings below.
+Add the hours in brackets if you know them, like (6 hours). Leave them out if you do not; the freelancer fills them in.
+Anything under "Excluded" is not part of the price: asking for it later is a paid change.
+Save the file as .txt or .md and upload it on the project page.
+
+Deliverables
+- Home page with the bakery story and opening hours (6 hours)
+- Menu page with prices for 20 items (4 hours)
+- Contact form that emails the owner (3 hours)
+- Mobile-friendly layout for all pages (4 hours)
+- Two rounds of changes after the first draft
+
+Excluded
+- Online ordering and payment checkout
+- Logo design
+- Writing the menu text and taking photos
+- Hosting and domain costs
+
+Notes
+Payment is by milestone on Crewmate. Amounts are before tax.

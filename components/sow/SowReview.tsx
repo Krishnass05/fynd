@@ -19,6 +19,19 @@ const STATUS: Record<SowStatus, { text: string; tone: 'neutral' | 'good' | 'bad'
   sent_back: { text: 'Sent back', tone: 'bad' },
   replaced: { text: 'Replaced', tone: 'neutral' },
 };
+// A short version of public/sample-sow.txt, shown in the upload guide
+const SAMPLE = `Statement of Work: Website for Sunrise Bakery
+Rate: Rs 1000/hr
+
+Deliverables
+- Home page with the bakery story (6 hours)
+- Menu page with prices for 20 items (4 hours)
+- Contact form that emails the owner (3 hours)
+- Two rounds of changes after the first draft
+
+Excluded
+- Online ordering and payment checkout
+- Logo design`;
 const fmtDate = (iso: string) => new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
 
 export default function SowReview({ projectId, role, docs, ratePerHour, onChanged, onUploaded }: {
@@ -124,7 +137,17 @@ export default function SowReview({ projectId, role, docs, ratePerHour, onChange
       {role === 'client' && (needsUpload || st === 'proposed') ? (
         <div className={s.upload}>
           <SowUpload projectId={projectId} kind="baseline" onDone={() => onUploaded()} />
-          <p className="muted">Use headings Deliverables, Included and Excluded with one item per line; hours like (6 hours) and a line like Rate: Rs 1000/hr are read too.</p>
+          <details className={s.guide}>
+            <summary>How to format your SOW (with a sample)</summary>
+            <ul>
+              <li>Put each piece of work on its own line starting with <code>- </code>, under a heading <strong>Deliverables</strong> (or Included).</li>
+              <li>Things that are not part of the price go under <strong>Excluded</strong>. Asking for them later is a paid change.</li>
+              <li>Add hours in brackets if you know them, like <code>(6 hours)</code>. If not, leave them out: the freelancer fills them in and you confirm.</li>
+              <li>A line like <code>Rate: Rs 1000/hr</code> sets the hourly rate. Save as .txt or .md.</li>
+            </ul>
+            <pre className={s.sample}>{SAMPLE}</pre>
+            <a className="btn secondary" href="/sample-sow.txt" download="sample-sow.txt">Download the sample SOW</a>
+          </details>
         </div>
       ) : null}
 
