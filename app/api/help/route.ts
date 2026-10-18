@@ -15,6 +15,9 @@ const allowAi = () => {
   return used <= 20;
 };
 
+// The AI check can take a few seconds, so allow the function more time on the host.
+export const maxDuration = 30;
+
 export const POST = (req: Request) => run(req, async ({ body }) => {
   const question = typeof body.question === 'string' ? body.question.trim() : '';
   if (!question) throw bad('Type a question');

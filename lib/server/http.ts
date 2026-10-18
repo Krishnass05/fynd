@@ -3,6 +3,7 @@ import { HttpError, bad } from './errors';
 import { requestRole, type RequestContext } from './context';
 import { SESSION_COOKIE, userFromCookie } from './session';
 import { readCookie } from '@/lib/engine/authcore';
+import { withState } from './persist';
 
 const MAX_BODY = 2_000_000;
 
@@ -38,7 +39,9 @@ export async function run(req: Request, fn: (ctx: Ctx) => unknown | Promise<unkn
       origin: process.env.APP_URL?.replace(/\/$/, '') || url.origin,
       ip: (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'local',
     };
-    const data = await requestRole.run(ctx, async () => fn({ userId: req.headers.get('x-demo-user'), body, url }));
+    // With Supabase, reads load a private copy of the data and writes save it back (see persist.ts); in development this just runs.
+    const write = req.method !== 'GET' && req.method !== 'HEAD';
+    const data = await requestRole.run(ctx, () => withState(ctx, async () => fn({ userId: req.headers.get('x-demo-user'), body, url }), write));
     const res = NextResponse.json(data);
     for (const c of ctx.cookies) res.cookies.set(c.name, c.value, c.options);
     return res;

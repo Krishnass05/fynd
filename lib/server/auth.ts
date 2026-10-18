@@ -56,6 +56,8 @@ export function loginAccount(body: Record<string, unknown>): User {
   const ok = demoId ? values.password === DEMO_PASSWORD : verifyPassword(values.password, hash ?? DUMMY_HASH) && Boolean(hash);
   if (!user || !ok) {
     db().limiter.fail(values.email);
+    const ctx = requestRole.getStore();
+    if (ctx) ctx.saveOnError = true; // with a database, the wrong-password count must be saved even though the request fails
     throw forbidden('Email or password is wrong');
   }
   const sides: Role[] = user.roles ?? [user.role];

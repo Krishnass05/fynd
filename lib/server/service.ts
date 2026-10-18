@@ -19,6 +19,7 @@ import { checkSplit, defaultSplit } from '@/lib/milestones';
 import type { MilestoneDraft } from '@/lib/milestones';
 import { findProfile, library } from './library';
 import { db, nextId, nextSeq } from './store';
+import { insertSignal, persistent, signalsSince } from './persist';
 
 const nowIso = () => new Date().toISOString();
 const str = (v: unknown, name: string, max: number): string => {
@@ -575,7 +576,8 @@ export function siteStats(): SiteStats {
 // ---- calls in a project: voice or video, watched live by the contact guard ----
 const peerOf = (project: Project, u: User): string => (project.clientId === u.id ? project.freelancerId : project.clientId);
 
-function pushSignal(project: Project, u: User, type: CallSignalType, payload: string): CallSignal {
+async function pushSignal(project: Project, u: User, type: CallSignalType, payload: string): Promise<CallSignal> {
+  if (persistent()) return insertSignal({ project_id: project.id, from_user: u.id, to_user: peerOf(project, u), type, payload });
   const seq = nextSeq();
   const sig: CallSignal = { id: `SIG${seq}`, seq, projectId: project.id, fromUserId: u.id, toUserId: peerOf(project, u), type, payload, at: nowIso() };
   db().signals.push(sig);
@@ -584,20 +586,21 @@ function pushSignal(project: Project, u: User, type: CallSignalType, payload: st
 }
 
 // Rings the other person in the project. mode is 'voice' or 'video'.
-export function startCall(u: User, projectId: string, b: Record<string, unknown> = {}): CallSignal {
+export async function startCall(u: User, projectId: string, b: Record<string, unknown> = {}): Promise<CallSignal> {
   const project = projectFor(u, projectId);
   const mode: CallMode = b.mode === 'video' ? 'video' : 'voice';
   return pushSignal(project, u, 'ring', JSON.stringify({ mode }));
 }
 
 // The signals addressed to this person since the given number.
-export function listCallSignals(u: User, projectId: string, since: number): CallSignal[] {
+export async function listCallSignals(u: User, projectId: string, since: number): Promise<CallSignal[]> {
   projectFor(u, projectId);
+  if (persistent()) return signalsSince(projectId, u.id, since);
   return db().signals.filter((s) => s.projectId === projectId && s.toUserId === u.id && s.seq > since);
 }
 
 // Offer, answer, ICE candidate, hang up or reject. Only the two people in the project can send.
-export function sendCallSignal(u: User, projectId: string, b: Record<string, unknown>): CallSignal {
+export async function sendCallSignal(u: User, projectId: string, b: Record<string, unknown>): Promise<CallSignal> {
   const project = projectFor(u, projectId);
   const type = b.type as CallSignalType;
   if (!['offer', 'answer', 'ice', 'hangup', 'reject'].includes(type)) throw bad('Unknown call signal type');
@@ -618,11 +621,11 @@ export async function reportCaption(u: User, projectId: string, b: Record<string
     if (ai?.flag) { r.block = true; r.reasons = [`AI check: ${ai.reasons.join('; ')}`]; }
   }
   if (!r.block) {
-    pushSignal(project, u, 'caption', text);
+    await pushSignal(project, u, 'caption', text);
     return { blocked: false, reasons: [] };
   }
   // End the call for both people, and leave a note in the project chat. The spoken details are not saved anywhere.
-  pushSignal(project, u, 'hangup', JSON.stringify({ reason: 'guard', reasons: r.reasons }));
+  await pushSignal(project, u, 'hangup', JSON.stringify({ reason: 'guard', reasons: r.reasons }));
   db().messages.push({
     id: nextId('M'), projectId, senderId: 'platform', senderName: 'Crewmate guard',
     body: `The call was ended because personal contact details were said (${r.reasons.join(', ')}). They were not saved. Please keep the conversation and payments on the platform.`,

@@ -1,8 +1,10 @@
-// In-memory data store with seed data. OWNER: Krishna.
-// This is the ONLY file that knows where data lives. Supabase replaces it later; nothing else changes.
+// The app's data and its demo seed. OWNER: Krishna.
+// db() is the ONLY way the rest of the code reaches data. In development it is one in-memory object. When Supabase is
+// configured (see persist.ts) each request gets its own copy, loaded from the database and saved back after a change.
 import { ScopeDesk } from '@/lib/engine/scopeDesk';
 import fixture from '../../fixture.json';
 import { createLimiter, type Limiter } from '@/lib/engine/authcore';
+import { requestRole } from './context';
 import type { Application, CallSignal, CompareLabel, Job, Message, Milestone, Project, SowDocument, User } from '@/lib/types';
 
 export interface Db {
@@ -26,7 +28,7 @@ export interface Db {
 
 const NOW = '2026-10-17T10:00:00.000Z';
 
-function seed(): Db {
+export function seedDb(): Db {
   const users: User[] = [
     { id: 'u_client1', name: 'Demo Client', email: 'client@demo.test', role: 'client', skills: [], demo: true },
     { id: 'u_freelancer1', name: 'Demo Freelancer', email: 'freelancer@demo.test', role: 'freelancer', skills: ['Web design', 'WordPress', 'HTML'], demo: true, headline: 'Web designer who ships clean landing pages', overview: 'I design and build small business websites and landing pages. Two revision rounds are included in every project, and I list what is not included up front.', location: 'Hyderabad', ratePerHour: 1200, category: 'Websites, IT and Software', availability: 'available', rating: 4.8, jobsDone: 54 },
@@ -98,12 +100,17 @@ function seed(): Db {
 const g = globalThis as unknown as { __scopeDeskDb?: Db };
 
 export function db(): Db {
-  if (!g.__scopeDeskDb) g.__scopeDeskDb = seed();
+  const mine = requestRole.getStore()?.db; // this request's copy, when the data lives in Supabase
+  if (mine) return mine;
+  if (!g.__scopeDeskDb) g.__scopeDeskDb = seedDb();
   return g.__scopeDeskDb;
 }
 
+// Back to the demo data. With Supabase the request's copy is replaced, and withState saves it.
 export function resetDb(): void {
-  g.__scopeDeskDb = seed();
+  const ctx = requestRole.getStore();
+  if (ctx?.db) ctx.db = seedDb();
+  else g.__scopeDeskDb = seedDb();
 }
 
 export function nextId(prefix: string): string {

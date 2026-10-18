@@ -4,6 +4,7 @@ import { googleSignIn } from '@/lib/server/auth';
 import { fetchProfile, googleConfig } from '@/lib/server/google';
 import { requestRole, type RequestContext } from '@/lib/server/context';
 import { OAUTH_COOKIE, clearOauthCookie, readOauth } from '@/lib/server/session';
+import { withState } from '@/lib/server/persist';
 
 // Step 2: Google sends the person back with a one-time code. Check the state, get their verified profile, sign them in.
 export async function GET(req: Request) {
@@ -27,7 +28,8 @@ export async function GET(req: Request) {
 
   // googleSignIn works on the in-memory store and queues the session cookie on the request context.
   const ctx: RequestContext = { role: null, sessionUserId: null, cookies: [], origin, ip: 'google' };
-  const result = requestRole.run(ctx, () => googleSignIn(profile, note.accountType === 'freelancer' || note.accountType === 'both' ? note.accountType : 'client'));
+  const accountType = note.accountType === 'freelancer' || note.accountType === 'both' ? note.accountType : 'client';
+  const result = await requestRole.run(ctx, () => withState(ctx, async () => googleSignIn(profile, accountType), true));
   const user = result.user;
   const side = user.roles?.includes(note.accountType === 'freelancer' ? 'freelancer' : 'client') ? (note.accountType === 'freelancer' ? 'freelancer' : 'client') : user.role;
   const next = typeof note.next === 'string' ? note.next : '';

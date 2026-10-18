@@ -55,7 +55,7 @@ Before the judges arrive: stop and restart `npm run dev` so the data is clean. U
 
 **Technical**
 
-- *Why no database?* The store sits behind one file. We chose Vercel + Supabase for the live link; it is not wired yet. Today it is in memory and resets on restart.
+- *Why no database?* There is one: with Supabase keys the app stores everything in Supabase (Postgres). It is a hackathon design: the whole app state is one versioned JSON row, and every write is "update where version = n" with a retry, so two people saving at once never overwrite each other (tested with 14 simultaneous writers and a restart). Call signalling has its own table. It is not a normalised schema and would need one to scale. Without keys it runs in memory for development.
 - *How do you stop double charging?* The SOW text is hashed (SHA-256). A repeat upload returns the existing version; nothing is priced again.
 - *What if hours are missing?* The item is flagged "needs clarification" and not priced. We never guess zero.
 - *Is the contact guard an AI?* Both: it is a rule-based guard (lib/engine/guard.js, tested) that catches numbers and emails even when written or said in words. The Help assistant is also rule-based. The contact guard can also call a language model as a second check (free Gemini key, or Claude), but only if a key is set; with no key it is rules only, and the screens say which. The Help assistant also uses the model when a key is set, but only to phrase answers from the written site guide; without a key it uses keyword matching on the same guide. The panel says which.
@@ -74,7 +74,7 @@ Before the judges arrive: stop and restart `npm run dev` so the data is clean. U
 
 ## 7. Known gaps (say them before they are found)
 
-1. **No live deploy yet** (Vercel + Supabase not set up). Run it locally for the viva.
+1. **Live deploy:** the Supabase storage and the Vercel guide are built and tested against a pretend Supabase, but they need your own Supabase and Vercel accounts (docs/DEPLOY.md). Until then, run it locally for the viva.
 2. **`main` is behind `krishna`.** Pull requests #3 and #4 are not merged. Merge them before the viva or demo from the `krishna` branch.
 3. **v1/v2 tags missing** (`v1-before-feedback`, `v2-after-feedback`). Without them the "improvement after feedback" mark is hard to show. Make them or explain the change from the commit history.
 4. No PDF reading, no rush multiplier, no JSON/CSV export button, no language-model reader.

@@ -12,7 +12,7 @@ npm run build   # type check and production build
 npm run smoke   # end-to-end API test (start the app first)
 ```
 
-Needs Node 20+. Data is held in server memory and resets on restart. Supabase replaces it before the live deploy.
+Needs Node 20+. By default data is held in server memory and resets on restart. With Supabase keys set it is stored in Supabase; see [docs/DEPLOY.md](docs/DEPLOY.md) for the Vercel and Supabase steps and [docs/AUTH.md](docs/AUTH.md) for accounts and Google sign-in.
 
 ## How it fits together
 
@@ -60,4 +60,4 @@ Read [TEAM_GUIDE.md](TEAM_GUIDE.md) for setup and the branch rules, and [docs/OW
 
 ## Not built yet
 
-PDF reading, anomaly flags beyond the first few, Supabase storage and the live deploy, the final design, v1/v2 tags for the business-feedback improvement, optional language model reader with a labelled manual fallback.
+PDF reading, anomaly flags beyond the first few, the live deploy itself (the Supabase storage and the deploy guide are ready), the final design, v1/v2 tags for the business-feedback improvement, optional language model reader with a labelled manual fallback.

@@ -10,7 +10,8 @@
     "test": "node --test lib/engine/scopeDesk.test.js lib/engine/demo.test.js lib/engine/sow.test.js lib/engine/guard.test.js lib/engine/helpbot.test.js lib/engine/aiguard.test.js lib/engine/aihelp.test.js lib/engine/auth.test.js",
     "smoke": "node scripts/smoke.mjs",
     "ai:check": "node scripts/ai-check.mjs",
-    "google:check": "node scripts/google-check.mjs"
+    "google:check": "node scripts/google-check.mjs",
+    "db:check": "node scripts/supabase-check.mjs"
   },
   "engines": {
     "node": ">=20"
