@@ -33,6 +33,10 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `getSiteStats` | `GET /api/stats` | anyone, no sign-in | `SiteStats`: real counts for the landing page (job profiles, sample freelancers, case checks passing) |
 | `login` |  `POST /api/login` `{email, password, role}` | anyone, no sign-in | `User`. 400 for a missing or malformed field, 403 for a wrong password or the wrong account type. Demo accounts only: client@demo.test, freelancer@demo.test, freelancer2@demo.test, shared password in the login page |
 | `getClient` | `GET /api/clients/:id` | any signed-in user | `ClientProfile`: company details, rating and reviews (sample), counts from real data (jobs posted, hires, open jobs) and the open jobs. Only the client themself gets their email. 404 if the id is not a client |
+| `startCall` | `POST /api/projects/:id/call` `{mode: 'voice' or 'video'}` | project member | `CallSignal` (a ring to the other person) |
+| `pollCallSignals` | `GET /api/projects/:id/call/signals?since=N` | project member | `CallSignal[]` addressed to you after number N (ring, offer, answer, ice, hangup, reject, caption) |
+| `sendCallSignal` | `POST /api/projects/:id/call/signal` `{type, payload}` | project member | `CallSignal`. Types: offer, answer, ice, hangup, reject. Captions can only be sent through the guard below |
+| `sendCaption` | `POST /api/projects/:id/call/caption` `{text}` | project member | `{blocked, reasons}`. The contact guard checks the line: a clean line goes to the other person as a caption; a line with a phone number (also said in words), email, link or handle sends them a hangup (reason guard) and puts a note in the chat. 400 for empty text |
 | `getMe` | `GET /api/me` | any user | `User` |
 | `updateMe` | `PUT /api/me` `{name?, skills?, headline?, overview?, location?, ratePerHour?}` | any user (the profile fields are for freelancers) | `User`. `ratePerHour` is whole rupees above 0 |
 | `listJobs` | `GET /api/jobs?mine=1&status=open` | client (mine) or freelancer (open jobs) | `Job[]` |
@@ -44,7 +48,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `listProjects` | `GET /api/projects` | participant | `Project[]` |
 | `getProject` | `GET /api/projects/:id` | participant | `ProjectDetail` (SOW versions, change requests, totals, audit) |
 | `listMessages` | `GET /api/projects/:id/messages` | participant | `Message[]` |
-| `sendMessage` | `POST /api/projects/:id/messages` `{body}` | participant | `Message`. Before saving, the server replaces email addresses and phone numbers (10 or more digits) with `***REDACTED***` and sets `redacted: true`. Prices, hours and dates are not touched. 400 for an empty message |
+| `sendMessage` | `POST /api/projects/:id/messages` `{body}` | participant | `Message`. Before saving, the contact guard replaces phone numbers (written, or said in words), email addresses (written or said as 'at ... dot ...'), links and handles with `***REDACTED***`, and sets `redacted: true` and `hiddenKinds`. Asking to move off the platform sets `warning`. Prices, hours and dates are not touched. 400 for an empty message |
 | `uploadSow` | `POST /api/projects/:id/sow` `{kind, filename, text}` | freelancer uploads `baseline`; client uploads `amendment` | `UploadSowResult` |
 | `approveChange` | `POST /api/projects/:id/changes/:changeId/approve` | client | `ProjectDetail` |
 | `rejectChange` | `POST /api/projects/:id/changes/:changeId/reject` `{reason}` | client | `ProjectDetail` |

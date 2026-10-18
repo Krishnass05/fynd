@@ -11,6 +11,7 @@ import { SERVICES } from '@/lib/services';
 import type { Role } from '@/lib/types';
 import { useUser } from '@/lib/useUser';
 import { ChevronRight, Search } from '@/components/ui/icons';
+import HelpBot from '@/components/help/HelpBot';
 import AppNav from './AppNav';
 
 const initials = (name: string) => name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
@@ -188,6 +189,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
         <div className="mobilebar"><AppNav role={role} /></div>
       </header>
       <main id="main-content" className="page">{children}</main>
+      <HelpBot role={role} />
     </div>
   );
 }

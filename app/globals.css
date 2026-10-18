@@ -522,3 +522,27 @@ th .plink-go { display: none; }
 .callbox-voice { color: #fff; margin: 0; padding: 24px; }
 .callbox-captions { list-style: none; margin: 0; padding: 10px 12px; max-height: 180px; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 4px; font-size: 14px; }
 .callbox-captions li[data-who="you"] { color: var(--muted); }
+
+/* Help assistant (bottom left) */
+.helpbot { position: fixed; left: 16px; bottom: 16px; z-index: 80; display: grid; gap: 10px; justify-items: start; }
+.helpbot-fab { min-height: 48px; padding: 0 22px; box-shadow: 0 12px 28px -14px rgba(37, 36, 34, 0.7); }
+.helpbot-panel { width: min(360px, calc(100vw - 32px)); max-height: min(520px, 70dvh); display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 24px 50px -20px rgba(37, 36, 34, 0.5); overflow: hidden; }
+.helpbot-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 12px 14px; background: var(--charcoal); color: #fff; }
+.helpbot-head div { display: grid; gap: 2px; }
+.helpbot-head span { font-size: 12px; opacity: 0.8; }
+.helpbot-x { width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.14); color: #fff; display: grid; place-items: center; cursor: pointer; flex: none; }
+.helpbot-log { flex: 1; overflow-y: auto; padding: 12px; display: grid; gap: 10px; align-content: start; }
+.helpbot-turn { max-width: 92%; display: grid; gap: 6px; }
+.helpbot-turn p { margin: 0; padding: 9px 12px; border-radius: 14px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; }
+.helpbot-turn[data-from="bot"] p { background: var(--brand-soft); border-bottom-left-radius: 4px; }
+.helpbot-turn[data-from="you"] { justify-self: end; }
+.helpbot-turn[data-from="you"] p { background: var(--charcoal); color: #fff; border-bottom-right-radius: 4px; }
+.helpbot-turn .helpbot-links { background: none; padding: 0; display: flex; gap: 12px; flex-wrap: wrap; }
+.helpbot-links a { font-weight: 600; }
+.helpbot-topics { display: flex; flex-wrap: wrap; gap: 6px; }
+.helpbot-topics button { min-height: 36px; padding: 0 12px; border: 1px solid var(--silver); border-radius: 999px; background: #fff; color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; }
+.helpbot-topics button:hover { background: var(--brand-soft); }
+.helpbot-form { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
+.helpbot-form input { flex: 1; min-width: 0; border-radius: 999px; padding: 0 14px; }
+.helpbot-form .btn { min-height: 44px; padding: 0 18px; }
+@media (max-width: 600px) { .helpbot { left: 12px; bottom: 12px; } }

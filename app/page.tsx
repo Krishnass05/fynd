@@ -3,6 +3,7 @@
 import '@/components/landing/landing.css';
 import CategoryCarousel from '@/components/landing/CategoryCarousel';
 import Hero from '@/components/landing/Hero';
+import HelpBot from '@/components/help/HelpBot';
 import LandingNav from '@/components/landing/LandingNav';
 import { FeaturedTalent, FinalCta, Footer, HowItWorks } from '@/components/landing/Sections';
 
@@ -18,6 +19,7 @@ export default function Home() {
         <FinalCta />
       </main>
       <Footer />
+      <HelpBot />
     </div>
   );
 }
