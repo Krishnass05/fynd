@@ -1,0 +1,30 @@
+/* Plan cards and comparison matrix, shared by app/pricing and app/(client)/client/pricing. OWNER: Krishna. */
+.plans { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; margin-top: 12px; }
+.plan { position: relative; border: 1px solid var(--line); border-radius: 18px; padding: 26px 22px; background: #fff; display: grid; gap: 10px; }
+.popular { border: 2px solid #F37021; box-shadow: 0 12px 32px rgba(243, 112, 33, .15); }
+.ribbon { position: absolute; top: -13px; left: 22px; background: #F37021; color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+.plan h2 { margin: 0; font-size: 22px; }
+.tagline { margin: 0; color: var(--muted); }
+.price { margin: 6px 0 0; display: flex; align-items: baseline; gap: 6px; }
+.price span { font-size: 40px; font-weight: 800; color: var(--ink-strong); }
+.price small { color: var(--muted); font-size: 15px; }
+.tokens { margin: 0; font-size: 14px; }
+.cta { justify-content: center; text-align: center; }
+.lead { margin: 8px 0 0; font-weight: 600; font-size: 14px; }
+.features { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 12px; }
+.features li { display: flex; gap: 10px; }
+.features p { margin: 2px 0 0; font-size: 14px; color: var(--muted); }
+.check { color: #F37021; font-weight: 800; }
+.soon { margin-left: 8px; font-size: 11px; font-weight: 700; color: #F37021; border: 1px solid #F37021; border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+.matrixWrap { margin-top: 48px; }
+.matrixWrap h2 { text-align: center; }
+.scroll { overflow-x: auto; }
+.matrix { width: 100%; border-collapse: collapse; min-width: 560px; }
+.matrix th, .matrix td { padding: 12px; border-bottom: 1px solid var(--line); text-align: center; }
+.matrix th[scope="row"], .matrix thead th:first-child { text-align: left; font-weight: 500; }
+.matrix thead th { font-size: 15px; }
+.matrix small { color: var(--muted); font-weight: 400; }
+.group th { background: #fbf6f2; text-align: left; font-weight: 700; font-size: 14px; }
+.hl { background: #fff7f1; }
+.yes { color: #F37021; font-weight: 800; }
+.no { color: #c9c2ba; }

@@ -2,7 +2,7 @@
 // `icon` names a glyph in components/ui/icons.tsx (the sidebar draws it; the phone menu ignores it).
 import type { Role } from './types';
 
-export type NavIcon = 'home' | 'search' | 'jobs' | 'heart' | 'plus' | 'user';
+export type NavIcon = 'home' | 'search' | 'jobs' | 'heart' | 'plus' | 'user' | 'rupee';
 export interface NavItem {
   href: string;
   label: string;
@@ -15,6 +15,7 @@ export const NAV: Record<Role, NavItem[]> = {
     { href: '/client/jobs', label: 'My jobs', icon: 'jobs' },
     { href: '/client/saved', label: 'Saved', icon: 'heart' },
     { href: '/client/jobs/new', label: 'Post a job', icon: 'plus' },
+    { href: '/client/pricing', label: 'Pricing', icon: 'rupee' },
     { href: '/client/profile', label: 'Profile', icon: 'user' },
     { href: '/client/dashboard', label: 'Dashboard', icon: 'home' },
   ],
@@ -30,6 +31,7 @@ export const TOP_LINKS: Record<Role, NavItem[]> = {
   client: [
     { href: '/client/freelancers', label: 'Find freelancers', icon: 'search' },
     { href: '/client/saved', label: 'Saved', icon: 'heart' },
+    { href: '/client/pricing', label: 'Pricing', icon: 'rupee' },
   ],
   freelancer: [],
 };
