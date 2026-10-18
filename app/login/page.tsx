@@ -53,7 +53,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="auth-grid">
+    <div className="auth-grid auth-grid--one">
       <form className="authcard" onSubmit={submit} noValidate aria-labelledby="login-title">
         <h1 id="login-title">Log in</h1>
         <p className="muted">Welcome back. Choose how you use Crewmate.</p>
