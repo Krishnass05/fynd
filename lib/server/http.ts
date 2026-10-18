@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { HttpError, bad } from './errors';
-import { requestRole } from './context';
+import { requestRole, type RequestContext } from './context';
+import { SESSION_COOKIE, userFromCookie } from './session';
+import { readCookie } from '@/lib/engine/authcore';
 
 const MAX_BODY = 2_000_000;
 
@@ -29,10 +31,19 @@ export async function run(req: Request, fn: (ctx: Ctx) => unknown | Promise<unkn
         }
       }
     }
-    const role = req.headers.get('x-demo-role');
-    return NextResponse.json(await requestRole.run({ role }, async () => fn({ userId: req.headers.get('x-demo-user'), body, url })));
+    const ctx: RequestContext = {
+      role: req.headers.get('x-demo-role'),
+      sessionUserId: userFromCookie(readCookie(req.headers.get('cookie'), SESSION_COOKIE)),
+      cookies: [],
+      origin: process.env.APP_URL?.replace(/\/$/, '') || url.origin,
+      ip: (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'local',
+    };
+    const data = await requestRole.run(ctx, async () => fn({ userId: req.headers.get('x-demo-user'), body, url }));
+    const res = NextResponse.json(data);
+    for (const c of ctx.cookies) res.cookies.set(c.name, c.value, c.options);
+    return res;
   } catch (e) {
-    if (e instanceof HttpError) return NextResponse.json({ error: e.message, type: e.type }, { status: e.status });
+    if (e instanceof HttpError) return NextResponse.json({ error: e.message, type: e.type, ...(e.fields ? { fields: e.fields } : {}) }, { status: e.status });
     console.error(e);
     return NextResponse.json({ error: 'Unexpected server error', type: 'server' }, { status: 500 });
   }

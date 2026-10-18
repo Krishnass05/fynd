@@ -1,6 +1,6 @@
 'use client';
 // Top bar of the public home page: CraftHire wordmark, Find Talent, Find Work, Explore Categories
-// (drop-down), How It Works, and on the right Log in and Sign up, which open the start page (/start).
+// (drop-down), How It Works, and on the right Log in and Sign up, which open /login and /register.
 // Sticky; on phones the links move into a drawer. OWNER: Krishna.
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -61,8 +61,8 @@ export default function LandingNav() {
         <Link href="/" className="lnav-brand" aria-label="CraftHire, home">Craft<span>Hire</span><i aria-hidden="true" /></Link>
         <nav className="lnav-links" aria-label="Main">{links}</nav>
         <div className="lnav-cta">
-          <Link href="/start" className="lnav-link lnav-signin">Log in</Link>
-          <Link href="/start" className="btn">Sign up</Link>
+          <Link href="/login" className="lnav-link lnav-signin">Log in</Link>
+          <Link href="/register" className="btn">Sign up</Link>
         </div>
         <button type="button" className="lnav-burger" aria-label={drawer ? 'Close menu' : 'Open menu'} aria-expanded={drawer} aria-controls="lnav-drawer" onClick={() => setDrawer((d) => !d)}>
           <span /><span /><span />
@@ -72,8 +72,8 @@ export default function LandingNav() {
         <div className="lnav-drawer" id="lnav-drawer">
           <nav aria-label="Main">{links}</nav>
           <div className="lnav-drawer-cta">
-            <Link href="/start" className="btn secondary" onClick={close}>Log in</Link>
-            <Link href="/start" className="btn" onClick={close}>Sign up</Link>
+            <Link href="/login" className="btn secondary" onClick={close}>Log in</Link>
+            <Link href="/register" className="btn" onClick={close}>Sign up</Link>
           </div>
         </div>
       ) : null}

@@ -8,6 +8,7 @@ export interface User {
   name: string;
   role: Role;
   skills: string[];
+  emailVerified?: boolean; // false until the verification email (Brevo, planned) is confirmed; Google accounts start verified
   email?: string; // what the person entered when they registered (demo accounts only for now)
   roles?: Role[]; // an account that can use both sides lists both; `role` is the side it is acting as right now
   demo?: boolean; // shown on the start page as a one-click demo login
@@ -395,5 +396,6 @@ export interface CaptionResult { blocked: boolean; reasons: string[] }
 
 export interface ApiErrorBody {
   error: string;
+  fields?: Record<string, string>; // for forms: the message for each field
   type: 'validation' | 'conflict' | 'forbidden' | 'not_found' | 'server';
 }

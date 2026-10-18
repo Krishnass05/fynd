@@ -333,4 +333,78 @@ assert.ok((await ok('GET', '/api/jobs', 'u_both1:freelancer')).some((j) => j.id 
 assert.ok((await ok('GET', '/api/freelancers?q=copywriting', CLIENT)).freelancers.some((f) => f.id === 'u_both1'), 'its freelancer side can be found');
 assert.equal((await ok('GET', '/api/clients/u_both1', FREE)).company.name, 'Quill & Co Studio', 'its client side has company details');
 
+
+// ---- real accounts: register, log in, sessions, lockout, logout ----
+const raw = async (method, path, { cookie, user, body } = {}) => {
+  const res = await fetch(BASE + path, {
+    method,
+    headers: { 'Content-Type': 'application/json', ...(cookie ? { cookie } : {}), ...(user ? { 'x-demo-user': user } : {}) },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const set = res.headers.getSetCookie?.() ?? [];
+  const sess = set.find((c) => c.startsWith('cd_session='));
+  return { status: res.status, data: await res.json(), set, cookie: sess ? sess.split(';')[0] : null, flags: sess ?? '' };
+};
+const reg = (over = {}) => ({ name: 'Priya Rao', email: 'priya.rao@example.com', password: 'Sunrise42', confirmPassword: 'Sunrise42', accountType: 'client', acceptedTerms: true, ...over });
+const cfgAuth = await ok('GET', '/api/auth/config');
+assert.equal(typeof cfgAuth.google, 'boolean', 'the pages can ask whether Google sign-in is on');
+
+// the form is validated on the server too, with a message per field
+const weak = await raw('POST', '/api/auth/register', { body: reg({ name: '', email: 'nope', password: 'abc', confirmPassword: 'x', accountType: 'boss', acceptedTerms: false }) });
+assert.equal(weak.status, 400);
+for (const f of ['name', 'email', 'password', 'accountType', 'acceptedTerms']) assert.ok(weak.data.fields[f], 'a message for ' + f);
+assert.equal((await raw('POST', '/api/auth/register', { body: reg({ confirmPassword: 'Sunrise43' }) })).data.fields.confirmPassword, 'The two passwords do not match');
+assert.equal((await raw('POST', '/api/auth/register', { body: reg({ password: 'Password1', confirmPassword: 'Password1' }) })).status, 400, 'a common password is refused');
+assert.equal((await raw('POST', '/api/auth/register', { body: reg({ name: '<script>x</script>' }) })).status, 400, 'a name with markup is refused');
+assert.equal((await raw('POST', '/api/auth/register', { body: reg({ email: 'client@demo.test' }) })).status, 400, 'a demo email cannot be taken');
+assert.equal((await raw('POST', '/api/auth/register', { body: 'not an object' })).status, 400, 'junk is refused, not a crash');
+
+// a good sign-up: an account, a signed HTTP-only cookie, and no password in the reply
+const made = await raw('POST', '/api/auth/register', { body: reg({ email: '  Priya.Rao@Example.COM ', accountType: 'both' }) });
+assert.equal(made.status, 200);
+assert.equal(made.data.email, 'priya.rao@example.com', 'the email is stored lower case');
+assert.deepEqual(made.data.roles, ['client', 'freelancer']);
+assert.equal(made.data.emailVerified, false, 'not verified until the email step exists');
+assert.ok(!JSON.stringify(made.data).match(/password|hash|scrypt|Sunrise/i), 'nothing secret in the reply');
+assert.ok(made.cookie && /HttpOnly/i.test(made.flags) && /SameSite=Lax/i.test(made.flags), 'a signed HTTP-only cookie');
+const me = await raw('GET', '/api/me', { cookie: made.cookie });
+assert.equal(me.data.id, made.data.id, 'the cookie alone is enough to be recognised');
+assert.equal((await raw('POST', '/api/auth/register', { body: reg({ email: 'PRIYA.rao@example.com' }) })).data.fields.email.includes('already exists'), true, 'no second account for the same email');
+
+// nobody can pretend to be a real account
+assert.equal((await raw('GET', '/api/me', { user: made.data.id })).status, 403, 'the id alone is not enough');
+assert.equal((await raw('GET', '/api/me', { cookie: made.cookie.slice(0, -3) + 'xyz', user: made.data.id })).status, 403, 'a tampered cookie is refused');
+const other = await raw('POST', '/api/auth/register', { body: reg({ name: 'Second Person', email: 'second.person@example.com' }) });
+assert.equal((await raw('GET', '/api/me', { cookie: other.cookie, user: made.data.id })).status, 403, "one account's cookie cannot act as another");
+assert.equal((await raw('GET', '/api/me', { user: 'u_client1' })).data.id, 'u_client1', 'demo accounts still work with the id');
+
+// log in with the password, in any case of the email, and the wrong ones fail the same way
+const ok1 = await raw('POST', '/api/login', { body: { email: 'PRIYA.RAO@example.com', password: 'Sunrise42', role: 'freelancer' } });
+assert.equal(ok1.status, 200);
+assert.equal(ok1.data.role, 'freelancer', 'a both-sides account picks its side');
+assert.ok(ok1.cookie);
+const wrongPw = await raw('POST', '/api/login', { body: { email: 'priya.rao@example.com', password: 'Sunrise43', role: 'client' } });
+const noUser = await raw('POST', '/api/login', { body: { email: 'nobody@example.com', password: 'Sunrise42', role: 'client' } });
+assert.equal(wrongPw.status, 403);
+assert.equal(wrongPw.data.error, noUser.data.error, 'a wrong password and an unknown email say the same thing');
+assert.equal((await raw('POST', '/api/login', { body: { email: 'second.person@example.com', password: 'Sunrise42', role: 'freelancer' } })).status, 403, 'a client-only account cannot log in as a freelancer');
+assert.equal((await raw('POST', '/api/login', { body: { email: 'bad', password: '', role: 'x' } })).data.fields.email.length > 0, true, 'the log-in form is validated on the server');
+
+// five wrong passwords lock the email for a while, even for the right password
+for (let i = 0; i < 5; i += 1) await raw('POST', '/api/login', { body: { email: 'second.person@example.com', password: 'wrongpass' + i, role: 'client' } });
+const locked = await raw('POST', '/api/login', { body: { email: 'second.person@example.com', password: 'Sunrise42', role: 'client' } });
+assert.equal(locked.status, 429, 'locked after repeated wrong passwords');
+assert.match(locked.data.error, /Try again in/);
+assert.equal((await raw('POST', '/api/login', { body: { email: 'priya.rao@example.com', password: 'Sunrise42', role: 'client' } })).status, 200, 'other accounts are not affected');
+
+// log out ends the session
+const out = await raw('POST', '/api/auth/logout', { cookie: made.cookie });
+assert.ok(out.set.some((c) => c.startsWith('cd_session=') && /Max-Age=0/i.test(c)), 'the cookie is cleared');
+assert.equal((await raw('GET', '/api/me', { user: made.data.id })).status, 403);
+
+// a new freelancer account appears in the marketplace like any other
+const fl = await raw('POST', '/api/auth/register', { body: reg({ name: 'Anil Kumar', email: 'anil.kumar@example.com', accountType: 'freelancer' }) });
+assert.equal(fl.data.role, 'freelancer');
+assert.ok((await raw('GET', '/api/freelancers?q=anil', { cookie: (await raw('POST', '/api/login', { body: { email: 'client@demo.test', password: 'demo1234', role: 'client' } })).cookie, user: 'u_client1' })).data.freelancers.some((f) => f.name === 'Anil Kumar'), 'a new freelancer can be found');
+
 console.log('smoke test passed');

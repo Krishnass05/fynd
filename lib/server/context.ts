@@ -1,5 +1,12 @@
-// Which side (client or freelancer) a request is acting as. An account with both roles sends x-demo-role;
-// run() stores it for the length of the request, and actor() reads it. OWNER: Krishna.
+// What a request carries: which side it acts as (x-demo-role), the signed-in user from the session cookie, and any
+// cookies the handler wants set on the response. run() fills it in and actor() reads it. OWNER: Krishna.
 import { AsyncLocalStorage } from 'node:async_hooks';
 
-export const requestRole = new AsyncLocalStorage<{ role: string | null }>();
+export interface CookieSpec {
+  name: string;
+  value: string;
+  options: { httpOnly?: boolean; sameSite?: 'lax' | 'strict'; path?: string; secure?: boolean; maxAge?: number };
+}
+export interface RequestContext { role: string | null; sessionUserId: string | null; cookies: CookieSpec[]; origin: string; ip: string }
+
+export const requestRole = new AsyncLocalStorage<RequestContext>();

@@ -5,6 +5,17 @@ import type {
 } from './types';
 import { getRole, getUserId } from './session';
 
+// An error from the server. `fields` holds the message for each form field when the problem is in the form.
+export class ApiError extends Error {
+  fields: Record<string, string>;
+  status: number;
+  constructor(message: string, fields: Record<string, string> = {}, status = 0) {
+    super(message);
+    this.fields = fields;
+    this.status = status;
+  }
+}
+
 async function call<T>(path: string, init?: { method?: string; body?: unknown }): Promise<T> {
   let res: Response;
   try {
@@ -24,8 +35,8 @@ async function call<T>(path: string, init?: { method?: string; body?: unknown })
     throw new Error(`The server sent an unreadable reply (HTTP ${res.status}).`);
   }
   if (!res.ok) {
-    const msg = (data as { error?: string }).error;
-    throw new Error(msg || `Request failed (HTTP ${res.status}).`);
+    const body = data as { error?: string; fields?: Record<string, string> };
+    throw new ApiError(body.error || `Request failed (HTTP ${res.status}).`, body.fields ?? {}, res.status);
   }
   return data as T;
 }
@@ -35,6 +46,9 @@ const post = <T>(path: string, body?: unknown) => call<T>(path, { method: 'POST'
 // users and profile
 export const listDemoUsers = () => call<User[]>('/api/users');
 export const getMe = () => call<User>('/api/me');
+export const register = (b: { name: string; email: string; password: string; confirmPassword: string; accountType: 'client' | 'freelancer' | 'both'; acceptedTerms: boolean }) => post<User>('/api/auth/register', b);
+export const logout = () => post<{ ok: true }>('/api/auth/logout');
+export const getAuthConfig = () => call<{ google: boolean }>('/api/auth/config');
 export const login = (b: { email: string; password: string; role: 'client' | 'freelancer' }) => post<User>('/api/login', b);
 export const updateMe = (b: { name?: string; skills?: string[]; headline?: string; overview?: string; location?: string; ratePerHour?: number }) =>
   call<User>('/api/me', { method: 'PUT', body: b });

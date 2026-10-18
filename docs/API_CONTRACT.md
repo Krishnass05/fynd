@@ -5,7 +5,7 @@
 ## Basics
 
 - All bodies and replies are JSON.
-- Every request sends the header `x-demo-user: <user id>` (set for you by `lib/api.ts` after "Continue as ..." on the start page).
+- Real accounts are recognised by their signed `cd_session` cookie (see docs/AUTH.md). The header `x-demo-user` is only believed for the synthetic demo accounts. Every request sends the header `x-demo-user: <user id>` (set for you by `lib/api.ts` after "Continue as ..." on the start page).
 - An account that has both sides (`roles` on the user, for example both@demo.test) also sends `x-demo-role: client` or `freelancer`. The server treats the account as that role for the request; an account without that side keeps its own role. `/api/me` returns the role it is acting as, plus `roles`.
 - Money is whole rupees, always before tax. **Unknown hours are `null`, never `0`.**
 - Errors: HTTP status 400, 403, 404, 409 or 500 with `{ "error": "message safe to show", "type": "validation | forbidden | not_found | conflict | server" }`. Show `error` to the user as it is.
@@ -38,6 +38,11 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `sendCallSignal` | `POST /api/projects/:id/call/signal` `{type, payload}` | project member | `CallSignal`. Types: offer, answer, ice, hangup, reject. Captions can only be sent through the guard below |
 | `sendCaption` | `POST /api/projects/:id/call/caption` `{text}` | project member | `{blocked, reasons}`. The contact guard checks the line: a clean line goes to the other person as a caption; a line with a phone number (also said in words), email, link or handle sends them a hangup (reason guard) and puts a note in the chat. 400 for empty text |
 | `askHelp` | `POST /api/help` `{question, role?}` | anyone | `{ text, links, topics, source }`. `source` is `ai` when a model wrote the reply from the site guide, `rules` for the keyword answer. 400 for an empty or over-300-character question. Limited to 20 AI answers a minute site-wide |
+| `register` | `POST /api/auth/register` `{name, email, password, confirmPassword, accountType, acceptedTerms}` | anyone | `User`, and a signed `cd_session` cookie. 400 with `fields` (a message per field) for anything invalid or an email already used. Passwords are stored hashed and never returned |
+| `login` | `POST /api/login` `{email, password, role}` | anyone | `User` (acting as `role`). Real accounts get the `cd_session` cookie. 400 with `fields` for a badly filled form, 403 for a wrong password, unknown email or wrong side (same message for the first two), 429 after 5 wrong passwords (locked 10 minutes) |
+| `logout` | `POST /api/auth/logout` | anyone | `{ ok }`, and clears the cookie |
+| `getAuthConfig` | `GET /api/auth/config` | anyone | `{ google }`: whether Google sign-in is switched on |
+| Google | `GET /api/auth/google/start?mode=login or register&type=client, freelancer or both&next=/path`, then `GET /api/auth/google/callback` | anyone | Redirects to Google and back, then to `/auth/done`. Errors come back to the page as `?google=state, denied, unverified or not_configured` |
 | `getAiStatus` | `GET /api/ai-status` | anyone | `{ enabled, provider }`: whether the AI second check on chat and calls is on (a key is set) and which provider. Never returns the key |
 | `getMe` | `GET /api/me` | any user | `User` |
 | `updateMe` | `PUT /api/me` `{name?, skills?, headline?, overview?, location?, ratePerHour?}` | any user (the profile fields are for freelancers) | `User`. `ratePerHour` is whole rupees above 0 |

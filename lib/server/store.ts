@@ -2,6 +2,7 @@
 // This is the ONLY file that knows where data lives. Supabase replaces it later; nothing else changes.
 import { ScopeDesk } from '@/lib/engine/scopeDesk';
 import fixture from '../../fixture.json';
+import { createLimiter, type Limiter } from '@/lib/engine/authcore';
 import type { Application, CallSignal, CompareLabel, Job, Message, Milestone, Project, SowDocument, User } from '@/lib/types';
 
 export interface Db {
@@ -12,6 +13,9 @@ export interface Db {
   sow: SowDocument[];
   messages: Message[];
   signals: CallSignal[]; // call signalling, in memory
+  credentials: Map<string, string>; // user id -> salted password hash (never sent to the browser)
+  googleIds: Map<string, string>; // Google account id -> user id
+  limiter: Limiter; // log-in attempt limiter
   milestones: Milestone[];
   saved: Map<string, Set<string>>; // client id -> saved freelancer ids
   desks: Map<string, ScopeDesk>;
@@ -88,7 +92,7 @@ function seed(): Db {
   // Project P1 starts with the case fixture so the three case checks are visible straight away.
   const desks = new Map<string, ScopeDesk>([['P1', ScopeDesk.fromFixture(fixture)]]);
   const labels = new Map<string, Record<string, CompareLabel>>([['P1', {}]]);
-  return { users, jobs, applications, projects, sow, messages, signals: [], milestones, saved: new Map([['u_client1', new Set(['u_freelancer3'])]]), desks, labels, hashes: new Map(), seq: 100 };
+  return { users, jobs, applications, projects, sow, messages, signals: [], credentials: new Map(), googleIds: new Map(), limiter: createLimiter(), milestones, saved: new Map([['u_client1', new Set(['u_freelancer3'])]]), desks, labels, hashes: new Map(), seq: 100 };
 }
 
 const g = globalThis as unknown as { __scopeDeskDb?: Db };

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { DASHBOARD, HOME, LEAD, MENUS, PROFILE, TOP_LINKS } from '@/lib/nav';
+import { logout } from '@/lib/api';
 import { clearUser, setRole } from '@/lib/session';
 import { SERVICES } from '@/lib/services';
 import type { Role } from '@/lib/types';
@@ -180,7 +181,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
                       Switch to {role === 'client' ? 'Freelancer' : 'Client'}
                     </button>
                   ) : null}
-                  <button type="button" role="menuitem" onClick={() => { clearUser(); router.push('/login'); }}>Log out</button>
+                  <button type="button" role="menuitem" onClick={() => { void logout().catch(() => undefined).finally(() => { clearUser(); router.push('/login'); }); }}>Log out</button>
                 </div>
               ) : null}
             </div>

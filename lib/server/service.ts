@@ -38,8 +38,11 @@ const wholeRupees = (v: unknown, name: string): number => {
 };
 
 export function actor(userId: string | null): User {
-  const u = db().users.find((x) => x.id === userId);
+  const id = userId || requestRole.getStore()?.sessionUserId || null; // a signed-in real account needs only its cookie
+  const u = db().users.find((x) => x.id === id);
   if (!u) throw forbidden('Choose a role first (Continue as Client or Freelancer)');
+  // Demo accounts (synthetic) are used with the x-demo-user header. A real account must have its signed session cookie.
+  if (!u.demo && requestRole.getStore()?.sessionUserId !== u.id) throw forbidden('Please log in again');
   // One account with both roles acts as the side named in the request (x-demo-role).
   const want = requestRole.getStore()?.role;
   if (want && want !== u.role && u.roles?.includes(want as Role)) return { ...u, role: want as Role };
@@ -51,32 +54,6 @@ const isClient = (x: User) => x.role === 'client' || Boolean(x.roles?.includes('
 
 // The start page offers only the demo users; the other freelancers exist to be browsed.
 export const listUsers = (): User[] => db().users.filter((u) => u.demo);
-
-// Demo sign-in. Real accounts (Supabase Auth) replace this later. The accounts and the shared
-// password are synthetic and shown on the login page on purpose.
-export const DEMO_PASSWORD = 'demo1234';
-export const DEMO_LOGINS: Record<string, string> = {
-  'client@demo.test': 'u_client1',
-  'freelancer@demo.test': 'u_freelancer1',
-  'freelancer2@demo.test': 'u_freelancer2',
-  'both@demo.test': 'u_both1', // one account, both sides
-};
-
-export function login(body: Record<string, unknown>): User {
-  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
-  const password = typeof body.password === 'string' ? body.password : '';
-  const role = body.role;
-  if (!email) throw bad('Enter your email');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw bad('That does not look like an email address');
-  if (!password) throw bad('Enter your password');
-  if (role !== 'client' && role !== 'freelancer') throw bad('Choose Client or Freelancer');
-  const id = DEMO_LOGINS[email];
-  const user = id ? db().users.find((u) => u.id === id) : undefined;
-  if (!user || password !== DEMO_PASSWORD) throw forbidden('Email or password is wrong');
-  const sides: Role[] = user.roles ?? [user.role];
-  if (!sides.includes(role)) throw forbidden(`This is a ${user.role} account. Choose ${user.role === 'client' ? 'Client' : 'Freelancer'} above.`);
-  return { ...user, role };
-}
 
 export function updateMe(acting: User, body: Record<string, unknown>): User {
   const u = db().users.find((x) => x.id === acting.id) ?? acting; // the stored account, so changes are kept

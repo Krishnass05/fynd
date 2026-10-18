@@ -98,7 +98,8 @@ export function Footer() {
           <p>The Scope Change Desk demo. All data is synthetic. A workflow aid, not legal advice.</p>
         </div>
         <nav aria-label="Footer">
-          <Link href="/start">Log in or sign up</Link>
+          <Link href="/login">Log in</Link>
+          <Link href="/register">Sign up</Link>
           <a href="#how-it-works">How it works</a>
           <Link href="/demo">Case checks</Link>
         </nav>
