@@ -9,3 +9,7 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 .env.local
 .claude/
+
+# local assistant notes (kept on the computer, not in the repo)
+/CLAUDE.md
+/AGENTS.md
