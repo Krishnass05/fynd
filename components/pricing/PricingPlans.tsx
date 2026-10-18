@@ -18,7 +18,7 @@ export function PlanGrid({ renderCta }: { renderCta: (plan: Plan) => ReactNode }
           <h2>{p.name}</h2>
           <p className={s.tagline}>{p.tagline}</p>
           <p className={s.price}><span>{p.price}</span>{p.per ? <small>{p.per}</small> : null}</p>
-          <p className={s.tokens}>Includes <strong>{p.tokens} negotiation tokens</strong> a month</p>
+          <p className={s.tokens}>Includes <strong>{p.tokens} negotiation tokens</strong> {p.per ? 'per seat, per month' : 'a month'}</p>
           {renderCta(p)}
           {p.lead ? <p className={s.lead}>{p.lead}</p> : null}
           <ul className={s.features}>

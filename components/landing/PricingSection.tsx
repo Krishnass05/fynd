@@ -19,7 +19,7 @@ export default function PricingSection() {
               <h3>{p.name}</h3>
               <p className="pcard2-tagline">{p.tagline}</p>
               <p className="pcard2-price"><span>{p.price}</span>{p.per ? <small>{p.per}</small> : null}</p>
-              <p className="pcard2-tokens">{p.tokens} negotiation tokens / month</p>
+              <p className="pcard2-tokens">{p.tokens} negotiation tokens {p.per ? '/ seat / month' : '/ month'}</p>
               <ul className="pcard2-features">
                 {p.features.slice(0, 3).map((f) => <li key={f.title}>{f.title}</li>)}
               </ul>
