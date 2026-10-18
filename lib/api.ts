@@ -100,6 +100,10 @@ export const pollCallSignals = (projectId: string, since: number) => call<CallSi
 export const sendCallSignal = (projectId: string, body: { type: string; payload?: string }) => post<CallSignal>(`/api/projects/${projectId}/call/signal`, body);
 export const sendCaption = (projectId: string, text: string) => post<CaptionResult>(`/api/projects/${projectId}/call/caption`, { text });
 
+// the Help assistant: source is 'ai' when a model wrote the reply from the site guide, 'rules' for the keyword answer
+export const askHelp = (question: string, role?: 'client' | 'freelancer') =>
+  post<{ text: string; links: Array<{ label: string; href: string }>; topics: Array<{ id: string; title: string }>; source: 'ai' | 'rules' }>('/api/help', { question, role });
+
 // whether the AI second check on chat and calls is switched on
 export const getAiStatus = () => call<{ enabled: boolean; provider: string | null }>('/api/ai-status');
 
