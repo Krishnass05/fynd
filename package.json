@@ -7,8 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test lib/engine/scopeDesk.test.js lib/engine/demo.test.js lib/engine/sow.test.js lib/engine/guard.test.js lib/engine/helpbot.test.js",
-    "smoke": "node scripts/smoke.mjs"
+    "test": "node --test lib/engine/scopeDesk.test.js lib/engine/demo.test.js lib/engine/sow.test.js lib/engine/guard.test.js lib/engine/helpbot.test.js lib/engine/aiguard.test.js",
+    "smoke": "node scripts/smoke.mjs",
+    "ai:check": "node scripts/ai-check.mjs"
   },
   "engines": {
     "node": ">=20"

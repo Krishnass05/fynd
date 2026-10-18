@@ -37,6 +37,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `pollCallSignals` | `GET /api/projects/:id/call/signals?since=N` | project member | `CallSignal[]` addressed to you after number N (ring, offer, answer, ice, hangup, reject, caption) |
 | `sendCallSignal` | `POST /api/projects/:id/call/signal` `{type, payload}` | project member | `CallSignal`. Types: offer, answer, ice, hangup, reject. Captions can only be sent through the guard below |
 | `sendCaption` | `POST /api/projects/:id/call/caption` `{text}` | project member | `{blocked, reasons}`. The contact guard checks the line: a clean line goes to the other person as a caption; a line with a phone number (also said in words), email, link or handle sends them a hangup (reason guard) and puts a note in the chat. 400 for empty text |
+| `getAiStatus` | `GET /api/ai-status` | anyone | `{ enabled, provider }`: whether the AI second check on chat and calls is on (a key is set) and which provider. Never returns the key |
 | `getMe` | `GET /api/me` | any user | `User` |
 | `updateMe` | `PUT /api/me` `{name?, skills?, headline?, overview?, location?, ratePerHour?}` | any user (the profile fields are for freelancers) | `User`. `ratePerHour` is whole rupees above 0 |
 | `listJobs` | `GET /api/jobs?mine=1&status=open` | client (mine) or freelancer (open jobs) | `Job[]` |

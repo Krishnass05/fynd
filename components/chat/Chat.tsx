@@ -3,7 +3,7 @@
 // Used by both project pages. Props: projectId (required) and role (optional: 'client' | 'freelancer').
 // Messages are saved on the server; the server hides email addresses and phone numbers before saving.
 import { useEffect, useRef, useState } from 'react';
-import { getMe, listMessages, sendMessage } from '@/lib/api';
+import { getAiStatus, getMe, listMessages, sendMessage } from '@/lib/api';
 import { getUserId } from '@/lib/session';
 import type { Message, Role, User } from '@/lib/types';
 import { useAsync } from '@/lib/useAsync';
@@ -36,6 +36,7 @@ export default function Chat({ projectId, role }: ChatProps) {
     [projectId]
   );
   const { data: currentUser } = useAsync<User>(getMe, []);
+  const { data: ai } = useAsync(getAiStatus, []);
   const activeUserId = currentUser?.id ?? getUserId();
 
   const [text, setText] = useState('');
@@ -101,7 +102,7 @@ export default function Chat({ projectId, role }: ChatProps) {
             </Badge>
           ) : null}
         </div>
-        <span className={styles.refresh}>Updates every few seconds</span>
+        <span className={styles.refresh}>{ai?.enabled ? `Checked for contact details by rules and an AI model (${ai.provider})` : 'Checked for contact details by rules'}</span>
       </div>
 
       <ErrorMessage message={listError ?? sendError} />

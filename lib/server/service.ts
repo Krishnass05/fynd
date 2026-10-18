@@ -12,7 +12,8 @@ import { bad, conflict, forbidden, notFound } from './errors';
 import { matchesAllWords } from '@/lib/search';
 import { COMPANIES, PORTFOLIO, REVIEWS } from '@/lib/data/sampleProfiles';
 import { requestRole } from './context';
-import { inspectSpeech, scrub } from '@/lib/engine/guard';
+import { inspectSpeech, scrub, HIDDEN } from '@/lib/engine/guard';
+import { review as aiReview } from '@/lib/engine/aiguard';
 import { parseSow, compareSow } from '@/lib/engine/sow';
 import { checkSplit, defaultSplit } from '@/lib/milestones';
 import type { MilestoneDraft } from '@/lib/milestones';
@@ -365,13 +366,23 @@ export function listMessages(u: User, projectId: string): Message[] {
   return db().messages.filter((m) => m.projectId === projectId);
 }
 
-export function sendMessage(u: User, projectId: string, b: Record<string, unknown>): Message {
+export async function sendMessage(u: User, projectId: string, b: Record<string, unknown>): Promise<Message> {
   projectFor(u, projectId);
+  const text = str(b.body, 'message', 2000);
   // The contact guard hides phone numbers (also said in words), email addresses, links and handles before saving.
-  const g = scrub(str(b.body, 'message', 2000));
+  const g = scrub(text);
+  let body = g.body;
+  let redacted = g.redacted;
+  let kinds = g.kinds;
+  // If the rules found nothing, an AI model (when a key is set) gets a second look. If it flags the message, the
+  // whole message is hidden. With no key, or if the model is slow or down, only the rules decide.
+  if (!redacted) {
+    const ai = await aiReview(text, { env: process.env });
+    if (ai?.flag) { body = `${HIDDEN} (hidden by the AI check)`; redacted = true; kinds = [`AI check: ${ai.reasons.join('; ')}`]; }
+  }
   const m: Message = {
-    id: nextId('M'), projectId, senderId: u.id, senderName: u.name, body: g.body, sentAt: nowIso(),
-    ...(g.redacted ? { redacted: true, hiddenKinds: g.kinds } : {}),
+    id: nextId('M'), projectId, senderId: u.id, senderName: u.name, body, sentAt: nowIso(),
+    ...(redacted ? { redacted: true, hiddenKinds: kinds } : {}),
     ...(g.asksOffPlatform ? { warning: 'Please keep the conversation and payments on the platform.' } : {}),
   };
   db().messages.push(m);
@@ -620,10 +631,15 @@ export function sendCallSignal(u: User, projectId: string, b: Record<string, unk
 
 // One line of live captions from this person's microphone. The guard checks it: a clean line goes to the
 // other person as a caption; a line with a phone number, email, link or handle (also said in words) ends the call.
-export function reportCaption(u: User, projectId: string, b: Record<string, unknown>): CaptionResult {
+export async function reportCaption(u: User, projectId: string, b: Record<string, unknown>): Promise<CaptionResult> {
   const project = projectFor(u, projectId);
   const text = str(b.text, 'caption', 600);
   const r = inspectSpeech(text);
+  if (!r.block) {
+    // The rules found nothing: the AI model (when a key is set) gets a second look before the line is shown.
+    const ai = await aiReview(text, { env: process.env });
+    if (ai?.flag) { r.block = true; r.reasons = [`AI check: ${ai.reasons.join('; ')}`]; }
+  }
   if (!r.block) {
     pushSignal(project, u, 'caption', text);
     return { blocked: false, reasons: [] };

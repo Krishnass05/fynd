@@ -100,6 +100,9 @@ export const pollCallSignals = (projectId: string, since: number) => call<CallSi
 export const sendCallSignal = (projectId: string, body: { type: string; payload?: string }) => post<CallSignal>(`/api/projects/${projectId}/call/signal`, body);
 export const sendCaption = (projectId: string, text: string) => post<CaptionResult>(`/api/projects/${projectId}/call/caption`, { text });
 
+// whether the AI second check on chat and calls is switched on
+export const getAiStatus = () => call<{ enabled: boolean; provider: string | null }>('/api/ai-status');
+
 // demo and reset
 export const runCaseChecks = () => call<DemoResult>('/api/demo');
 export const resetData = () => post<{ ok: true }>('/api/reset');

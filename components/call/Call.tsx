@@ -6,7 +6,7 @@
 // the call is ended for both people. Calls need Chrome or Edge (speech recognition), otherwise they do not start.
 // A public STUN server is used to find a route; strict networks may need a TURN server. OWNER: Krishna.
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { pollCallSignals, sendCallSignal, sendCaption, startCall } from '@/lib/api';
+import { getAiStatus, pollCallSignals, sendCallSignal, sendCaption, startCall } from '@/lib/api';
 import type { CallMode, CallSignal } from '@/lib/types';
 import { Badge, Button, ErrorMessage } from '@/components/ui';
 
@@ -34,6 +34,8 @@ export default function Call({ projectId, peerName }: { projectId: string; peerN
   const [error, setError] = useState<string | null>(null);
   const [ended, setEnded] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
+  const [ai, setAi] = useState<{ enabled: boolean; provider: string | null } | null>(null);
+  useEffect(() => { void getAiStatus().then(setAi).catch(() => undefined); }, []);
 
   const phaseRef = useRef<Phase>('idle');
   const pc = useRef<RTCPeerConnection | null>(null);
@@ -218,7 +220,7 @@ export default function Call({ projectId, peerName }: { projectId: string; peerN
       </div>
       <p className="muted callbox-note">
         Calls happen on the platform and are watched live: your speech is turned into text and checked, and the call ends if a phone number,
-        email address, link or social handle is said, even in words. This is a rule-based guard. It works in Chrome and Edge.
+        email address, link or social handle is said, even in words. {ai?.enabled ? `Rules plus an AI model (${ai.provider}) check each line; the text of what is said is sent to that provider.` : 'Rule-based guard only (no AI model is switched on).'} It works in Chrome and Edge.
       </p>
       <ErrorMessage message={error} />
       {ended ? <p className="callbox-ended" role="status">{ended}</p> : null}
