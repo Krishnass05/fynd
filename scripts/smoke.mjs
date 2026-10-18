@@ -676,4 +676,38 @@ const cl = await ok('GET', '/api/clients/u_client1', FREE);
 assert.ok(cl.reviews.some((r) => r.projectId === projectId && r.rating === 4), 'and it shows on the client profile');
 }
 
+// ---- call credits: clients only, 1 credit per answered call, blocked at zero, packs at Rs 20 a credit ----
+{
+assert.equal((await call('GET', '/api/credits', FREE)).status, 403, 'freelancers have no credits: calls are free for them');
+const start = (await ok('GET', '/api/credits', CLIENT)).balance;
+assert.ok(start >= 1, 'the client has credits');
+const C = `/api/projects/${projectId}/call`;
+const answer = (who) => ok('POST', `${C}/signal`, who, { type: 'offer', payload: '{}' });
+await ok('POST', C, FREE, { mode: 'voice' }); // the freelancer rings; nobody answers: free
+assert.equal((await ok('GET', '/api/credits', CLIENT)).balance, start, 'a missed call costs nothing');
+await ok('POST', C, CLIENT, { mode: 'video' });
+await answer(FREE); // answered
+await answer(FREE); // the same call again (a retry): charged once
+let cr = await ok('GET', '/api/credits', CLIENT);
+assert.equal(cr.balance, start - 1, 'one answered call = one credit');
+assert.equal(cr.history[0].reason, 'call');
+assert.equal(cr.history[0].delta, -1);
+const pd = await ok('GET', `/api/projects/${projectId}`, CLIENT);
+assert.deepEqual([pd.callCredits.payer, pd.callCredits.balance], ['you', start - 1]);
+assert.equal((await ok('GET', `/api/projects/${projectId}`, FREE)).callCredits.balance, null, 'the freelancer does not see the client balance');
+for (let i = 0; i < start - 1; i += 1) { await ok('POST', C, FREE, { mode: 'voice' }); await answer(CLIENT); }
+assert.equal((await ok('GET', '/api/credits', CLIENT)).balance, 0, 'out of credits');
+const blocked = await call('POST', C, CLIENT, { mode: 'voice' });
+assert.equal(blocked.status, 409);
+assert.match(blocked.data.error, /Buy credits/);
+assert.match((await call('POST', C, FREE, { mode: 'voice' })).data.error, /no call credits left/, 'the freelancer is told why');
+assert.equal((await call('POST', '/api/credits/buy', CLIENT, { pack: 'nope' })).status, 400);
+assert.equal((await call('POST', '/api/credits/buy', FREE, { pack: 'c1' })).status, 403);
+cr = await ok('POST', '/api/credits/buy', CLIENT, { pack: 'c5' });
+assert.equal(cr.balance, 5);
+assert.equal(cr.history[0].reason, 'purchase');
+assert.equal(cr.history[0].price, 100, '5 credits at Rs 20');
+await ok('POST', C, CLIENT, { mode: 'voice' }); // calls work again
+}
+
 console.log('smoke test passed');

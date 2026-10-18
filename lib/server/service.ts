@@ -5,10 +5,11 @@ import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDes
 import { Negotiations, type OfferInput, type Party } from '@/lib/engine/negotiation';
 import { suggestTask } from '@/lib/engine/taskrules';
 import { checkMove, checkinStatus as checkinClock, computeProgress, istDay, MoveError } from '@/lib/engine/progress';
+import { CALL_COST, CreditError, PACKS, START_CREDITS, balanceOf, buyPack, canCall, chargeCall } from '@/lib/engine/credits';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
   ActivityItem, Application, AttentionItem, CallMode, CallSignal, CallSignalType, CaptionResult, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
-  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, TaskRequest, UploadSowResult, User, WorkItem, WorkStatus, CheckIn,
+  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, TaskRequest, UploadSowResult, User, WorkItem, WorkStatus, CheckIn, CreditEntry, CreditsInfo,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
@@ -341,6 +342,7 @@ export function getProject(u: User, id: string): ProjectDetail {
     taskRequests: listTaskViews(id),
     ...workParts(id),
     feedback: feedbackFor(u, project),
+    callCredits: callCreditsFor(u, project),
   };
 }
 
@@ -1110,7 +1112,66 @@ async function pushSignal(project: Project, u: User, type: CallSignalType, paylo
 export async function startCall(u: User, projectId: string, b: Record<string, unknown> = {}): Promise<CallSignal> {
   const project = projectFor(u, projectId);
   const mode: CallMode = b.mode === 'video' ? 'video' : 'voice';
-  return pushSignal(project, u, 'ring', JSON.stringify({ mode }));
+  // the client pays for calls in their project (freelancers never pay); no credits, no call
+  const payer = clientOf(project);
+  if (!canCall(payer.credits)) {
+    throw conflict(u.id === payer.id ? 'No call credits left. Buy credits to call.' : `${payer.name} has no call credits left, so calls are paused until they buy more.`);
+  }
+  const sig = await pushSignal(project, u, 'ring', JSON.stringify({ mode }));
+  const prev = db().calls.findIndex((c) => c.projectId === projectId);
+  const entry = { projectId, startedAt: nowIso(), charged: false };
+  if (prev >= 0) db().calls[prev] = entry; else db().calls.push(entry);
+  return sig;
+}
+
+// ---- call credits (clients only; freelancers never pay) ----
+function clientOf(project: Project): User {
+  return db().users.find((x) => x.id === project.clientId)!;
+}
+
+function logCredit(e: Omit<CreditEntry, 'id' | 'at'>) {
+  db().creditLog.push({ id: nextId('CR'), at: nowIso(), ...e });
+}
+
+// The call was answered (the person called accepted, which sends the offer): charge the client once for it.
+function chargeAnsweredCall(project: Project) {
+  const entry = db().calls.find((c) => c.projectId === project.id);
+  if (!entry || entry.charged) return;
+  const payer = clientOf(project);
+  payer.credits = canCall(payer.credits) ? chargeCall(payer.credits) : 0;
+  entry.charged = true;
+  logCredit({ userId: payer.id, delta: -CALL_COST, balanceAfter: payer.credits, reason: 'call', projectId: project.id, projectTitle: project.jobTitle });
+}
+
+function callCreditsFor(u: User, project: Project) {
+  const payer = clientOf(project);
+  const mine = u.id === payer.id;
+  return { payer: mine ? 'you' as const : 'client' as const, canCall: canCall(payer.credits), balance: mine ? balanceOf(payer.credits) : null, cost: CALL_COST };
+}
+
+export function getCredits(u: User): CreditsInfo {
+  if (u.role !== 'client') throw forbidden('Credits are for clients; calls are free for freelancers');
+  const me = db().users.find((x) => x.id === u.id) ?? u;
+  return {
+    balance: balanceOf(me.credits), callCost: CALL_COST, startCredits: START_CREDITS, packs: [...PACKS],
+    history: db().creditLog.filter((e) => e.userId === u.id).sort((a, b) => b.at.localeCompare(a.at)),
+  };
+}
+
+// Buying a pack. Demo: no payment is taken; the credits are added straight away.
+export function buyCredits(u: User, b: Record<string, unknown>): CreditsInfo {
+  if (u.role !== 'client') throw forbidden('Credits are for clients; calls are free for freelancers');
+  const me = db().users.find((x) => x.id === u.id);
+  if (!me) throw notFound('Account not found');
+  try {
+    const { balance, pack } = buyPack(me.credits, String(b.pack ?? ''));
+    me.credits = balance;
+    logCredit({ userId: me.id, delta: pack.credits, balanceAfter: balance, reason: 'purchase', packId: pack.id, price: pack.price });
+  } catch (e) {
+    if (e instanceof CreditError) throw bad(e.message);
+    throw e;
+  }
+  return getCredits(u);
 }
 
 // The signals addressed to this person since the given number.
@@ -1127,6 +1188,7 @@ export async function sendCallSignal(u: User, projectId: string, b: Record<strin
   if (!['offer', 'answer', 'ice', 'hangup', 'reject'].includes(type)) throw bad('Unknown call signal type');
   const payload = typeof b.payload === 'string' ? b.payload : b.payload === undefined ? '' : JSON.stringify(b.payload);
   if (payload.length > 20000) throw bad('Call signal is too large');
+  if (type === 'offer') chargeAnsweredCall(project); // the call was answered: 1 credit from the client, once per call
   return pushSignal(project, u, type, payload);
 }
 

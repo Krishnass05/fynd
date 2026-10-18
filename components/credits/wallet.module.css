@@ -1,0 +1,21 @@
+/* Credits wallet in the client's top bar. OWNER: Krishna. */
+.wrap { position: relative; display: inline-flex; }
+.button { position: relative; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink-strong); display: grid; place-items: center; cursor: pointer; }
+.button:hover, .button[aria-expanded="true"] { border-color: #F37021; color: #c4561a; }
+.button:focus-visible { outline: 2px solid #F37021; outline-offset: 2px; }
+.count { position: absolute; top: -6px; right: -8px; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 999px; background: #F37021; color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; line-height: 1; }
+.empty { background: var(--bad); }
+.panel { position: absolute; top: calc(100% + 10px); right: -8px; width: min(300px, calc(100vw - 32px)); background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 16px 40px -18px rgba(37, 36, 34, .35); padding: 16px; z-index: 60; display: grid; gap: 8px; text-align: left; }
+.title { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.balance { margin: 0; font-size: 15px; }
+.balance strong { font-size: 30px; font-weight: 800; color: var(--ink-strong); margin-right: 2px; }
+.note { margin: 0; font-size: 12px; color: var(--muted); }
+.sub { margin: 6px 0 0; font-weight: 600; font-size: 14px; }
+.packs { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.packs li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.packs li:last-child { border-bottom: 0; }
+.packs :global(.btn) { padding: 6px 14px; font-size: 13px; }
+.ok { margin: 0; font-size: 13px; color: #1d7a46; }
+.err { margin: 0; font-size: 13px; color: var(--bad); }
+.more { font-size: 13px; font-weight: 600; color: #c4561a; text-decoration: none; }
+.more:hover { text-decoration: underline; }

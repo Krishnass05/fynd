@@ -15,6 +15,7 @@ import { useUser } from '@/lib/useUser';
 import { ChevronRight, Search } from '@/components/ui/icons';
 import HelpBot from '@/components/help/HelpBot';
 import AppNav from './AppNav';
+import CreditWallet from '@/components/credits/CreditWallet';
 
 const initials = (name: string) => name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
@@ -182,6 +183,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
           </nav>
 
           <div className="usermenu">
+            {role === 'client' ? <CreditWallet /> : null}
             <span className="usermenu-name"><small>Hello,</small>{user ? user.name : ''}</span>
             <div className="usermenu-wrap" onMouseEnter={() => setOpen('user')} onMouseLeave={() => setOpen(null)}>
               <button type="button" className="avatar avatar-link" aria-label="Open your account menu" aria-haspopup="menu" aria-expanded={open === 'user'} aria-controls="menu-user" data-here={pathname.startsWith(PROFILE[role]) || pathname.startsWith(DASHBOARD[role]) || undefined} onClick={() => toggle('user')}>

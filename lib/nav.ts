@@ -16,6 +16,7 @@ export const NAV: Record<Role, NavItem[]> = {
     { href: '/client/saved', label: 'Saved', icon: 'heart' },
     { href: '/client/jobs/new', label: 'Post a job', icon: 'plus' },
     { href: '/client/pricing', label: 'Pricing', icon: 'rupee' },
+    { href: '/client/credits', label: 'Credits', icon: 'rupee' },
     { href: '/client/profile', label: 'Profile', icon: 'user' },
     { href: '/client/dashboard', label: 'Dashboard', icon: 'home' },
   ],
@@ -32,6 +33,7 @@ export const TOP_LINKS: Record<Role, NavItem[]> = {
     { href: '/client/freelancers', label: 'Find freelancers', icon: 'search' },
     { href: '/client/saved', label: 'Saved', icon: 'heart' },
     { href: '/client/pricing', label: 'Pricing', icon: 'rupee' },
+    { href: '/client/credits', label: 'Credits', icon: 'rupee' },
   ],
   freelancer: [],
 };

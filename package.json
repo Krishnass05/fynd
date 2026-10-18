@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test lib/engine/scopeDesk.test.js lib/engine/demo.test.js lib/engine/sow.test.js lib/engine/guard.test.js lib/engine/helpbot.test.js lib/engine/aiguard.test.js lib/engine/aihelp.test.js lib/engine/auth.test.js lib/engine/negotiation.test.js lib/engine/taskrules.test.js lib/engine/progress.test.js",
+    "test": "node --test lib/engine/scopeDesk.test.js lib/engine/demo.test.js lib/engine/sow.test.js lib/engine/guard.test.js lib/engine/helpbot.test.js lib/engine/aiguard.test.js lib/engine/aihelp.test.js lib/engine/auth.test.js lib/engine/negotiation.test.js lib/engine/taskrules.test.js lib/engine/progress.test.js lib/engine/credits.test.js",
     "smoke": "node scripts/smoke.mjs",
     "ai:check": "node scripts/ai-check.mjs",
     "google:check": "node scripts/google-check.mjs",

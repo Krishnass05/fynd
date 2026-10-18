@@ -23,6 +23,7 @@ export interface User {
   jobsDone?: number; // sample data
   // Client profile: company details the client entered themselves (shown instead of any sample company)
   company?: CompanyInfo;
+  credits?: number; // client call credits; missing = the starting amount (see lib/engine/credits.js)
 }
 
 // What a client sees when browsing freelancers.
@@ -307,6 +308,29 @@ export interface ProjectDetail {
   checkinStatus: import('./engine/progress').CheckinStatus;
   // Feedback after the job: open once the client has approved every milestone; one review per side
   feedback: { complete: boolean; mine: ReviewItem | null; theirs: ReviewItem | null };
+  // Calls cost the client 1 credit when answered; freelancers never pay. The balance is shown only to the client.
+  callCredits: { payer: 'you' | 'client'; canCall: boolean; balance: number | null; cost: number };
+}
+
+// One change to a client's call credits
+export interface CreditEntry {
+  id: string;
+  userId: string;
+  delta: number; // -1 for a call, +credits for a purchase
+  balanceAfter: number;
+  reason: 'call' | 'purchase';
+  projectId?: string;
+  projectTitle?: string;
+  packId?: string;
+  price?: number; // rupees, before GST (no payment is taken in the demo)
+  at: string;
+}
+export interface CreditsInfo {
+  balance: number;
+  callCost: number;
+  startCredits: number;
+  packs: Array<{ id: string; credits: number; price: number; label: string; popular?: boolean }>;
+  history: CreditEntry[]; // newest first
 }
 
 // ---- the task list, progress and daily check-ins (docs/SCOPE_FLOW.md section 2) ----

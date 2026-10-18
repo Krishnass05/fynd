@@ -60,7 +60,7 @@ export function serializeDb(d: Db): unknown {
     desks: [...d.desks].map(([k, v]) => [k, v.toState()]),
     labels: [...d.labels], hashes: [...d.hashes],
     tasks: d.tasks, deals: [...d.deals].map(([k, v]) => [k, v.toState()]),
-    work: d.work, checkins: d.checkins, reviews: d.reviews,
+    work: d.work, checkins: d.checkins, reviews: d.reviews, creditLog: d.creditLog, calls: d.calls,
   };
 }
 
@@ -83,6 +83,8 @@ export function deserializeDb(o: Record<string, unknown>): Db {
     work: arr(o.work),
     checkins: arr(o.checkins),
     reviews: arr(o.reviews), // added with feedback after a job
+    creditLog: arr(o.creditLog), // added with call credits
+    calls: arr(o.calls),
     seq: typeof o.seq === 'number' ? o.seq : 100,
   };
 }

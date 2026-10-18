@@ -95,6 +95,9 @@ export const approveMilestone = (projectId: string, milestoneId: string) => post
 // SOW upload (txt or md text for now) and change orders
 export const uploadSow = (projectId: string, b: { kind: SowKind; filename: string; text: string }) =>
   post<UploadSowResult>(`/api/projects/${projectId}/sow`, b);
+// Call credits (clients): balance, history and packs; buying a pack (demo: no payment taken)
+export const getCredits = () => call<import('./types').CreditsInfo>('/api/credits');
+export const buyCredits = (pack: string) => post<import('./types').CreditsInfo>('/api/credits/buy', { pack });
 // Feedback after the job (open once every milestone is approved)
 export const leaveReview = (projectId: string, b: { rating: number; text: string }) => post<ProjectDetail>(`/api/projects/${projectId}/review`, b);
 // The task list and daily check-ins

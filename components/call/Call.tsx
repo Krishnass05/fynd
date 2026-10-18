@@ -7,7 +7,8 @@
 // A public STUN server is used to find a route; strict networks may need a TURN server. OWNER: Krishna.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAiStatus, pollCallSignals, sendCallSignal, sendCaption, startCall } from '@/lib/api';
-import type { CallMode, CallSignal } from '@/lib/types';
+import Link from 'next/link';
+import type { CallMode, CallSignal, ProjectDetail } from '@/lib/types';
 import { Badge, Button, ErrorMessage } from '@/components/ui';
 
 const ICE = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
@@ -27,7 +28,9 @@ const recognizerClass = (): (new () => Recognizer) | null => {
 type Phase = 'idle' | 'calling' | 'incoming' | 'connecting' | 'live';
 interface Line { id: number; who: 'you' | 'them'; text: string }
 
-export default function Call({ projectId, peerName }: { projectId: string; peerName: string }) {
+// credits: who pays for calls (the client: 1 credit per answered call; freelancers never pay). onLive lets the page
+// refresh the balance once a call connects.
+export default function Call({ projectId, peerName, credits, onLive }: { projectId: string; peerName: string; credits?: ProjectDetail['callCredits']; onLive?: () => void }) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [mode, setMode] = useState<CallMode>('voice');
   const [lines, setLines] = useState<Line[]>([]);
@@ -111,7 +114,7 @@ export default function Call({ projectId, peerName }: { projectId: string; peerN
     p.onicecandidate = (e) => { if (e.candidate) void sendCallSignal(projectId, { type: 'ice', payload: JSON.stringify(e.candidate) }).catch(() => undefined); };
     p.ontrack = (e) => { if (remoteEl.current) { remoteEl.current.srcObject = e.streams[0]; void remoteEl.current.play().catch(() => undefined); } };
     p.onconnectionstatechange = () => {
-      if (p.connectionState === 'connected') { setPhaseBoth('live'); startListening(); }
+      if (p.connectionState === 'connected') { setPhaseBoth('live'); startListening(); onLive?.(); }
       if (p.connectionState === 'failed' || p.connectionState === 'disconnected') finish('The call was disconnected.');
     };
     pc.current = p;
@@ -222,6 +225,13 @@ export default function Call({ projectId, peerName }: { projectId: string; peerN
         Calls happen on the platform and are watched live: your speech is turned into text and checked, and the call ends if a phone number,
         email address, link or social handle is said, even in words. {ai?.enabled ? `Rules plus an AI model (${ai.provider}) check each line; the text of what is said is sent to that provider.` : 'Rule-based guard only (no AI model is switched on).'} It works in Chrome and Edge.
       </p>
+      {credits ? (
+        <p className="callbox-note" role="status">
+          {credits.payer === 'you'
+            ? <>Each answered call uses {credits.cost} credit. You have <strong>{credits.balance} {credits.balance === 1 ? 'credit' : 'credits'}</strong> left. <Link href="/client/credits">{credits.canCall ? 'Buy more' : 'Buy credits to call'}</Link></>
+            : credits.canCall ? <>Calls are free for you; the client's credits cover them.</> : <>{peerName} has no call credits left, so calls are paused until they buy more.</>}
+        </p>
+      ) : null}
       <ErrorMessage message={error} />
       {ended ? <p className="callbox-ended" role="status">{ended}</p> : null}
 
@@ -235,8 +245,8 @@ export default function Call({ projectId, peerName }: { projectId: string; peerN
 
       {phase === 'idle' ? (
         <div className="callbox-actions">
-          <Button type="button" onClick={() => void call('voice')}>Voice call</Button>
-          <Button type="button" variant="secondary" onClick={() => void call('video')}>Video call</Button>
+          <Button type="button" disabled={credits ? !credits.canCall : false} onClick={() => void call('voice')}>Voice call</Button>
+          <Button type="button" variant="secondary" disabled={credits ? !credits.canCall : false} onClick={() => void call('video')}>Video call</Button>
         </div>
       ) : null}
 
