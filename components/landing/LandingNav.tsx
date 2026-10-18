@@ -1,6 +1,6 @@
 'use client';
 // Top bar of the public home page: Crewmate wordmark, Find Talent, Find Work, Explore Categories
-// (drop-down), How It Works, and on the right Log in and Sign up, which open /login and /register.
+// (drop-down), How It Works, Pricing, and on the right Log in and Sign up, which open /login and /register.
 // Sticky; on phones the links move into a drawer. OWNER: Krishna.
 import Link from 'next/link';
 import { LogoMark } from '@/components/brand/Logo';
@@ -53,6 +53,7 @@ export default function LandingNav() {
         ) : null}
       </div>
       <a className="lnav-link" href="#how-it-works" onClick={close}>How It Works</a>
+      <a className="lnav-link" href="#pricing" onClick={close}>Pricing</a>
     </>
   );
 

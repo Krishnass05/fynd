@@ -6,6 +6,7 @@ import Hero from '@/components/landing/Hero';
 import HelpBot from '@/components/help/HelpBot';
 import LandingNav from '@/components/landing/LandingNav';
 import { FeaturedTalent, FinalCta, Footer, HowItWorks } from '@/components/landing/Sections';
+import PricingSection from '@/components/landing/PricingSection';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         <CategoryCarousel />
         <HowItWorks />
         <FeaturedTalent />
+        <PricingSection />
         <FinalCta />
       </main>
       <Footer />

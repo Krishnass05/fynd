@@ -101,6 +101,7 @@ export function Footer() {
           <Link href="/login">Log in</Link>
           <Link href="/register">Sign up</Link>
           <a href="#how-it-works">How it works</a>
+          <Link href="/pricing">Pricing</Link>
           <Link href="/demo">Case checks</Link>
         </nav>
       </div>
