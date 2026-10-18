@@ -169,3 +169,28 @@ flowchart LR
   F --> F2[Find jobs]
   F --> F3[Profile]
 ```
+
+## 11. Scope flow: SOW, negotiation, tasks, new requests (planned, not built)
+
+```mermaid
+flowchart TD
+  H[Freelancer applies with a price] -->|counter until one side accepts| HA[Hired at the agreed price]
+  HA --> U[Client uploads SOW]
+  U --> T[Crewmate reads it into a table: rules first, AI if a key is set, labelled]
+  T --> FR{Freelancer reviews rows}
+  FR -->|counter hours or date| T
+  FR -->|send back| U
+  FR -->|approve| S[Signed scope v1: rows become tasks inside milestones]
+  S --> W[Tasks: to do, in progress, done, approved]
+  W --> P[Progress bar = approved hours / agreed hours]
+  W --> C[Daily check-in; warning after 2 days without one]
+  N[Client asks for a new task in plain English] --> L[Suggested label: included, new or excluded, defect, unclear]
+  L --> Q{Freelancer: accept as included, quote, ask, decline}
+  Q -->|quote| NG[Negotiation: counter until accept or decline]
+  NG -->|agreed| W
+  NG -->|declined| X[Closed: nothing committed]
+  Q -->|decline| X
+  Q -->|accept as included| W
+```
+
+Spec: `docs/SCOPE_FLOW.md`. Only the side that did not make the latest offer can accept it. Nothing joins the work list, hours or price until both sides agree.
