@@ -26,7 +26,7 @@ const B = 'Business, Accounting, Human Resources and Legal';
 const A = 'Data Entry and Admin';
 
 export const CATEGORIES: Category[] = [
-  { slug: 'ai-services', name: 'AI Services', description: 'AI solutions, automation, and intelligent tools.', image: '/img/categories/ai-services.svg', alt: 'A network of connected nodes, standing for AI and automation', tone: '#eb5e28', to: { q: 'automation' } },
+  { slug: 'ai-services', name: 'AI Services', description: 'AI solutions, automation, and intelligent tools.', image: '/img/categories/ai-services.png', alt: 'A robotic hand reaching toward a human hand', tone: '#eb5e28', to: { q: 'automation' } },
   { slug: 'development-it', name: 'Development & IT', description: 'Websites, applications, software, and technical expertise.', image: '/img/categories/development-it.png', alt: 'A developer at a desk looking at code on a large monitor and a laptop', tone: '#403d39', to: { category: W } },
   { slug: 'design-creative', name: 'Design & Creative', description: 'Brand identity, graphic design, UI/UX, and creative direction.', image: '/img/categories/design-creative.png', alt: 'Colour swatch books and a tablet with colour sketches on a designer desk', tone: '#eb5e28', to: { category: D } },
   { slug: 'sales-marketing', name: 'Sales & Marketing', description: 'Campaigns, growth strategy, SEO, and social media.', image: '/img/categories/sales-marketing.png', alt: 'A rail of clothes with red SALE tags on the hangers', tone: '#ccc5b9', to: { q: 'marketing' } },
