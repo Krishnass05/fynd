@@ -413,11 +413,33 @@ export async function sendMessage(u: User, projectId: string, b: Record<string, 
 }
 
 // ---- SOW upload and comparison ----
+// The first SOW (the baseline) goes through a sign-off (docs/SCOPE_FLOW.md step 1): the client uploads it, the freelancer
+// approves it (filling in or changing the hours per row) or sends it back, and if hours changed the client confirms them.
+// Only a signed baseline is the scope that requests are checked against. Older baselines without a status are signed.
+export const sowStatus = (d: SowDocument) => d.status ?? 'signed';
+const signedBaseline = (projectId: string) => db().sow.find((d) => d.projectId === projectId && d.kind === 'baseline' && sowStatus(d) === 'signed');
+
+function signBaseline(projectId: string, doc: SowDocument, by: User) {
+  const project = db().projects.find((p) => p.id === projectId)!;
+  const desk = db().desks.get(projectId)!;
+  doc.status = 'signed';
+  doc.signedAt = nowIso();
+  doc.history = [...(doc.history ?? []), { at: doc.signedAt, by: party(by), action: 'signed', note: 'Signed by both sides' }];
+  desk.scope = {
+    included: doc.items.filter((i) => i.section !== 'excluded').map((i) => i.text),
+    excluded: doc.items.filter((i) => i.section === 'excluded').map((i) => i.text),
+  };
+  if (doc.ratePerHour) {
+    desk.ratePerHour = doc.ratePerHour;
+    project.ratePerHour = doc.ratePerHour;
+  }
+}
+
 export function uploadSow(u: User, projectId: string, b: Record<string, unknown>): UploadSowResult {
-  const project = projectFor(u, projectId);
+  projectFor(u, projectId);
   const kind = b.kind;
   if (kind !== 'baseline' && kind !== 'amendment') throw bad('kind must be baseline or amendment');
-  if (kind === 'amendment' && u.role !== 'client') throw forbidden('Only the client uploads an amendment');
+  if (u.role !== 'client') throw forbidden(kind === 'baseline' ? 'The client uploads the first SOW; the freelancer then reviews and signs it' : 'Only the client uploads an amendment');
   const filename = str(b.filename, 'filename', 200);
   if (!/\.(txt|md|pdf)$/i.test(filename)) throw bad('Only .txt, .md and .pdf files are accepted');
   const text = str(b.text, 'text', 500_000);
@@ -429,32 +451,30 @@ export function uploadSow(u: User, projectId: string, b: Record<string, unknown>
   const parsed = parseSow(text);
   if (!parsed.items.length) throw bad('No deliverables, included or excluded items could be read from this file. Check the headings, or add the items by hand.');
 
-  const baseline = docs.find((d) => d.kind === 'baseline');
-  if (kind === 'baseline' && baseline) throw conflict('A signed SOW is already uploaded for this project');
-  if (kind === 'amendment' && !baseline) throw conflict('Upload the signed SOW first');
+  const baseline = signedBaseline(projectId);
+  if (kind === 'baseline' && baseline) throw conflict('The SOW is already signed. Ask for changes with an amendment or a new task');
+  if (kind === 'amendment' && !baseline) throw conflict('The first SOW has to be signed by both sides before an amendment');
 
-  // Same text uploaded again: reuse the existing document, so it cannot double-charge.
+  // Same text uploaded again: reuse the existing document, so it cannot double-charge. (A first SOW that was sent back
+  // or replaced can be uploaded again as a new version, for a fresh review.)
   const dupId = textHashes.get(`${projectId}:${hash(text)}`);
-  const dup = dupId ? docs.find((d) => d.id === dupId) : undefined;
-  const doc: SowDocument = dup ?? {
+  const found = dupId ? docs.find((d) => d.id === dupId) : undefined;
+  const dup = found && !(found.kind === 'baseline' && ['sent_back', 'replaced'].includes(sowStatus(found))) ? found : undefined;
+  if (dup) return { document: dup, compare: null, project: getProject(u, projectId) };
+
+  const doc: SowDocument = {
     id: nextId('S'), projectId, version: docs.length + 1, kind, filename, uploadedBy: u.id, uploadedAt: nowIso(), items: parsed.items,
   };
-  if (!dup) {
-    db().sow.push(doc);
-    textHashes.set(`${projectId}:${hash(text)}`, doc.id);
-  }
-
   if (kind === 'baseline') {
-    desk.scope = {
-      included: parsed.items.filter((i) => i.section !== 'excluded').map((i) => i.text),
-      excluded: parsed.items.filter((i) => i.section === 'excluded').map((i) => i.text),
-    };
-    if (parsed.ratePerHour) {
-      desk.ratePerHour = parsed.ratePerHour;
-      project.ratePerHour = parsed.ratePerHour;
-    }
-    return { document: doc, compare: null, project: getProject(u, projectId) };
+    // an earlier draft that was not signed yet is replaced by this one
+    for (const d of docs.filter((x) => x.kind === 'baseline' && sowStatus(x) !== 'signed' && sowStatus(x) !== 'replaced')) d.status = 'replaced';
+    doc.status = 'proposed';
+    doc.ratePerHour = parsed.ratePerHour ?? null;
+    doc.history = [{ at: doc.uploadedAt, by: 'client', action: 'uploaded', note: filename }];
   }
+  db().sow.push(doc);
+  textHashes.set(`${projectId}:${hash(text)}`, doc.id);
+  if (kind === 'baseline') return { document: doc, compare: null, project: getProject(u, projectId) };
 
   const items = compareSow(baseline!.items, doc.items);
   const requests = items
@@ -473,6 +493,57 @@ export function uploadSow(u: User, projectId: string, b: Record<string, unknown>
     compare: { fromVersion: baseline!.version, toVersion: doc.version, items, changeRequestIds: requests.map((r) => r.id) },
     project: getProject(u, projectId),
   };
+}
+
+// The sign-off of the first SOW. Freelancer: approve {rows?: [{hours, note}] in the same order as the items} or
+// send_back {note}. Client: confirm (the freelancer's hours) or send_back {note} (the hours go back to the freelancer).
+export function reviewSow(u: User, projectId: string, docId: string, b: Record<string, unknown>): ProjectDetail {
+  projectFor(u, projectId);
+  const doc = db().sow.find((d) => d.id === docId && d.projectId === projectId);
+  if (!doc) throw notFound('SOW not found');
+  if (doc.kind !== 'baseline') throw bad('Only the first SOW is signed off; amendments become change orders');
+  const status = sowStatus(doc);
+  const note = typeof b.note === 'string' ? b.note.trim().slice(0, 1000) : '';
+  const log = (action: string, text: string) => { doc.history = [...(doc.history ?? []), { at: nowIso(), by: party(u), action, note: text }]; };
+  const action = b.action;
+
+  if (u.role === 'freelancer') {
+    if (status !== 'proposed') throw conflict(status === 'signed' ? 'This SOW is already signed' : `This SOW is ${status.replace('_', ' ')}, not waiting for your review`);
+    if (action === 'send_back') {
+      if (!note) throw bad('Say what needs to change');
+      doc.status = 'sent_back';
+      log('sent_back', note);
+    } else if (action === 'approve') {
+      const rows = b.rows === undefined ? doc.items.map((i) => ({ hours: i.hours, note: '' })) : b.rows;
+      if (!Array.isArray(rows) || rows.length !== doc.items.length) throw bad(`rows must list all ${doc.items.length} items, in order`);
+      const clean = rows.map((r: { hours?: unknown; note?: unknown }, n: number) => {
+        const h = r?.hours === undefined ? doc.items[n].hours : r.hours;
+        if (h !== null && (typeof h !== 'number' || !Number.isFinite(h) || h < 0 || h > 1000)) throw bad(`Row ${n + 1}: hours must be a number from 0 to 1000, or empty when unknown`);
+        return { hours: h as number | null, note: typeof r?.note === 'string' ? r.note.trim().slice(0, 300) : '' };
+      });
+      const changed = clean.some((r, n) => r.hours !== doc.items[n].hours);
+      doc.review = { by: u.name, at: nowIso(), rows: clean };
+      if (changed) {
+        doc.status = 'awaiting_client';
+        log('approved_with_hours', note || 'Approved, with hours filled in or changed: the client confirms them');
+      } else {
+        log('approved', note || 'Approved as uploaded');
+        signBaseline(projectId, doc, u);
+      }
+    } else throw bad('action must be approve or send_back');
+  } else {
+    if (status !== 'awaiting_client') throw conflict(status === 'signed' ? 'This SOW is already signed' : 'Nothing is waiting for your confirmation');
+    if (action === 'confirm') {
+      doc.items = doc.items.map((i, n) => ({ ...i, hours: doc.review!.rows[n].hours }));
+      log('confirmed_hours', note || "Confirmed the freelancer's hours");
+      signBaseline(projectId, doc, u);
+    } else if (action === 'send_back') {
+      if (!note) throw bad('Say what is wrong with the hours');
+      doc.status = 'proposed';
+      log('hours_sent_back', note);
+    } else throw bad('action must be confirm or send_back');
+  }
+  return getProject(u, projectId);
 }
 
 // ---- decisions on a change request ----
@@ -708,13 +779,15 @@ export function freelancerDashboard(u: User): FreelancerDashboard {
   for (const p of listProjects(u)) {
     const d = getProject(u, p.id);
     const count = (s: string) => d.changeRequests.filter((c) => c.state === s).length;
-    const hasBaseline = d.sowDocuments.some((s) => s.kind === 'baseline');
+    const hasBaseline = d.sowDocuments.some((s) => s.kind === 'baseline' && sowStatus(s) === 'signed');
+    const toReview = d.sowDocuments.some((s) => s.kind === 'baseline' && sowStatus(s) === 'proposed');
     projects.push({
       project: p, clientName: d.client.name, totals: d.totals, hasBaseline,
       counts: { awaitingClient: count('quoted'), needsClarification: count('needs_clarification'), rejected: count('rejected'), approved: count('approved') },
     });
     const note = (kind: AttentionItem['kind'], text: string) => attention.push({ kind, projectId: p.id, projectTitle: p.jobTitle, text });
-    if (!hasBaseline) note('upload_sow', 'Upload the signed SOW so extra requests can be compared against it.');
+    if (toReview) note('review_sow', 'The client uploaded the SOW. Review it, fill in the hours and approve it, or send it back.');
+    else if (!hasBaseline) note('upload_sow', 'Waiting for the client to upload the SOW, or to confirm your hours.');
     for (const c of d.changeRequests) {
       if (c.state === 'needs_clarification') note('clarify_hours', `${c.text}: hours are unknown, so it cannot be priced yet.`);
       if (c.state === 'rejected') note('rejected_change', `${c.text} was rejected${c.decisionReason ? ` (${c.decisionReason})` : ''}. You can reopen it with a reason.`);
@@ -774,11 +847,14 @@ export function clientDashboard(u: User): ClientDashboard {
   for (const p of listProjects(u)) {
     const d = getProject(u, p.id);
     const count = (s: string) => d.changeRequests.filter((c) => c.state === s).length;
-    const hasBaseline = d.sowDocuments.some((s) => s.kind === 'baseline');
+    const hasBaseline = d.sowDocuments.some((s) => s.kind === 'baseline' && sowStatus(s) === 'signed');
+    const sowState = d.sowDocuments.filter((s) => s.kind === 'baseline').map(sowStatus);
     const counts = { awaitingDecision: count('quoted'), needsClarification: count('needs_clarification'), rejected: count('rejected'), approved: count('approved') };
     projects.push({ project: p, freelancerName: d.freelancer.name, totals: d.totals, hasBaseline, counts });
     const href = `/client/projects/${p.id}`;
-    if (!hasBaseline) attention.push({ kind: 'no_sow', title: p.jobTitle, text: `Waiting for ${d.freelancer.name} to upload the signed SOW.`, href });
+    if (sowState.includes('awaiting_client')) attention.push({ kind: 'confirm_sow', title: p.jobTitle, text: `${d.freelancer.name} approved the SOW with hours filled in. Confirm them to sign it.`, href });
+    else if (!hasBaseline && sowState.includes('proposed')) attention.push({ kind: 'no_sow', title: p.jobTitle, text: `Waiting for ${d.freelancer.name} to review your SOW.`, href });
+    else if (!hasBaseline) attention.push({ kind: 'no_sow', title: p.jobTitle, text: sowState.includes('sent_back') ? `${d.freelancer.name} sent the SOW back. Read why and upload a new version.` : 'Upload the SOW so the freelancer can review and sign it.', href });
     if (counts.awaitingDecision) {
       attention.push({ kind: 'change_orders', title: p.jobTitle, text: `${counts.awaitingDecision} change ${counts.awaitingDecision === 1 ? 'order needs' : 'orders need'} your decision.`, href });
     }

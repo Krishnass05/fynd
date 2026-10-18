@@ -212,10 +212,39 @@ assert.equal((await call('POST', `/api/projects/${projectId}/call/caption`, FREE
 
 // signed SOW then amendment
 const baseline = ['Rate: Rs 1000/hr', '', 'Deliverables', '- One landing page', '- Contact form', '', 'Excluded', '- Payment checkout', '- Blog'].join('\n');
-const up1 = await ok('POST', `/api/projects/${projectId}/sow`, FREE, { kind: 'baseline', filename: 'signed.txt', text: baseline });
+// the client uploads the first SOW; the freelancer reviews it; changed hours go back to the client to confirm
+assert.equal((await call('POST', `/api/projects/${projectId}/sow`, FREE, { kind: 'baseline', filename: 'signed.txt', text: baseline })).status, 403, 'the freelancer does not upload the first SOW');
+const draft = await ok('POST', `/api/projects/${projectId}/sow`, CLIENT, { kind: 'baseline', filename: 'draft.txt', text: baseline + '\n- Blog' });
+assert.equal(draft.document.status, 'proposed');
+assert.ok((await ok('GET', '/api/dashboard', FREE)).attention.some((a) => a.kind === 'review_sow'), 'the freelancer is asked to review it');
+assert.equal((await call('POST', `/api/projects/${projectId}/sow`, CLIENT, { kind: 'amendment', filename: 'early.txt', text: baseline })).status, 409, 'no amendment before the first SOW is signed');
+const sowAct = (who, docId, body) => call('POST', `/api/projects/${projectId}/sow/${docId}`, who, body);
+assert.equal((await sowAct(CLIENT, draft.document.id, { action: 'confirm' })).status, 409, 'nothing for the client to confirm yet');
+assert.equal((await sowAct(FREE, draft.document.id, { action: 'send_back' })).status, 400, 'a reason is required');
+let sp = (await sowAct(FREE, draft.document.id, { action: 'send_back', note: 'Blog is listed twice' })).data;
+assert.equal(sp.sowDocuments.find((d) => d.id === draft.document.id).status, 'sent_back');
+assert.equal(sp.taskRequests.length, 0);
+const up1 = await ok('POST', `/api/projects/${projectId}/sow`, CLIENT, { kind: 'baseline', filename: 'signed.txt', text: baseline });
 assert.equal(up1.compare, null);
-assert.ok(!(await ok('GET', '/api/dashboard', FREE)).attention.some((a) => a.kind === 'upload_sow'), 'no SOW prompt once uploaded');
-assert.equal((await call('POST', `/api/projects/${projectId}/sow`, FREE, { kind: 'baseline', filename: 'again.txt', text: baseline + '\n- extra' })).status, 409, 'only one signed SOW');
+assert.equal(up1.document.status, 'proposed');
+assert.equal(up1.document.version, 2, 'a new version after it was sent back');
+assert.equal((await sowAct(FREE, up1.document.id, { action: 'approve', rows: [{ hours: -2 }, { hours: 3 }, { hours: null }, { hours: null }] })).status, 400, 'bad hours refused');
+assert.equal((await sowAct(FREE, up1.document.id, { action: 'approve', rows: [{ hours: 4 }] })).status, 400, 'every row must be listed');
+sp = (await sowAct(FREE, up1.document.id, { action: 'approve', rows: [{ hours: 4 }, { hours: 3 }, { hours: null }, { hours: null }] })).data;
+assert.equal(sp.sowDocuments.find((d) => d.id === up1.document.id).status, 'awaiting_client', 'hours were filled in, so the client confirms');
+assert.ok((await ok('GET', '/api/client-dashboard', CLIENT)).attention.some((a) => a.kind === 'confirm_sow'), 'the client is asked to confirm');
+assert.equal((await call('POST', `/api/projects/${projectId}/sow`, CLIENT, { kind: 'amendment', filename: 'early.txt', text: baseline })).status, 409, 'still not signed');
+sp = (await sowAct(CLIENT, up1.document.id, { action: 'send_back', note: 'Contact form should be 2h' })).data;
+assert.equal(sp.sowDocuments.find((d) => d.id === up1.document.id).status, 'proposed', 'back to the freelancer');
+sp = (await sowAct(FREE, up1.document.id, { action: 'approve', rows: [{ hours: 4 }, { hours: 2 }, { hours: null }, { hours: null }] })).data;
+sp = (await sowAct(CLIENT, up1.document.id, { action: 'confirm' })).data;
+const signed = sp.sowDocuments.find((d) => d.id === up1.document.id);
+assert.equal(signed.status, 'signed');
+assert.deepEqual(signed.items.map((i) => i.hours), [4, 2, null, null], 'the confirmed hours are in the signed SOW');
+assert.ok(signed.history.some((h) => h.action === 'confirmed_hours'));
+assert.equal((await sowAct(FREE, up1.document.id, { action: 'approve' })).status, 409, 'already signed');
+assert.ok(!(await ok('GET', '/api/dashboard', FREE)).attention.some((a) => a.kind === 'upload_sow' || a.kind === 'review_sow'), 'no SOW prompt once signed');
+assert.equal((await call('POST', `/api/projects/${projectId}/sow`, CLIENT, { kind: 'baseline', filename: 'again.txt', text: baseline + '\n- extra' })).status, 409, 'only one signed SOW');
 
 const amend = ['Deliverables', '- One landing page', '- Contact form', '- Payment checkout (6 hours)', '- Loyalty points page (4 hours)', '- Newsletter signup'].join('\n');
 assert.equal((await call('POST', `/api/projects/${projectId}/sow`, FREE, { kind: 'amendment', filename: 'v2.txt', text: amend })).status, 403, 'only the client uploads an amendment');
@@ -248,7 +277,7 @@ assert.equal(dash2.projects[0].counts.approved, 1);
 // check 3: same amendment again does not double-charge or double-book
 const again = await ok('POST', `/api/projects/${projectId}/sow`, CLIENT, { kind: 'amendment', filename: 'v2-again.txt', text: amend });
 assert.equal(again.project.totals.committedValue, 6000);
-assert.equal(again.project.sowDocuments.length, 2, 'same text does not create a new SOW version');
+assert.equal(again.project.sowDocuments.filter((d) => d.kind === 'amendment').length, 1, 'same text does not create a new SOW version');
 assert.equal(again.project.changeRequests.length, up2.project.changeRequests.length);
 
 // bad input gives clear messages, not crashes

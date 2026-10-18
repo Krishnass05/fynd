@@ -183,7 +183,17 @@ export interface SowDocument {
   uploadedBy: string;
   uploadedAt: string;
   items: SowItem[];
+  // The first SOW only (docs/SCOPE_FLOW.md step 1). Missing on older data, which counts as signed.
+  status?: SowStatus;
+  ratePerHour?: number | null; // a "Rate:" line read from the file, applied when signed
+  review?: { by: string; at: string; rows: Array<{ hours: number | null; note: string }> }; // the freelancer's hours, same order as items
+  signedAt?: string;
+  history?: Array<{ at: string; by: 'client' | 'freelancer'; action: string; note: string }>;
 }
+
+// proposed: waiting for the freelancer; awaiting_client: the freelancer changed hours, the client confirms;
+// signed: the scope; sent_back: the freelancer asked for a new version; replaced: a newer upload took its place
+export type SowStatus = 'proposed' | 'awaiting_client' | 'signed' | 'sent_back' | 'replaced';
 
 export type ChangeState =
   | 'needs_clarification'
@@ -330,7 +340,7 @@ export interface DashboardProject {
 }
 
 export interface AttentionItem {
-  kind: 'upload_sow' | 'clarify_hours' | 'rejected_change' | 'awaiting_client';
+  kind: 'upload_sow' | 'review_sow' | 'clarify_hours' | 'rejected_change' | 'awaiting_client';
   projectId: string;
   projectTitle: string;
   text: string;
@@ -360,7 +370,7 @@ export interface ClientDashboardJob {
 }
 
 export interface ClientAttentionItem {
-  kind: 'applicants' | 'change_orders' | 'no_sow' | 'clarify';
+  kind: 'applicants' | 'change_orders' | 'no_sow' | 'confirm_sow' | 'clarify';
   title: string;
   text: string;
   href: string;

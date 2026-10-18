@@ -1,0 +1,18 @@
+/* The first SOW as a table, and its sign-off. OWNER: Krishna. Uses the shared colour tokens from globals.css. */
+.review { display: grid; gap: 12px; }
+.head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.callout { margin: 0; padding: 8px 12px; border-left: 3px solid var(--line-strong); font-size: 14px; }
+.scroll { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th, .table td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.table th { font-weight: 600; color: var(--muted); font-size: 13px; }
+.table tfoot td { border-bottom: 0; }
+.excluded td { color: var(--muted); }
+.hours { max-width: 110px; min-height: 36px; padding: 6px 10px; }
+.actions { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); }
+.actions p { margin: 0; font-size: 14px; }
+.upload { display: grid; gap: 6px; }
+.upload p { margin: 0; }
+.history summary { cursor: pointer; font-size: 14px; color: var(--muted); }
+.history ul { margin: 8px 0 0; padding-left: 18px; font-size: 13px; display: grid; gap: 4px; }
+.table td :global(.badge) { white-space: nowrap; }

@@ -6,7 +6,7 @@ import { useAsync } from '@/lib/useAsync';
 import Chat from '@/components/chat/Chat';
 import Call from '@/components/call/Call';
 import ChangeList from '@/components/changes/ChangeList';
-import SowUpload from '@/components/sow/SowUpload';
+import SowReview from '@/components/sow/SowReview';
 import MilestoneList from '@/components/milestones/MilestoneList';
 import TaskRequests from '@/components/tasks/TaskRequests';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
@@ -25,14 +25,9 @@ export default function FreelancerProject() {
           <Card title="Capacity">
             <p>{data.totals.committedHours}h of {data.project.availableHours}h committed · {data.totals.remainingHours}h remaining · agreed extra work {money(data.totals.committedValue)}</p>
           </Card>
-          <Card title="SOW versions">
-            {data.sowDocuments.length ? data.sowDocuments.map((s) => <p key={s.id}>v{s.version} {s.kind}: {s.filename} ({s.items.length} items)</p>) : <p className="muted">No signed SOW yet.</p>}
+          <Card title="SOW">
+            <SowReview projectId={id} role="freelancer" docs={data.sowDocuments} ratePerHour={data.project.ratePerHour} onChanged={setData} onUploaded={() => void reload()} />
           </Card>
-          {!data.sowDocuments.some((s) => s.kind === 'baseline') ? (
-            <Card title="Upload the signed SOW">
-              <SowUpload projectId={id} kind="baseline" onDone={() => void reload()} />
-            </Card>
-          ) : null}
           <MilestoneList projectId={id} milestones={data.milestones} summary={data.milestoneSummary} role="freelancer" onChanged={setData} />
           <h2>New tasks from the client</h2>
           <TaskRequests projectId={id} role="freelancer" tasks={data.taskRequests} ratePerHour={data.project.ratePerHour} onChanged={setData} />

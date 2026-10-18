@@ -8,6 +8,7 @@ import Chat from '@/components/chat/Chat';
 import Call from '@/components/call/Call';
 import ChangeList from '@/components/changes/ChangeList';
 import SowUpload from '@/components/sow/SowUpload';
+import SowReview from '@/components/sow/SowReview';
 import TaskRequests from '@/components/tasks/TaskRequests';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
 
@@ -25,10 +26,10 @@ export default function ClientProject() {
           <Card title="Capacity and value">
             <p>{data.totals.committedHours}h of {data.project.availableHours}h committed · {data.totals.remainingHours}h remaining · agreed extra work {money(data.totals.committedValue)}</p>
           </Card>
-          <Card title="SOW versions">
-            {data.sowDocuments.length ? data.sowDocuments.map((s) => <p key={s.id}>v{s.version} {s.kind}: {s.filename} ({s.items.length} items)</p>) : <p className="muted">No signed SOW uploaded yet. The freelancer uploads it first.</p>}
+          <Card title="SOW">
+            <SowReview projectId={id} role="client" docs={data.sowDocuments} ratePerHour={data.project.ratePerHour} onChanged={setData} onUploaded={() => void reload()} />
           </Card>
-          {data.sowDocuments.length ? (
+          {data.sowDocuments.some((s) => s.kind === 'baseline' && (s.status ?? 'signed') === 'signed') ? (
             <Card title="Ask for more work">
               <SowUpload projectId={id} kind="amendment" onDone={() => void reload()} />
             </Card>

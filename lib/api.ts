@@ -95,6 +95,12 @@ export const approveMilestone = (projectId: string, milestoneId: string) => post
 // SOW upload (txt or md text for now) and change orders
 export const uploadSow = (projectId: string, b: { kind: SowKind; filename: string; text: string }) =>
   post<UploadSowResult>(`/api/projects/${projectId}/sow`, b);
+// Sign-off of the first SOW (rows: the freelancer's hours per item, in order; null = unknown)
+export type SowReview =
+  | { action: 'approve'; rows?: Array<{ hours: number | null; note?: string }>; note?: string }
+  | { action: 'send_back'; note: string }
+  | { action: 'confirm'; note?: string };
+export const reviewSow = (projectId: string, docId: string, b: SowReview) => post<ProjectDetail>(`/api/projects/${projectId}/sow/${docId}`, b);
 export const approveChange = (projectId: string, changeId: string) => post<ProjectDetail>(`/api/projects/${projectId}/changes/${changeId}/approve`);
 export const rejectChange = (projectId: string, changeId: string, reason: string) =>
   post<ProjectDetail>(`/api/projects/${projectId}/changes/${changeId}/reject`, { reason });
