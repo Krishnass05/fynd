@@ -26,16 +26,17 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | --- | --- | --- | --- |
 | `listDemoUsers` | `GET /api/users` | anyone | `User[]` (only the three demo logins; the other sample freelancers are for browsing) |
 | `searchFreelancers` | `GET /api/freelancers?q=&category=&skill=&maxRate=&available=1` | client | `FreelancerSearch`: matching freelancers (best rated first) plus the category and skill options for the filters. Sample data |
-| `getFreelancer` | `GET /api/freelancers/:id` | client | `FreelancerProfile` (overview, skills, rate, rating, jobs, projects on this site). 404 if the id is not a freelancer |
+| `getFreelancer` | `GET /api/freelancers/:id` | client | `FreelancerProfile` (overview, skills, rate, rating, jobs, projects on this site). 404 if the id is not a freelancer | Now open to any signed-in user, and it includes `portfolio` (previous work), `workedWith` (past clients), `reviews` and `reviewCount`; `rating` is the average of the reviews (sample content).
 | `listSaved` | `GET /api/saved` | client | `Freelancer[]` (the client's saved freelancers) |
 | `setSaved` | `PUT /api/saved/:id` `{saved: true or false}` | client | `{ saved }` (404 if the id is not a freelancer). Freelancers in search results and profiles carry `saved` for the viewing client |
 | `getSiteStats` | `GET /api/stats` | anyone, no sign-in | `SiteStats`: real counts for the landing page (job profiles, sample freelancers, case checks passing) |
 | `login` | `POST /api/login` `{email, password, role}` | anyone, no sign-in | `User`. 400 for a missing or malformed field, 403 for a wrong password or the wrong account type. Demo accounts only: client@demo.test, freelancer@demo.test, freelancer2@demo.test, shared password in the login page |
+| `getClient` | `GET /api/clients/:id` | any signed-in user | `ClientProfile`: company details, rating and reviews (sample), counts from real data (jobs posted, hires, open jobs) and the open jobs. Only the client themself gets their email. 404 if the id is not a client |
 | `getMe` | `GET /api/me` | any user | `User` |
 | `updateMe` | `PUT /api/me` `{name?, skills?, headline?, overview?, location?, ratePerHour?}` | any user (the profile fields are for freelancers) | `User`. `ratePerHour` is whole rupees above 0 |
 | `listJobs` | `GET /api/jobs?mine=1&status=open` | client (mine) or freelancer (open jobs) | `Job[]` |
 | `createJob` | `POST /api/jobs` `{title, description, budget, deadline, profileId?}` | client | `Job`. With a `profileId`, accepting an applicant sets the project rate and hours from that profile |
-| `getJob` | `GET /api/jobs/:id` | owner client, or freelancer | `JobDetail`: the job, `typicalTotal` (library price, or null) and applicants with their skills (client sees all, freelancer only their own) |
+| `getJob` |  `GET /api/jobs/:id` | owner client, or freelancer | `JobDetail`: the job, `typicalTotal` (library price, or null) and applicants with their skills (client sees all, freelancer only their own) |
 | `applyToJob` | `POST /api/jobs/:id/applications` `{pitch, proposedPrice}` | freelancer | `Application` (409 if already applied or job not open) |
 | `rejectApplication` | `POST /api/applications/:id/reject` | owner client | `{ id, status: 'rejected' }`. Removes a pending applicant; the job stays open. 409 if the application was already decided, 403 for anyone but the job's client |
 | `acceptApplication` | `POST /api/applications/:id/accept` `{milestones?: [{title, amount}]}` | owner client | `{ projectId }` (closes the job, rejects other applicants, creates the project and its milestones). The milestones must be whole rupees and add up to the applicant's price exactly, or the call is refused and nothing changes. Left out, the price is split 30/40/30 |

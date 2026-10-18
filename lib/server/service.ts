@@ -4,12 +4,13 @@ import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
-  ActivityItem, Application, AttentionItem, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
+  ActivityItem, Application, AttentionItem, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
   JobStatus, Message, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
 import { matchesAllWords } from '@/lib/search';
+import { COMPANIES, PORTFOLIO, REVIEWS } from '@/lib/data/sampleProfiles';
 import { parseSow, compareSow } from '@/lib/engine/sow';
 import { checkSplit, defaultSplit } from '@/lib/milestones';
 import type { MilestoneDraft } from '@/lib/milestones';
@@ -83,9 +84,13 @@ export function updateMe(u: User, body: Record<string, unknown>): User {
 }
 
 // ---- browsing freelancers (client side) ----
+// Ratings come from the (sample) reviews when there are any.
+const reviewsFor = (id: string) => REVIEWS.filter((r) => r.toId === id).sort((a, b) => b.date.localeCompare(a.date));
+const averageOf = (list: Array<{ rating: number }>): number | null => (list.length ? Math.round((list.reduce((t, r) => t + r.rating, 0) / list.length) * 10) / 10 : null);
+
 const toFreelancer = (u: User, viewer?: User): Freelancer => ({
   id: u.id, name: u.name, headline: u.headline ?? '', location: u.location ?? '', ratePerHour: u.ratePerHour ?? null,
-  category: u.category ?? 'Other', availability: u.availability ?? 'available', rating: u.rating ?? null, jobsDone: u.jobsDone ?? 0, skills: u.skills,
+  category: u.category ?? 'Other', availability: u.availability ?? 'available', rating: averageOf(reviewsFor(u.id)) ?? u.rating ?? null, reviewCount: reviewsFor(u.id).length, jobsDone: u.jobsDone ?? 0, skills: u.skills,
   saved: viewer ? (db().saved.get(viewer.id)?.has(u.id) ?? false) : undefined,
 });
 
@@ -114,11 +119,28 @@ export function searchFreelancers(u: User, params: URLSearchParams): FreelancerS
 }
 
 export function getFreelancerProfile(u: User, id: string): FreelancerProfile {
-  if (u.role !== 'client') throw forbidden('Only clients browse freelancers');
   const f = db().users.find((x) => x.id === id && x.role === 'freelancer');
   if (!f) throw notFound('Freelancer not found');
   const projects = db().projects.filter((p) => p.freelancerId === id).map((p) => ({ title: p.jobTitle, status: (db().jobs.find((j) => j.id === p.jobId)?.status ?? 'in_progress') as JobStatus }));
-  return { ...toFreelancer(f, u), overview: f.overview ?? '', projects };
+  const portfolio = PORTFOLIO[id] ?? [];
+  const reviews = reviewsFor(id);
+  const workedWith = [...new Set([...portfolio.map((p) => p.clientName), ...reviews.map((r) => r.fromCompany).filter((c): c is string => Boolean(c))])];
+  return { ...toFreelancer(f, u.role === 'client' ? u : undefined), overview: f.overview ?? '', projects, portfolio, workedWith, reviews, reviewCount: reviews.length };
+}
+
+// A client's profile: company details, rating and reviews, and what they have posted. Any signed-in user can view it.
+export function getClientProfile(u: User, id: string): ClientProfile {
+  const c = db().users.find((x) => x.id === id && x.role === 'client');
+  if (!c) throw notFound('Client not found');
+  const jobs = db().jobs.filter((j) => j.clientId === id);
+  const reviews = reviewsFor(id);
+  const open = jobs.filter((j) => j.status === 'open');
+  return {
+    id: c.id, name: c.name, email: u.id === c.id ? c.email : undefined, company: COMPANIES[id] ?? null,
+    rating: averageOf(reviews), reviewCount: reviews.length, reviews,
+    stats: { jobsPosted: jobs.length, hires: db().projects.filter((p) => p.clientId === id).length, openJobs: open.length },
+    openJobs: open.slice(0, 5).map((j) => ({ id: j.id, title: j.title })),
+  };
 }
 
 // Saved freelancers (a client's shortlist).
@@ -180,7 +202,10 @@ export function getJob(u: User, id: string): JobDetail {
   const prof = job.profileId ? findProfile(job.profileId) : undefined;
   const typicalTotal = prof?.ratePerHour && prof.typicalHours ? prof.ratePerHour * prof.typicalHours : null;
   const withSkills = applications.map((a) => ({ ...a, freelancerSkills: db().users.find((x) => x.id === a.freelancerId)?.skills ?? [] }));
-  return { job, typicalTotal, applications: withSkills };
+  const owner = db().users.find((x) => x.id === job.clientId);
+  const ownerReviews = reviewsFor(job.clientId);
+  const client = { id: job.clientId, name: owner?.name ?? 'Client', company: COMPANIES[job.clientId]?.name ?? null, rating: averageOf(ownerReviews), reviewCount: ownerReviews.length };
+  return { job, client, typicalTotal, applications: withSkills };
 }
 
 export function applyToJob(u: User, jobId: string, b: Record<string, unknown>): Application {

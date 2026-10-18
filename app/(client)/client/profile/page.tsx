@@ -1,28 +1,19 @@
 'use client';
-// The client's profile: what they gave when they registered. The dashboard has its own page. OWNER: Krishna.
-import { initials } from '@/lib/format';
+// The client's own profile: details, company, rating and reviews. The dashboard has its own page. OWNER: Krishna.
+import { getClient } from '@/lib/api';
+import { useAsync } from '@/lib/useAsync';
 import { useUser } from '@/lib/useUser';
-import { Badge, Spinner } from '@/components/ui';
+import ClientProfileView from '@/components/profile/ClientProfileView';
+import { ErrorMessage, Spinner } from '@/components/ui';
 
 export default function ClientProfile() {
-  const { user, loading } = useUser('client');
-  if (loading && !user) return <Spinner />;
-  if (!user) return null;
+  const { user } = useUser('client');
+  const { data, error } = useAsync(() => (user ? getClient(user.id) : Promise.resolve(null)), [user?.id]);
   return (
     <>
-      <section className="profilecard" aria-labelledby="profile-title">
-        <span className="avatar-xl" aria-hidden="true">{initials(user.name)}</span>
-        <div className="profilecard-main">
-          <h1 id="profile-title">{user.name}</h1>
-          <Badge tone="neutral">Client</Badge>
-        </div>
-        <dl className="profile-facts">
-          <div><dt>Name</dt><dd>{user.name}</dd></div>
-          <div><dt>Email</dt><dd>{user.email ?? 'Not given'}</dd></div>
-          <div><dt>Account type</dt><dd>Client (hires freelancers)</dd></div>
-          <div><dt>Account</dt><dd>Demo account, synthetic data</dd></div>
-        </dl>
-      </section>
+      <ErrorMessage message={error} />
+      {!data && !error ? <Spinner /> : null}
+      {data ? <ClientProfileView data={data} own jobHref={(id) => `/client/jobs/${id}`} /> : null}
     </>
   );
 }

@@ -1,7 +1,8 @@
 'use client';
 // The freelancer's own profile: what clients see when they browse. OWNER: Krishna.
+import { PortfolioList, RatingSummary, ReviewList, SampleNote } from '@/components/profile/Parts';
 import { useState } from 'react';
-import { getMe, updateMe } from '@/lib/api';
+import { getFreelancer, getMe, updateMe } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
 import { Button, Card, ErrorMessage, Field, Spinner } from '@/components/ui';
 
@@ -52,6 +53,30 @@ export default function Profile() {
           </form>
         </Card>
       ) : null}
+      {data ? <PublicView id={data.id} /> : null}
+    </>
+  );
+}
+
+// What clients see: previous work, past clients and reviews (sample content).
+function PublicView({ id }: { id: string }) {
+  const { data } = useAsync(() => getFreelancer(id), [id]);
+  if (!data) return null;
+  return (
+    <>
+      <h2>Your rating</h2>
+      <RatingSummary rating={data.rating} count={data.reviewCount} label="sample" />
+      <h2>Previous work</h2>
+      <PortfolioList items={data.portfolio} empty="No previous work yet." />
+      {data.workedWith.length ? (
+        <>
+          <h2>You have worked with</h2>
+          <ul className="fcard-chips" aria-label="Past clients">{data.workedWith.map((c) => <li key={c}>{c}</li>)}</ul>
+        </>
+      ) : null}
+      <h2>Reviews from clients</h2>
+      <ReviewList reviews={data.reviews} empty="No reviews yet." />
+      <SampleNote>Previous work, ratings and reviews are made-up sample content for the demo.</SampleNote>
     </>
   );
 }

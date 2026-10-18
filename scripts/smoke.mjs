@@ -256,10 +256,22 @@ for (const t of ['Web Development', 'Logo Design', 'Video Editing', 'SEO', 'Data
 assert.equal((await call('GET', '/api/freelancers?maxRate=-5', CLIENT)).status, 400);
 assert.equal((await call('GET', '/api/freelancers', FREE)).status, 403, 'only clients browse');
 const prof = await ok('GET', '/api/freelancers/u_freelancer2', CLIENT);
+// profiles: previous work, past clients and reviews (sample), and client profiles with company details
+assert.ok(prof.portfolio.length >= 2 && prof.workedWith.length >= 2 && prof.reviews.length >= 3, 'freelancer profile has previous work, past clients and reviews');
+assert.ok(prof.rating >= 1 && prof.rating <= 5 && prof.reviewCount === prof.reviews.length, 'rating comes from the reviews');
+assert.equal((await ok('GET', '/api/freelancers/u_freelancer2', FREE)).id, 'u_freelancer2', 'a freelancer can open a profile too');
+const cp = await ok('GET', '/api/clients/u_client1', CLIENT);
+assert.equal(cp.company.name, 'Brew & Beans Cafe');
+assert.equal(cp.email, 'client@demo.test', 'a client sees their own email');
+assert.ok(cp.reviews.length >= 3 && cp.rating >= 1 && cp.stats.jobsPosted >= 2);
+const seen = await ok('GET', '/api/clients/u_client1', FREE);
+assert.equal(seen.email, undefined, 'other people do not see the email');
+assert.equal((await call('GET', '/api/clients/u_freelancer2', CLIENT)).status, 404, 'only clients have a client profile');
+assert.equal((await ok('GET', '/api/jobs/J2', FREE)).client.company, 'Brew & Beans Cafe', 'the job shows who posted it');
 assert.ok(prof.overview.length > 10 && prof.skills.includes('Logo design'));
 assert.equal((await call('GET', '/api/freelancers/u_client1', CLIENT)).status, 404, 'a client is not a freelancer profile');
 assert.equal((await call('GET', '/api/freelancers/nobody', CLIENT)).status, 404);
-assert.equal((await call('GET', '/api/freelancers/u_freelancer2', FREE)).status, 403);
+// (a freelancer may open a freelancer profile, checked above; the search list stays client-only)
 
 // a freelancer edits their own profile and clients see the change
 const upd = await ok('PUT', '/api/me', FREE, { headline: 'Brand marks that work on a cafe sign', ratePerHour: 1100, location: 'Pune' });

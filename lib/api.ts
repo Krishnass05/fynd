@@ -1,7 +1,7 @@
 // The ONLY way pages talk to the server. OWNER: Krishna. Do not call fetch in pages.
 // Every function throws an Error whose message is safe to show to the user.
 import type {
-  Application, ClientDashboard, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
+  Application, ClientDashboard, ClientProfile, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
 } from './types';
 import { getUserId } from './session';
 
@@ -50,6 +50,7 @@ export const searchFreelancers = (o: { q?: string; category?: string; skill?: st
   return call<FreelancerSearch>(`/api/freelancers?${p.toString()}`);
 };
 export const getFreelancer = (id: string) => call<FreelancerProfile>(`/api/freelancers/${id}`);
+export const getClient = (id: string) => call<ClientProfile>(`/api/clients/${id}`);
 export const listSaved = () => call<Freelancer[]>('/api/saved');
 export const setSaved = (id: string, saved: boolean) => call<{ saved: boolean }>(`/api/saved/${id}`, { method: 'PUT', body: { saved } });
 

@@ -491,3 +491,15 @@ button.avatar-link { border: 0; font: inherit; font-weight: 700; font-size: 14px
 @media (hover: none) { .plink-go { display: none; } }
 @media (prefers-reduced-motion: reduce) { .plink, .plink-go { transition: none; } }
 th .plink-go { display: none; }
+
+/* Profiles: reviews, previous work, open jobs */
+.reviewlist, .worklist, .openjobs { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.review, .work { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--card); }
+.review-head { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+.review-text { margin: 8px 0 4px; }
+.review-project, .work-client { margin: 0; font-size: 13px; }
+.work-top { display: flex; justify-content: space-between; gap: 12px; }
+.work p { margin: 6px 0; }
+.openjobs { display: flex; flex-wrap: wrap; gap: 8px; }
+.openjobs li a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--ink); }
+.openjobs li a:hover { background: var(--brand-soft); }

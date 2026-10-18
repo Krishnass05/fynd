@@ -32,6 +32,7 @@ export interface Freelancer {
   availability: 'available' | 'busy';
   rating: number | null;
   jobsDone: number;
+  reviewCount?: number;
   skills: string[];
   saved?: boolean; // whether the viewing client has saved this freelancer
 }
@@ -39,6 +40,42 @@ export interface Freelancer {
 export interface FreelancerProfile extends Freelancer {
   overview: string;
   projects: Array<{ title: string; status: JobStatus }>; // real projects on this site
+  portfolio: PortfolioItem[]; // previous work (sample)
+  workedWith: string[]; // companies this freelancer has worked for (sample, from the previous work and reviews)
+  reviews: ReviewItem[]; // reviews from clients (sample)
+  reviewCount: number;
+}
+
+// Previous work shown on a freelancer's profile. Sample content for the demo.
+export interface PortfolioItem { id: string; title: string; description: string; clientName: string; year: number; tags: string[] }
+
+// A review of a freelancer (written by a client) or of a client (written by a freelancer). Sample content.
+export interface ReviewItem {
+  id: string;
+  toId: string;
+  fromName: string;
+  fromRole: Role;
+  fromCompany?: string;
+  rating: number; // 1 to 5
+  text: string;
+  date: string; // ISO date
+  projectTitle: string;
+}
+
+// What a client entered about their company when registering. Sample content for the demo accounts.
+export interface CompanyInfo { name: string; industry: string; size: string; location: string; website: string; about: string; memberSince: string }
+
+// A client's profile, as the client sees it and as a freelancer sees it from a job page.
+export interface ClientProfile {
+  id: string;
+  name: string;
+  email?: string; // only the client sees their own email
+  company: CompanyInfo | null;
+  rating: number | null; // average of the reviews
+  reviewCount: number;
+  reviews: ReviewItem[];
+  stats: { jobsPosted: number; hires: number; openJobs: number }; // counted from real data on this site
+  openJobs: Array<{ id: string; title: string }>;
 }
 
 export interface FreelancerSearch {
@@ -244,6 +281,7 @@ export interface UploadSowResult {
 
 export interface JobDetail {
   job: Job;
+  client: { id: string; name: string; company: string | null; rating: number | null; reviewCount: number }; // who posted it
   typicalTotal: number | null; // typical price for the job's library profile, if it started from one (illustrative)
   applications: Application[]; // owner client sees all; a freelancer sees only their own
 }
