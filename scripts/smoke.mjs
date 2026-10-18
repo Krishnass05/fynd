@@ -650,4 +650,30 @@ const seen = await ok('GET', `/api/projects/${projectId}`, CLIENT);
 assert.equal(seen.checkins[0].blockers, 'Need the SMTP details', 'the client reads the check-in');
 }
 
+// ---- feedback after the job: open once every milestone is approved; one review per side; shown on profiles ----
+{
+const R = `/api/projects/${projectId}/review`;
+let pj = await ok('GET', `/api/projects/${projectId}`, CLIENT);
+assert.equal(pj.feedback.complete, false, 'not complete while a milestone is unapproved');
+assert.equal((await call('POST', R, CLIENT, { rating: 5, text: 'Great work all round.' })).status, 409, 'feedback is locked until the job is complete');
+for (const m of pj.milestones.filter((x) => x.status !== 'approved')) pj = await ok('POST', `/api/projects/${projectId}/milestones/${m.id}/approve`, CLIENT);
+assert.equal(pj.feedback.complete, true, 'every milestone approved: the job is complete');
+assert.equal((await call('POST', R, CLIENT, { rating: 6, text: 'Great work all round.' })).status, 400, 'rating 1 to 5');
+assert.equal((await call('POST', R, CLIENT, { rating: 5, text: 'ok' })).status, 400, 'at least a sentence');
+assert.equal((await call('POST', R, 'u_freelancer3', { rating: 5, text: 'Not my project at all.' })).status, 403, 'outsiders cannot review');
+pj = await ok('POST', R, CLIENT, { rating: 5, text: 'Delivered on time, call 98765 43210 for a reference.' });
+assert.equal(pj.feedback.mine.rating, 5);
+assert.ok(!pj.feedback.mine.text.includes('98765'), 'contact details are hidden in reviews too');
+assert.equal((await call('POST', R, CLIENT, { rating: 1, text: 'Changing my mind now.' })).status, 409, 'one review per side');
+const fr = await ok('GET', '/api/freelancers/u_freelancer2', CLIENT);
+const onProfile = fr.reviews.find((r) => r.projectId === projectId);
+assert.ok(onProfile, 'the review shows on the freelancer profile');
+assert.equal(onProfile.fromRole, 'client');
+pj = await ok('POST', R, FREE, { rating: 4, text: 'Clear brief and quick approvals.' });
+assert.equal(pj.feedback.mine.rating, 4);
+assert.equal((await ok('GET', `/api/projects/${projectId}`, CLIENT)).feedback.theirs.rating, 4, 'the client sees the freelancer feedback');
+const cl = await ok('GET', '/api/clients/u_client1', FREE);
+assert.ok(cl.reviews.some((r) => r.projectId === projectId && r.rating === 4), 'and it shows on the client profile');
+}
+
 console.log('smoke test passed');

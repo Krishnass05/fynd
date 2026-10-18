@@ -64,6 +64,9 @@ export interface ReviewItem {
   text: string;
   date: string; // ISO date
   projectTitle: string;
+  // set on a real review left after a completed project on Crewmate (sample reviews have none)
+  projectId?: string;
+  fromId?: string;
 }
 
 // What a client entered about their company when registering. Sample content for the demo accounts.
@@ -302,6 +305,8 @@ export interface ProjectDetail {
   progress: import('./engine/progress').Progress;
   checkins: CheckIn[]; // newest first
   checkinStatus: import('./engine/progress').CheckinStatus;
+  // Feedback after the job: open once the client has approved every milestone; one review per side
+  feedback: { complete: boolean; mine: ReviewItem | null; theirs: ReviewItem | null };
 }
 
 // ---- the task list, progress and daily check-ins (docs/SCOPE_FLOW.md section 2) ----

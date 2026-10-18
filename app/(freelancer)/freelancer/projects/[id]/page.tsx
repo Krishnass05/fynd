@@ -9,6 +9,7 @@ import ChangeList from '@/components/changes/ChangeList';
 import SowReview from '@/components/sow/SowReview';
 import MilestoneList from '@/components/milestones/MilestoneList';
 import TaskRequests from '@/components/tasks/TaskRequests';
+import ProjectFeedback from '@/components/profile/ProjectFeedback';
 import WorkBoard from '@/components/work/WorkBoard';
 import CheckIns from '@/components/work/CheckIns';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
@@ -39,6 +40,8 @@ export default function FreelancerProject() {
           <TaskRequests projectId={id} role="freelancer" tasks={data.taskRequests} ratePerHour={data.project.ratePerHour} onChanged={setData} />
           <h2>Change orders</h2>
           <ChangeList projectId={id} changes={data.changeRequests} canDecide={false} onChanged={setData} />
+          <h2>Feedback</h2>
+          <Card plain><ProjectFeedback projectId={id} otherName={data.client.name} data={data.feedback} onChanged={setData} /></Card>
           <h2>Call</h2>
           <Card plain><Call projectId={id} peerName={data.client.name} /></Card>
           <h2>Chat</h2>

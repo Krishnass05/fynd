@@ -33,6 +33,7 @@ export function ReviewList({ reviews, empty }: { reviews: ReviewItem[]; empty: s
             <strong>{r.fromName}</strong>
             <span className="muted">{r.fromCompany ? `${r.fromCompany} · ` : ''}{r.fromRole === 'client' ? 'Client' : 'Freelancer'}</span>
             <time className="muted" dateTime={r.date}>{r.date}</time>
+            {r.projectId ? <span className="badge good">Crewmate project</span> : null}
           </div>
           <p className="review-text">{r.text}</p>
           <p className="muted review-project">On: {r.projectTitle}</p>

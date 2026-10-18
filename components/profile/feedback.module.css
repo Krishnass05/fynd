@@ -1,0 +1,11 @@
+/* Feedback after the job (ProjectFeedback.tsx). OWNER: Krishna. */
+.fb { display: grid; gap: 16px; }
+.form, .shown { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #fff; display: grid; gap: 10px; }
+.label { margin: 0; font-weight: 600; }
+.text { margin: 0; line-height: 1.55; }
+.stars { display: inline-flex; gap: 2px; color: #c9c2ba; }
+.stars .on svg { fill: #F37021; stroke: #F37021; }
+.pick { display: inline-flex; gap: 4px; }
+.pick button { background: none; border: 0; padding: 4px; cursor: pointer; color: #c9c2ba; border-radius: 8px; min-width: 40px; min-height: 40px; }
+.pick button.on svg { fill: #F37021; stroke: #F37021; }
+.pick button:focus-visible { outline: 2px solid #F37021; outline-offset: 2px; }

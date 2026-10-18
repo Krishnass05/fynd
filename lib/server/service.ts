@@ -103,7 +103,8 @@ export function updateMe(acting: User, body: Record<string, unknown>): User {
 
 // ---- browsing freelancers (client side) ----
 // Ratings come from the (sample) reviews when there are any.
-const reviewsFor = (id: string, from: Role) => REVIEWS.filter((r) => r.toId === id && r.fromRole === from).sort((a, b) => b.date.localeCompare(a.date));
+// Real reviews (left after a completed project) and the sample ones, newest first.
+const reviewsFor = (id: string, from: Role) => [...db().reviews, ...REVIEWS].filter((r) => r.toId === id && r.fromRole === from).sort((a, b) => b.date.localeCompare(a.date));
 const averageOf = (list: Array<{ rating: number }>): number | null => (list.length ? Math.round((list.reduce((t, r) => t + r.rating, 0) / list.length) * 10) / 10 : null);
 
 const toFreelancer = (u: User, viewer?: User): Freelancer => ({
@@ -339,6 +340,7 @@ export function getProject(u: User, id: string): ProjectDetail {
     audit: desk.audit(),
     taskRequests: listTaskViews(id),
     ...workParts(id),
+    feedback: feedbackFor(u, project),
   };
 }
 
@@ -601,6 +603,46 @@ export const rejectChange = (u: User, pid: string, cid: string, reason: unknown)
   decide(u, pid, cid, 'client', (d) => d.reject(cid, u.name, typeof reason === 'string' ? reason : undefined));
 export const reopenChange = (u: User, pid: string, cid: string, reason: unknown) =>
   decide(u, pid, cid, 'any', (d) => d.reopen(cid, u.name, typeof reason === 'string' ? reason : ''));
+
+// ---- feedback after the job ----
+// A project is complete when it has milestones and the client has approved every one. Then each side can leave
+// one review (1 to 5 stars and a comment) for the other; it shows on the other person's profile and rating.
+function projectComplete(projectId: string): boolean {
+  const ms = db().milestones.filter((m) => m.projectId === projectId);
+  return ms.length > 0 && ms.every((m) => m.status === 'approved');
+}
+
+function feedbackFor(u: User, project: Project) {
+  const here = db().reviews.filter((r) => r.projectId === project.id);
+  return {
+    complete: projectComplete(project.id),
+    mine: here.find((r) => r.fromId === u.id) ?? null,
+    theirs: here.find((r) => r.toId === u.id) ?? null,
+  };
+}
+
+export function leaveReview(u: User, projectId: string, b: Record<string, unknown>): ProjectDetail {
+  const project = projectFor(u, projectId);
+  if (!projectComplete(projectId)) throw conflict('Feedback opens when the client has approved every milestone of this project');
+  if (db().reviews.some((r) => r.projectId === projectId && r.fromId === u.id)) throw conflict('You already left feedback for this project');
+  const rating = b.rating;
+  if (typeof rating !== 'number' || !Number.isInteger(rating) || rating < 1 || rating > 5) throw bad('Choose a rating from 1 to 5 stars');
+  const text = str(b.text, 'feedback', 1000);
+  if (text.length < 10) throw bad('Write at least a sentence (10 characters)');
+  const isClient = u.id === project.clientId;
+  const toId = isClient ? project.freelancerId : project.clientId;
+  const me = db().users.find((x) => x.id === u.id);
+  db().reviews.push({
+    id: nextId('RV'), projectId, fromId: u.id, toId,
+    fromName: u.name, fromRole: isClient ? 'client' : 'freelancer',
+    ...(isClient && (me?.company?.name || COMPANIES[u.id]?.name) ? { fromCompany: me?.company?.name || COMPANIES[u.id]!.name } : {}),
+    rating,
+    text: scrub(text).body, // contact details are hidden here too, like in chat
+    date: nowIso().slice(0, 10),
+    projectTitle: project.jobTitle,
+  });
+  return getProject(u, projectId);
+}
 
 // ---- the task list, progress and daily check-ins (docs/SCOPE_FLOW.md section 2) ----
 // A task comes from a row of the signed first SOW (included rows only) or from a request both sides agreed on (or the

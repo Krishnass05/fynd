@@ -6,7 +6,7 @@ import { Negotiations } from '@/lib/engine/negotiation';
 import fixture from '../../fixture.json';
 import { createLimiter, type Limiter } from '@/lib/engine/authcore';
 import { requestRole } from './context';
-import type { Application, CallSignal, CheckIn, CompareLabel, Job, Message, Milestone, Project, SowDocument, TaskRequest, User, WorkState } from '@/lib/types';
+import type { Application, CallSignal, CheckIn, CompareLabel, Job, Message, Milestone, Project, ReviewItem, SowDocument, TaskRequest, User, WorkState } from '@/lib/types';
 
 export interface Db {
   users: User[];
@@ -28,6 +28,7 @@ export interface Db {
   deals: Map<string, Negotiations>; // project id -> its negotiations (quotes on new tasks)
   work: WorkState[]; // status and milestone of each task (the task itself comes from the SOW or a request)
   checkins: CheckIn[]; // daily check-ins
+  reviews: ReviewItem[]; // real reviews left after completed projects (sample reviews live in lib/data)
   seq: number;
 }
 
@@ -99,7 +100,7 @@ export function seedDb(): Db {
   // Project P1 starts with the case fixture so the three case checks are visible straight away.
   const desks = new Map<string, ScopeDesk>([['P1', ScopeDesk.fromFixture(fixture)]]);
   const labels = new Map<string, Record<string, CompareLabel>>([['P1', {}]]);
-  return { users, jobs, applications, projects, sow, messages, signals: [], credentials: new Map(), googleIds: new Map(), limiter: createLimiter(), milestones, saved: new Map([['u_client1', new Set(['u_freelancer3'])]]), desks, labels, hashes: new Map(), tasks: [], deals: new Map<string, Negotiations>(), work: [], checkins: [], seq: 100 };
+  return { users, jobs, applications, projects, sow, messages, signals: [], credentials: new Map(), googleIds: new Map(), limiter: createLimiter(), milestones, saved: new Map([['u_client1', new Set(['u_freelancer3'])]]), desks, labels, hashes: new Map(), tasks: [], deals: new Map<string, Negotiations>(), work: [], checkins: [], reviews: [], seq: 100 };
 }
 
 const g = globalThis as unknown as { __scopeDeskDb?: Db };

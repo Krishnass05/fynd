@@ -95,6 +95,8 @@ export const approveMilestone = (projectId: string, milestoneId: string) => post
 // SOW upload (txt or md text for now) and change orders
 export const uploadSow = (projectId: string, b: { kind: SowKind; filename: string; text: string }) =>
   post<UploadSowResult>(`/api/projects/${projectId}/sow`, b);
+// Feedback after the job (open once every milestone is approved)
+export const leaveReview = (projectId: string, b: { rating: number; text: string }) => post<ProjectDetail>(`/api/projects/${projectId}/review`, b);
 // The task list and daily check-ins
 export const moveWork = (projectId: string, key: string, to: WorkStatus, note?: string) =>
   post<ProjectDetail>(`/api/projects/${projectId}/work/${encodeURIComponent(key)}`, { action: 'move', to, note });
