@@ -1,5 +1,5 @@
 'use client';
-// Top bar of the public home page: CraftHire wordmark, Find Talent, Find Work, Explore Categories
+// Top bar of the public home page: Crewmate wordmark, Find Talent, Find Work, Explore Categories
 // (drop-down), How It Works, and on the right Log in and Sign up, which open /login and /register.
 // Sticky; on phones the links move into a drawer. OWNER: Krishna.
 import Link from 'next/link';
@@ -58,7 +58,7 @@ export default function LandingNav() {
   return (
     <header className="lnav" data-scrolled={scrolled || undefined} ref={wrap}>
       <div className="lnav-row">
-        <Link href="/" className="lnav-brand" aria-label="CraftHire, home">Craft<span>Hire</span><i aria-hidden="true" /></Link>
+        <Link href="/" className="lnav-brand" aria-label="Crewmate, home">Crew<span>mate</span><i aria-hidden="true" /></Link>
         <nav className="lnav-links" aria-label="Main">{links}</nav>
         <div className="lnav-cta">
           <Link href="/login" className="lnav-link lnav-signin">Log in</Link>

@@ -1,7 +1,7 @@
 {
-  "name": "scope-change-desk",
+  "name": "crewmate",
   "version": "0.2.0",
-  "description": "C35 Scope Change Desk: job board, project workspace and priced change orders from SOW comparison",
+  "description": "Crewmate (hackathon case C35, Scope Change Desk): job board, project workspace and priced change orders from SOW comparison",
   "private": true,
   "scripts": {
     "dev": "next dev",

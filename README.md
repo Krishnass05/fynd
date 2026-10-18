@@ -1,4 +1,4 @@
-# C35 Scope Change Desk
+# Crewmate (hackathon case C35: Scope Change Desk)
 
 Fynd x NMIMS Hyderabad hackathon, 17-18 Oct 2026. A client posts a job, a freelancer applies, they chat in a project workspace and share a signed SOW. When the client later uploads an amended SOW, the site compares the two, prices each extra item before tax, flags anything unusual, and records the client's decision. All data is synthetic. It is a workflow aid, not legal advice.
 

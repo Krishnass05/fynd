@@ -94,8 +94,8 @@ export function Footer() {
     <footer className="lfoot">
       <div className="lwrap lfoot-row">
         <div>
-          <p className="lfoot-brand">Craft<span>Hire</span></p>
-          <p>The Scope Change Desk demo. All data is synthetic. A workflow aid, not legal advice.</p>
+          <p className="lfoot-brand">Crew<span>mate</span></p>
+          <p>Crewmate demo (hackathon case C35, Scope Change Desk). All data is synthetic. A workflow aid, not legal advice.</p>
         </div>
         <nav aria-label="Footer">
           <Link href="/login">Log in</Link>

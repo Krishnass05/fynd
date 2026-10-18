@@ -6,7 +6,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-body' });
 
 export const metadata: Metadata = {
-  title: 'CraftHire · Scope Change Desk',
+  title: 'Crewmate',
   description: 'Hire a freelancer, share a SOW, and price every extra request before the work starts. Synthetic data.',
 };
 

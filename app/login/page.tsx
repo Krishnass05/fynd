@@ -63,7 +63,7 @@ function LoginForm() {
     <div className="auth-grid">
       <form className="authcard" onSubmit={submit} noValidate aria-labelledby="login-title">
         <h1 id="login-title">Log in</h1>
-        <p className="muted">Welcome back. Choose how you use CraftHire.</p>
+        <p className="muted">Welcome back. Choose how you use Crewmate.</p>
         <div className="seg" role="group" aria-label="Account type">
           {(['client', 'freelancer'] as Role[]).map((r) => (
             <button key={r} type="button" aria-pressed={role === r} onClick={() => { setRoleChoice(r); setError(null); }}>

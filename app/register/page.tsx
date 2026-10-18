@@ -61,7 +61,7 @@ function RegisterForm() {
     <div className="auth-grid auth-grid--one">
       <form className="authcard" onSubmit={submit} noValidate aria-labelledby="reg-title">
         <h1 id="reg-title">Create your account</h1>
-        <p className="muted">Join CraftHire to hire freelancers, find work, or both.</p>
+        <p className="muted">Join Crewmate to hire freelancers, find work, or both.</p>
         <ErrorMessage message={googleNote} />
 
         <GoogleButton enabled={google} href={`/api/auth/google/start?mode=register&type=${accountType}`}>Sign up with Google</GoogleButton>

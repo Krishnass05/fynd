@@ -20,7 +20,7 @@ Backup proof if the screen fails: run `npm test` (23 tests pass) and `npm run sm
 
 Before the judges arrive: stop and restart `npm run dev` so the data is clean. Use two windows, the second one private. Sample files are in `docs/demo/`.
 
-1. **Home and login.** Open http://localhost:3000 (the CraftHire home page). Show the hero search and the category carousel, then click **Log in** (top right) to reach the start page, click "Log in as client", press **Fill in** on Demo Client, log in. Say: demo accounts only, real sign-up comes with Supabase.
+1. **Home and login.** Open http://localhost:3000 (the Crewmate home page). Show the hero search and the category carousel, then click **Log in** (top right) to reach the start page, click "Log in as client", press **Fill in** on Demo Client, log in. Say: demo accounts only, real sign-up comes with Supabase.
 2. **Client home.** Big search, popular searches, review carousel (labelled sample reviews). Open the **Services** menu to show the domains and topics. Open **Jobs** to show My jobs and Post a job.
 3. **Hire.** Jobs > My jobs > "Logo for a new cafe". Show two applicants side by side. Accept Second Freelancer with the 30/40/30 milestone split (record only, no money moves).
 4. **Freelancer window.** Log in as Second Freelancer, open the project, upload `signed-sow.txt`. This is the baseline.

@@ -1,4 +1,4 @@
-/* CraftHire home page (/). 60/30/10: white sections, charcoal headings/nav/footer, paprika accents.
+/* Crewmate home page (/). 60/30/10: white sections, charcoal headings/nav/footer, paprika accents.
    Uses the tokens and Liquid Glass buttons from app/globals.css. OWNER: Krishna. */
 .landing { background: #fff; color: var(--ink); overflow-x: clip; }
 .lwrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }

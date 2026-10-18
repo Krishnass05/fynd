@@ -1,7 +1,7 @@
 // Plain terms for the demo. OWNER: Krishna.
 import Link from 'next/link';
 
-export const metadata = { title: 'Terms of use · CraftHire' };
+export const metadata = { title: 'Terms of use · Crewmate' };
 
 export default function Terms() {
   return (

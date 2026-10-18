@@ -624,7 +624,7 @@ export async function reportCaption(u: User, projectId: string, b: Record<string
   // End the call for both people, and leave a note in the project chat. The spoken details are not saved anywhere.
   pushSignal(project, u, 'hangup', JSON.stringify({ reason: 'guard', reasons: r.reasons }));
   db().messages.push({
-    id: nextId('M'), projectId, senderId: 'platform', senderName: 'CraftHire guard',
+    id: nextId('M'), projectId, senderId: 'platform', senderName: 'Crewmate guard',
     body: `The call was ended because personal contact details were said (${r.reasons.join(', ')}). They were not saved. Please keep the conversation and payments on the platform.`,
     sentAt: nowIso(),
   });

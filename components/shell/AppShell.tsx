@@ -96,7 +96,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
     <div className="shell">
       <header className="topnav" ref={navRef}>
         <div className="topnav-row">
-          <Link href={HOME[role]} className="brand topnav-brand">Scope Change Desk</Link>
+          <Link href={HOME[role]} className="brand topnav-brand">Crewmate</Link>
 
           <form role="search" className="searchbox" onSubmit={search}>
             <Search size={18} />

@@ -34,7 +34,7 @@ export default function AppNav({ role }: { role?: Role }) {
   return (
     <PillNav
       logo={<Mark />}
-      logoAlt="Scope Change Desk, home"
+      logoAlt="Crewmate, home"
       logoHref={role ? HOME[role] : '/'}
       items={items.map(({ label, href }) => ({ label, href }))}
       activeHref={best?.href ?? ''}

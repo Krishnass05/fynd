@@ -1,4 +1,4 @@
-// Content for the CraftHire home page. All of it is sample content for the demo: no real customers,
+// Content for the Crewmate home page. All of it is sample content for the demo: no real customers,
 // reviews or marketplace numbers. Images are local files in public/ that can be swapped for real photos.
 // OWNER: Krishna.
 import { SERVICES } from '@/lib/services';
