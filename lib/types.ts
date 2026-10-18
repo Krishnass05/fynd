@@ -21,6 +21,8 @@ export interface User {
   availability?: 'available' | 'busy';
   rating?: number; // 0 to 5, sample data
   jobsDone?: number; // sample data
+  // Client profile: company details the client entered themselves (shown instead of any sample company)
+  company?: CompanyInfo;
 }
 
 // What a client sees when browsing freelancers.

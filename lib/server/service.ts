@@ -25,6 +25,13 @@ import { db, nextId, nextSeq } from './store';
 import { insertSignal, persistent, signalsSince } from './persist';
 
 const nowIso = () => new Date().toISOString();
+// An optional text field: missing or blank becomes '', otherwise trimmed and length-checked.
+const optText = (v: unknown, name: string, max: number): string => {
+  if (v === undefined || v === null) return '';
+  if (typeof v !== 'string') throw bad(`${name} must be text`);
+  if (v.trim().length > max) throw bad(`${name} is too long (maximum ${max} characters)`);
+  return v.trim();
+};
 const str = (v: unknown, name: string, max: number): string => {
   if (typeof v !== 'string' || !v.trim()) throw bad(`${name} is required`);
   if (v.trim().length > max) throw bad(`${name} is too long (maximum ${max} characters)`);
@@ -69,10 +76,27 @@ export function updateMe(acting: User, body: Record<string, unknown>): User {
     u.skills = (body.skills as string[]).map((s) => s.trim());
   }
   if (side === 'freelancer') {
-    if (body.headline !== undefined) u.headline = str(body.headline, 'headline', 120);
-    if (body.overview !== undefined) u.overview = str(body.overview, 'overview', 1000);
-    if (body.location !== undefined) u.location = str(body.location, 'location', 60);
+    // optional text: an empty field clears it (it used to fail the whole save with "is required")
+    if (body.headline !== undefined) u.headline = optText(body.headline, 'headline', 120);
+    if (body.overview !== undefined) u.overview = optText(body.overview, 'overview', 1000);
+    if (body.location !== undefined) u.location = optText(body.location, 'location', 60);
     if (body.ratePerHour !== undefined && body.ratePerHour !== null && body.ratePerHour !== '') u.ratePerHour = wholeRupees(body.ratePerHour, 'ratePerHour');
+  }
+  if (side === 'client' && body.company !== undefined) {
+    const c = body.company;
+    if (!c || typeof c !== 'object' || Array.isArray(c)) throw bad('company must be an object');
+    const g = c as Record<string, unknown>;
+    const website = optText(g.website, 'website', 120);
+    if (website && !/^(https?:\/\/)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(website)) throw bad('Website must look like example.com');
+    u.company = {
+      name: optText(g.name, 'company name', 80),
+      industry: optText(g.industry, 'industry', 60),
+      size: optText(g.size, 'company size', 40),
+      location: optText(g.location, 'location', 60),
+      website,
+      about: optText(g.about, 'about the company', 1000),
+      memberSince: u.company?.memberSince ?? String(new Date().getFullYear()),
+    };
   }
   return { ...u, role: side };
 }
@@ -130,7 +154,9 @@ export function getClientProfile(u: User, id: string): ClientProfile {
   const reviews = reviewsFor(id, 'freelancer');
   const open = jobs.filter((j) => j.status === 'open');
   return {
-    id: c.id, name: c.name, email: u.id === c.id ? c.email : undefined, company: COMPANIES[id] ?? null,
+    id: c.id, name: c.name, email: u.id === c.id ? c.email : undefined,
+    // what the client entered (if they filled in a company name), otherwise the sample company, if any
+    company: c.company?.name ? c.company : (COMPANIES[id] ?? null),
     rating: averageOf(reviews), reviewCount: reviews.length, reviews,
     stats: { jobsPosted: jobs.length, hires: db().projects.filter((p) => p.clientId === id).length, openJobs: open.length },
     openJobs: open.slice(0, 5).map((j) => ({ id: j.id, title: j.title })),

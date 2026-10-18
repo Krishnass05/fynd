@@ -363,7 +363,22 @@ const upd = await ok('PUT', '/api/me', FREE, { headline: 'Brand marks that work 
 assert.equal(upd.ratePerHour, 1100);
 assert.equal((await ok('GET', '/api/freelancers/u_freelancer2', CLIENT)).headline, 'Brand marks that work on a cafe sign');
 assert.equal((await call('PUT', '/api/me', FREE, { ratePerHour: 0 })).status, 400, 'rate must be above 0');
-assert.equal((await call('PUT', '/api/me', FREE, { headline: '' })).status, 400, 'headline cannot be empty');
+// the whole form is sent on Save, so empty optional fields must clear the value, not fail the save
+const cleared = await ok('PUT', '/api/me', FREE, { name: 'Second Freelancer', headline: '', overview: '', location: '', skills: [] });
+assert.equal(cleared.headline, '', 'an empty headline clears it');
+assert.equal((await ok('GET', '/api/freelancers/u_freelancer2', CLIENT)).location, '', 'and clients see it cleared');
+assert.equal((await call('PUT', '/api/me', FREE, { name: '' })).status, 400, 'the name is still required');
+assert.equal((await call('PUT', '/api/me', FREE, { headline: 'x'.repeat(121) })).status, 400, 'too long is refused');
+
+// a client saves their company details; freelancers see them on the client profile
+const comp = { name: 'Sunrise Bakery', industry: 'Food and beverage', size: '2-10 people', location: 'Hyderabad', website: 'sunrisebakery.in', about: 'A family bakery.' };
+await ok('PUT', '/api/me', CLIENT, { name: 'Demo Client', company: comp });
+const seenBy = await ok('GET', '/api/clients/u_client1', FREE);
+assert.equal(seenBy.company.name, 'Sunrise Bakery');
+assert.equal(seenBy.company.website, 'sunrisebakery.in');
+assert.ok(seenBy.company.memberSince, 'member since is set on the first save');
+assert.equal((await call('PUT', '/api/me', CLIENT, { company: { ...comp, website: 'not a site' } })).status, 400, 'a bad website is refused');
+assert.equal((await ok('GET', '/api/clients/u_client1', FREE)).company.website, 'sunrisebakery.in', 'and nothing changed');
 
 // one account, both sides: log in as either, act as each, but never hire or apply to yourself
 const both = (r) => L({ email: 'both@demo.test', password: 'demo1234', role: r });

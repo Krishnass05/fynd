@@ -26,10 +26,10 @@ export default function ClientProfileView({ data, own, jobHref }: { data: Client
           {c ? (
             <>
               <div><dt>Company</dt><dd>{c.name}</dd></div>
-              <div><dt>Industry</dt><dd>{c.industry}</dd></div>
-              <div><dt>Company size</dt><dd>{c.size}</dd></div>
-              <div><dt>Location</dt><dd>{c.location}</dd></div>
-              <div><dt>Website</dt><dd>{c.website}</dd></div>
+              <div><dt>Industry</dt><dd>{c.industry || 'Not set'}</dd></div>
+              <div><dt>Company size</dt><dd>{c.size || 'Not set'}</dd></div>
+              <div><dt>Location</dt><dd>{c.location || 'Not set'}</dd></div>
+              <div><dt>Website</dt><dd>{c.website || 'Not set'}</dd></div>
               <div><dt>Member since</dt><dd>{c.memberSince}</dd></div>
             </>
           ) : null}
@@ -39,7 +39,7 @@ export default function ClientProfileView({ data, own, jobHref }: { data: Client
       {c ? (
         <>
           <h2 style={{ marginTop: 0 }}>About the company</h2>
-          <p>{c.about}</p>
+          <p>{c.about || 'No description yet.'}</p>
         </>
       ) : <p className="muted">No company details were given.</p>}
 

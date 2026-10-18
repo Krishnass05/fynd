@@ -44,7 +44,7 @@ export default function Profile() {
 
   return (
     <>
-      <ErrorMessage message={me.error ?? profile.error ?? saveError} />
+      <ErrorMessage message={me.error ?? profile.error} />
       {!user ? <Spinner /> : null}
       {user && data ? (
         <>
@@ -80,6 +80,7 @@ export default function Profile() {
               <Field label="Location"><input name="location" defaultValue={user.location ?? ''} maxLength={60} /></Field>
               <Field label="Rate per hour (rupees)"><input name="rate" type="number" min={1} step={1} inputMode="numeric" defaultValue={user.ratePerHour ?? ''} /></Field>
               <Field label="Skills (separate with commas)"><input name="skills" defaultValue={user.skills.join(', ')} /></Field>
+              <ErrorMessage message={saveError} />
               <Button type="submit">Save</Button>
             </form>
           ) : null}

@@ -52,7 +52,7 @@ export const addRole = (role: 'client' | 'freelancer') => post<User>('/api/auth/
 export const logout = () => post<{ ok: true }>('/api/auth/logout');
 export const getAuthConfig = () => call<{ google: boolean }>('/api/auth/config');
 export const login = (b: { email: string; password: string; role: 'client' | 'freelancer' }) => post<User>('/api/login', b);
-export const updateMe = (b: { name?: string; skills?: string[]; headline?: string; overview?: string; location?: string; ratePerHour?: number }) =>
+export const updateMe = (b: { name?: string; skills?: string[]; headline?: string; overview?: string; location?: string; ratePerHour?: number; company?: Partial<Omit<import('./types').CompanyInfo, 'memberSince'>> }) =>
   call<User>('/api/me', { method: 'PUT', body: b });
 
 // browsing freelancers (client side)
