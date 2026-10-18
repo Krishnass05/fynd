@@ -1,63 +1,174 @@
-# Crewmate (hackathon case C35: Scope Change Desk)
+# Crewmate
 
-Fynd x NMIMS Hyderabad hackathon, 17-18 Oct 2026. A client posts a job, a freelancer applies, they chat in a project workspace and share a signed SOW. When the client later uploads an amended SOW, the site compares the two, prices each extra item before tax, flags anything unusual, and records the client's decision. All data is synthetic. It is a workflow aid, not legal advice.
+**Great work starts with the right connection.** A freelance marketplace that prices every extra request before the work starts.
 
-## Run and test
+**Live site: https://crewmate-sable.vercel.app**
+
+Fynd × NMIMS Hyderabad hackathon, 17–18 October 2026, case **C35: Scope Change Desk**. All data is synthetic. Crewmate is a workflow aid, not legal advice, and no money moves through the site.
+
+---
+
+## The problem
+
+A client hires a freelancer for a job. Then the small extra asks start: "can you also add a payment page?", "one more change?". Nobody prices them, so the freelancer either works for free or argues, and there is no written record of what was agreed. This is **scope creep**.
+
+## What Crewmate does
+
+1. **Hire.** The client posts a job; freelancers apply with a price; the client compares them side by side and hires one, splitting the price into milestones.
+2. **Agree the scope.** The client uploads the SOW (statement of work). Crewmate reads it into a table: item, included or excluded, hours, price. The freelancer fills in hours and approves; if hours changed, the client confirms. Now there is a signed scope.
+3. **Price every new request.** The client asks for something new in plain English. Crewmate checks it against the signed scope (included, excluded, new, own defect, unclear). The freelancer accepts it as included, fixes it free, quotes, asks for details, or declines. A quote is negotiated with counter offers until one side accepts. Only then is it committed work.
+4. **Track the work.** Signed rows and agreed requests become tasks. The freelancer posts a daily check-in (the client is warned after 2 days without one). The client approves finished tasks; the progress bar counts approved hours; milestones become ready when their tasks are approved.
+5. **Keep it on the platform.** Chat and voice/video calls hide phone numbers, emails, links and handles, even when spelled out in words or sent one digit at a time.
+
+## Try it
+
+| | |
+| --- | --- |
+| Live site | https://crewmate-sable.vercel.app |
+| Demo client | `client@demo.test` / `demo1234` |
+| Demo freelancer | `freelancer@demo.test` / `demo1234` |
+| Both sides in one account | `both@demo.test` / `demo1234` |
+| The three case checks | https://crewmate-sable.vercel.app/demo |
+| Pricing | https://crewmate-sable.vercel.app/pricing |
+| Sample SOW to upload | [public/sample-sow.txt](public/sample-sow.txt) |
+
+You can also register a real account (email and password, or Google sign-in).
+
+## The three judged checks
+
+| # | Check | How Crewmate guarantees it | Tested in |
+| --- | --- | --- | --- |
+| 1 | Six extra hours at ₹1000/hr = **₹6000** change estimate before taxes | Price = hours × rate (× 1.5 rush, labelled an assumption), always "before tax" | `scopeDesk.test.js`, `negotiation.test.js`, smoke test, `/demo` |
+| 2 | A **rejected change does not silently become committed** work | Only approved change orders and agreed negotiations count; declined ones are closed and cannot be accepted later; only the side that did not make the latest offer can accept it | same |
+| 3 | Repeated import of the same request **does not double-charge or double-book** | Requests keyed by id + SHA-256 content hash; the same SOW text or the same request returns the existing one | same |
+
+Other rules: unknown hours are `null`, never zero (no price until clarified); approvals are refused over the project's remaining hours; own-defect fixes are free but still use hours.
+
+## Features
+
+- **Public site:** home page (search, categories, how it works, featured talent, pricing), pricing page, About, Contact, Help for clients and freelancers, Terms & Conditions, one footer on every page.
+- **Accounts:** register and log in with server-side validation, Google sign-in, sessions, lockout after 5 wrong passwords, one account with both client and freelancer sides.
+- **Client:** find freelancers (search, categories, skills, rate), profiles with past work and reviews, saved list, post a job (optionally from a library of 28 job profiles), compare applicants, hire with a milestone split, dashboard, in-app pricing page.
+- **Freelancer:** find jobs, apply, edit profile, see client company profiles, dashboard.
+- **Project workspace (both sides):** SOW sign-off table with a format guide and sample; plain-English requests with negotiation; task list with progress by approved hours; daily check-ins; milestones; change orders from amended SOWs; chat with the contact guard; voice and video calls with live captions; help assistant.
+
+## Tech stack
+
+| Layer | What | Where |
+| --- | --- | --- |
+| Frontend | Next.js 16 (App Router), React 19, TypeScript, plain CSS / CSS Modules | `app/`, `components/` |
+| API | Next.js API routes (serverless functions on Vercel) | `app/api/**` |
+| Server logic | Permissions and wiring | `lib/server/service.ts` |
+| Rules engine | Plain JavaScript, no dependencies, unit tested | `lib/engine/*.js` |
+| Database | Supabase (Postgres) | `supabase/schema.sql`, `lib/server/persist.ts` |
+| Auth | scrypt password hashes, HMAC-signed HTTP-only cookie, Google OAuth | `lib/server/auth.ts`, `session.ts`, `google.ts` |
+| AI | Google Gemini as a second check after the rules (chat, calls, help); rules decide if it is off or slow | `lib/engine/aiguard.js`, `aihelp.js` |
+| Calls | WebRTC + Web Speech API (captions) | `components/call/Call.tsx` |
+| Hosting | Vercel (production branch `krishna`) | — |
+| Tests | node:test (92 unit tests) + end-to-end smoke test | `lib/engine/*.test.js`, `scripts/smoke.mjs` |
+
+### How a request flows
+
+```
+Browser page → lib/api.ts (fetch, JSON)
+  → app/api/**/route.ts → run() in lib/server/http.ts
+  → lib/server/service.ts (who may do what)
+  → lib/engine/*.js (the rules)
+  → lib/server/persist.ts → Supabase
+  → JSON back to the page
+```
+
+The browser never talks to Supabase directly and never holds a database key.
+
+### Database
+
+Two tables, created by [supabase/schema.sql](supabase/schema.sql), with row level security on and no policies (only the server key can read them):
+
+- **`app_state`**: one row (`id = 'main'`) holding the whole app state as versioned JSON: users and password hashes, jobs, applications, projects, milestones, SOW documents, messages, change orders, task requests, negotiations, task progress and check-ins. Every write is "update where version = n" with a retry, so two people saving at once never overwrite each other. This is a deliberate hackathon shortcut: simple and safe for a pilot, but it will not scale to many users; the next step is one table per entity.
+- **`call_signals`**: short-lived call set-up messages.
+
+An uploaded SOW file is **not** stored: the browser sends its text, the server reads it into rows (item, included or excluded, hours) and saves those rows plus a SHA-256 hash of the text (for duplicate detection).
+
+Without Supabase keys the app keeps everything in memory (development); it resets on restart.
+
+## Run it locally
+
+Needs **Node 20+**.
 
 ```bash
 npm install
-npm run dev     # http://localhost:3000
-npm test        # rules engine tests
-npm run build   # type check and production build
-npm run smoke   # end-to-end API test (start the app first)
+npm run dev        # http://localhost:3000
 ```
 
-Needs Node 20+. By default data is held in server memory and resets on restart. With Supabase keys set it is stored in Supabase; see [docs/DEPLOY.md](docs/DEPLOY.md) for the Vercel and Supabase steps and [docs/AUTH.md](docs/AUTH.md) for accounts and Google sign-in.
+```bash
+npm test           # 92 rules-engine unit tests
+npm run build      # type check and production build
+npm run smoke      # end-to-end API test against a running server (it resets the data: never point it at the live site)
+```
 
-## How it fits together
+Copy `.env.example` to `.env.local` (never commit it) and fill in what you need:
 
-| Part | Where | Notes |
+| Variable | Needed for | Secret |
 | --- | --- | --- |
-| Rules engine (money, approvals, capacity, audit) | `lib/engine/` | Plain JavaScript with tests. Every price and decision comes from here |
-| SOW reader and comparison | `lib/engine/sow.js` | Reads .txt and .md for now |
-| API | `app/api/**`, `lib/server/` | Contract in [docs/API_CONTRACT.md](docs/API_CONTRACT.md) |
-| Client pages | `app/(client)/` | Jobs, applicants, project page, change orders |
-| Freelancer pages | `app/(freelancer)/` | Find jobs, apply, profile, project workspace |
-| Shared parts | `components/` | UI kit, chat, change list, SOW upload |
-| Case checks | `/demo` page and `lib/engine/demo.js` | The 3 outcome checks in printed order |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase storage (leave empty for in-memory data) | No |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase storage (server only) | **Yes** |
+| `SESSION_SECRET` | Signing the login cookie (set a long random value when deployed) | **Yes** |
+| `APP_URL` | The live address, for the Google redirect | No |
+| `GEMINI_API_KEY` | The AI second check and help assistant (optional) | **Yes** |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in (optional) | **Yes** |
+| `STORE=memory` | Force in-memory data even with Supabase keys | No |
+| `ALLOW_RESET=true` | Allow `/api/reset` in production (keep it off on the live site) | No |
 
-## Rules the engine enforces
+## Deploy
 
-| Rule | Behaviour |
+Pushing to the `krishna` branch deploys to Vercel automatically (about 2 minutes). `https://crewmate-sable.vercel.app/api/version` shows which commit is live. Full Vercel + Supabase + Google steps: [docs/DEPLOY.md](docs/DEPLOY.md).
+
+## Project layout
+
+```
+app/                 pages (one folder per URL) and app/api/** (API routes)
+  (client)/client/   signed-in client pages
+  (freelancer)/      signed-in freelancer pages
+components/          shared parts: shell, footer, landing, sow, tasks, work, chat, call, pricing, ui
+lib/engine/          the rules (plain JS) and their tests
+lib/server/          service layer, auth, sessions, Supabase persistence
+lib/api.ts           the only way pages talk to the server
+lib/pricing.ts       plans and prices (shared by every pricing view)
+lib/site.ts          footer and About page content (team, social links)
+supabase/schema.sql  the database tables
+scripts/             smoke test and setup checks
+docs/                guides (below)
+```
+
+## Documentation
+
+| Document | What is in it |
 | --- | --- |
-| `null` hours | Unknown, never zero. No price until clarified |
-| Excluded item in the signed SOW | A paid change, hours x rate, before tax |
-| Defect rework (our own bug) | Booked as effort, charged 0 |
-| Urgent | 1.5x rush multiplier, labelled as an assumption |
-| Approve | Only from quoted, refused if rejected, already approved or over capacity |
-| Reject | Never counted as committed. Can return only through reopen with a reason |
-| Import | Same id and content is ignored, so no double charge or double booking |
+| [docs/Crewmate-Technical-Handbook.pdf](docs/Crewmate-Technical-Handbook.pdf) | Everything technical: every page, button, API route, the database schema, deployment, glossary |
+| [docs/API_CONTRACT.md](docs/API_CONTRACT.md) | Every API endpoint, its input and output |
+| [docs/SCOPE_FLOW.md](docs/SCOPE_FLOW.md) | The SOW, negotiation, tasks and check-in design |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | Vercel + Supabase deployment, step by step |
+| [docs/AUTH.md](docs/AUTH.md) | Accounts, sessions and Google sign-in |
+| [docs/VIVA.md](docs/VIVA.md) | Viva preparation |
+| [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) | Demo walkthrough |
+| [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) | Colours, type, motion, accessibility |
+| [decision.md](decision.md) | Why each choice was made (one row per decision) |
+| [flow.md](flow.md) | Diagrams of the journeys and states |
 
-## Decisions and flows
+## Team and workflow
 
-[decision.md](decision.md) records why each choice was made. [flow.md](flow.md) draws the user journey, the SOW comparison, the change-order states and how the team ships.
-
-## Design
-
-Colours, type, motion and accessibility rules are in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md).
-
-## Demo
-
-A 6-minute walkthrough with sample SOW files is in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
-
-## For teammates
-
-Read [TEAM_GUIDE.md](TEAM_GUIDE.md) for setup and the branch rules, and [docs/OWNERSHIP.md](docs/OWNERSHIP.md) for who edits what. Statements of Work go in [docs/sow](docs/sow/README.md).
+Each teammate works on their own branch and code reaches `main` only through pull requests. Who edits what: [docs/OWNERSHIP.md](docs/OWNERSHIP.md). Setup and branch rules: [TEAM_GUIDE.md](TEAM_GUIDE.md). Run `npm test` and `npm run build` before every pull request.
 
 ## Data note
 
-`fixture.json` is **reconstructed** from the case brief (flagged by `"_reconstructed": true`). It is not the organisers' original file. Swap in the official one if you get it. It seeds the first project so the three case checks are visible straight away.
+`fixture.json` is **reconstructed** from the case brief (flagged `"_reconstructed": true`), not the organisers' original file. It seeds demo project P1 so the three case checks are visible straight away.
 
-## Not built yet
+## Known limits
 
-PDF reading, anomaly flags beyond the first few, the live deploy itself (the Supabase storage and the deploy guide are ready), the final design, v1/v2 tags for the business-feedback improvement, optional language model reader with a labelled manual fallback.
+- All app data is one JSON row: fine for a demo and pilot, not for many users.
+- SOW files: `.txt` and `.md` only (no PDF), and the original file is not kept.
+- No email yet (verification, password reset, notifications); the contact form does not send.
+- Negotiation at hiring is not built: the client hires at the applicant's price.
+- Pricing plans are proposals being tested; no payment is taken. Features marked "Coming soon" on the pricing page are not built.
+- Calls may need a TURN server on strict networks.
+- Founding-team names and photos, and social links, are placeholders until supplied.
