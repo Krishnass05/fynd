@@ -16,9 +16,16 @@ import { HttpError } from './errors';
 import { seedDb, type Db } from './store';
 
 function cfg() {
-  const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/$/, '');
+  // Accept the URL with or without a trailing /rest/v1/ (Supabase shows it both ways).
+  const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim().replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
   if (!url || !key || process.env.STORE === 'memory') return null;
+  // The publishable (public) key cannot write past row level security: warn and stay in memory instead of failing every request.
+  if (key.startsWith('sb_publishable_') || key.startsWith('sb_anon_')) {
+    const w = globalThis as unknown as { __warnedKey?: boolean };
+    if (!w.__warnedKey) { w.__warnedKey = true; console.warn('SUPABASE_SERVICE_ROLE_KEY is a publishable key. Use the SECRET key (sb_secret_...). Data stays in memory until then.'); }
+    return null;
+  }
   return { url, key };
 }
 
