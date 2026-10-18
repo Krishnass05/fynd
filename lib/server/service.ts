@@ -196,7 +196,9 @@ export function getJob(u: User, id: string): JobDetail {
   const owner = db().users.find((x) => x.id === job.clientId);
   const ownerReviews = reviewsFor(job.clientId, 'freelancer');
   const client = { id: job.clientId, name: owner?.name ?? 'Client', company: COMPANIES[job.clientId]?.name ?? null, rating: averageOf(ownerReviews), reviewCount: ownerReviews.length };
-  return { job, client, typicalTotal, applications: withSkills };
+  // Once someone is hired, the project for this job, if this person is one of its two sides
+  const project = db().projects.find((p) => p.jobId === id && (p.clientId === u.id || p.freelancerId === u.id));
+  return { job, client, typicalTotal, applications: withSkills, ...(project ? { projectId: project.id } : {}) };
 }
 
 export function applyToJob(u: User, jobId: string, b: Record<string, unknown>): Application {

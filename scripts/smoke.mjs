@@ -116,6 +116,8 @@ assert.equal((await call('POST', acceptPath, CLIENT, { milestones: [{ title: '',
 assert.equal((await call('POST', acceptPath, CLIENT, { milestones: [{ title: 'Half', amount: 7000.5 }, { title: 'Rest', amount: 6999.5 }] })).status, 400, 'whole rupees only');
 assert.equal((await ok('GET', `/api/jobs/${job.id}`, CLIENT)).job.status, 'open', 'a bad split leaves the job open');
 const { projectId } = await ok('POST', acceptPath, CLIENT, { milestones: [{ title: 'Start', amount: 4000 }, { title: 'Middle', amount: 5000 }, { title: 'Final', amount: 5000 }] });
+assert.equal((await ok('GET', `/api/jobs/${job.id}`, CLIENT)).projectId, projectId, 'the job page links the client to the new project');
+assert.equal((await ok('GET', `/api/jobs/${job.id}`, FREE)).projectId, projectId, 'and the hired freelancer');
 const proj0 = await ok('GET', `/api/projects/${projectId}`, CLIENT);
 assert.equal(proj0.milestones.length, 3);
 assert.equal(proj0.milestoneSummary.total, 14000);

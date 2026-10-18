@@ -7,7 +7,7 @@ import { acceptApplication, getJob, rejectApplication } from '@/lib/api';
 import { initials } from '@/lib/format';
 import { useAsync } from '@/lib/useAsync';
 import MilestoneSplit from '@/components/milestones/MilestoneSplit';
-import { Badge, Button, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
+import { Badge, Button, ButtonLink, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
 import s from './compare.module.css';
 
 const pct = (value: number, base: number) => Math.round(((value - base) / base) * 100);
@@ -125,6 +125,12 @@ export default function JobDetail() {
                 <div className="row">
                   <Button onClick={() => setAccepting({ id: a.id, name: a.freelancerName, price: a.proposedPrice })}>Accept</Button>
                   <Button variant="secondary" disabled={busy} onClick={() => void remove(a.id, a.freelancerName)}>Remove</Button>
+                </div>
+              ) : null}
+              {a.status === 'accepted' && data.projectId ? (
+                <div className="row">
+                  <ButtonLink href={`/client/projects/${data.projectId}`} variant="primary">Open project</ButtonLink>
+                  <span className="muted">Chat, SOW, milestones and change requests</span>
                 </div>
               ) : null}
             </Card>

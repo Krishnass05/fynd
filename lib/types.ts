@@ -288,6 +288,7 @@ export interface JobDetail {
   client: { id: string; name: string; company: string | null; rating: number | null; reviewCount: number }; // who posted it
   typicalTotal: number | null; // typical price for the job's library profile, if it started from one (illustrative)
   applications: Application[]; // owner client sees all; a freelancer sees only their own
+  projectId?: string; // the project made when someone was hired, for the two people in it
 }
 
 export interface DashboardProject {
