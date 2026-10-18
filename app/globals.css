@@ -480,3 +480,14 @@ button.avatar-link { border: 0; font: inherit; font-weight: 700; font-size: 14px
   .btn.glass-light { --glass: rgba(37, 36, 34, 0.55); }
 }
 @media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:active { transform: none; } }
+
+/* Applicant name that opens the freelancer profile: no underline, a hover cue instead */
+.plink { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink-strong); border-radius: 999px; padding: 2px 10px 2px 2px; transition: background-color 0.2s ease; }
+.plink .avatar-sm { width: 32px; height: 32px; }
+.plink-name { font-weight: 700; }
+.plink-go { font-size: 13px; font-weight: 500; color: var(--muted); opacity: 0; transform: translateX(-4px); transition: opacity 0.2s ease, transform 0.2s ease; white-space: nowrap; }
+.plink:hover, .plink:focus-visible { background: var(--brand-soft); }
+.plink:hover .plink-go, .plink:focus-visible .plink-go { opacity: 1; transform: none; }
+@media (hover: none) { .plink-go { display: none; } }
+@media (prefers-reduced-motion: reduce) { .plink, .plink-go { transition: none; } }
+th .plink-go { display: none; }

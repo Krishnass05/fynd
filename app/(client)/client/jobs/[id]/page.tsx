@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { acceptApplication, getJob, rejectApplication } from '@/lib/api';
+import { initials } from '@/lib/format';
 import { useAsync } from '@/lib/useAsync';
 import MilestoneSplit from '@/components/milestones/MilestoneSplit';
 import { Badge, Button, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
@@ -11,6 +12,17 @@ import s from './compare.module.css';
 
 const pct = (value: number, base: number) => Math.round(((value - base) / base) * 100);
 const vs = (n: number) => (n === 0 ? 'on target' : `${Math.abs(n)}% ${n < 0 ? 'below' : 'above'}`);
+
+// The applicant's name opens their profile: initials badge, the name, and an arrow that appears on hover or focus.
+function ProfileLink({ id, name }: { id: string; name: string }) {
+  return (
+    <Link href={`/client/freelancers/${id}`} className="plink" aria-label={`View ${name}'s profile`}>
+      <span className="avatar-sm" aria-hidden="true">{initials(name)}</span>
+      <span className="plink-name">{name}</span>
+      <span className="plink-go" aria-hidden="true">View profile →</span>
+    </Link>
+  );
+}
 
 export default function JobDetail() {
   const { id } = useParams<{ id: string }>();
@@ -89,7 +101,7 @@ export default function JobDetail() {
                   <tbody>
                     {apps.map((a) => (
                       <tr key={a.id}>
-                        <th scope="row"><Link href={`/client/freelancers/${a.freelancerId}`}>{a.freelancerName}</Link>{a.proposedPrice === cheapest ? <> <Badge tone="good">Lowest</Badge></> : null}</th>
+                        <th scope="row"><ProfileLink id={a.freelancerId} name={a.freelancerName} />{a.proposedPrice === cheapest ? <> <Badge tone="good">Lowest</Badge></> : null}</th>
                         <td className={s.nowrap}>{money(a.proposedPrice)}</td>
                         <td>{vs(pct(a.proposedPrice, data.job.budget))}</td>
                         {data.typicalTotal ? <td>{vs(pct(a.proposedPrice, data.typicalTotal))}</td> : null}
@@ -106,7 +118,7 @@ export default function JobDetail() {
 
           {apps.map((a) => (
             <Card key={a.id}>
-              <strong><Link href={`/client/freelancers/${a.freelancerId}`}>{a.freelancerName}</Link></strong> <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>
+              <ProfileLink id={a.freelancerId} name={a.freelancerName} /> <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>
               <p>{a.pitch}</p>
               <p className="muted">Proposed price {money(a.proposedPrice)} ({vs(pct(a.proposedPrice, data.job.budget))} your budget){a.freelancerSkills?.length ? ` · ${a.freelancerSkills.join(', ')}` : ''}</p>
               {canAccept && a.status === 'pending' ? (
