@@ -37,6 +37,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `createJob` | `POST /api/jobs` `{title, description, budget, deadline, profileId?}` | client | `Job`. With a `profileId`, accepting an applicant sets the project rate and hours from that profile |
 | `getJob` | `GET /api/jobs/:id` | owner client, or freelancer | `JobDetail`: the job, `typicalTotal` (library price, or null) and applicants with their skills (client sees all, freelancer only their own) |
 | `applyToJob` | `POST /api/jobs/:id/applications` `{pitch, proposedPrice}` | freelancer | `Application` (409 if already applied or job not open) |
+| `rejectApplication` | `POST /api/applications/:id/reject` | owner client | `{ id, status: 'rejected' }`. Removes a pending applicant; the job stays open. 409 if the application was already decided, 403 for anyone but the job's client |
 | `acceptApplication` | `POST /api/applications/:id/accept` `{milestones?: [{title, amount}]}` | owner client | `{ projectId }` (closes the job, rejects other applicants, creates the project and its milestones). The milestones must be whole rupees and add up to the applicant's price exactly, or the call is refused and nothing changes. Left out, the price is split 30/40/30 |
 | `listProjects` | `GET /api/projects` | participant | `Project[]` |
 | `getProject` | `GET /api/projects/:id` | participant | `ProjectDetail` (SOW versions, change requests, totals, audit) |

@@ -97,6 +97,12 @@ const job = await ok('POST', '/api/jobs', CLIENT, { title: 'Shop website', descr
 assert.equal(job.status, 'open');
 assert.equal((await call('POST', '/api/jobs', FREE, { title: 'x', description: 'y', budget: 1, deadline: '2026-12-01' })).status, 403, 'freelancer cannot post a job');
 const app = await ok('POST', `/api/jobs/${job.id}/applications`, FREE, { pitch: 'I can do this.', proposedPrice: 14000 });
+// the client can remove a pending applicant; others cannot, and it cannot be done twice
+assert.equal((await call('POST', `/api/applications/${app.id}/reject`, FREE)).status, 403, 'only the job owner removes an applicant');
+const spare = await ok('POST', `/api/jobs/${job.id}/applications`, 'u_freelancer1', { pitch: 'Me too.', proposedPrice: 15000 });
+assert.equal((await ok('POST', `/api/applications/${spare.id}/reject`, CLIENT)).status, 'rejected');
+assert.equal((await call('POST', `/api/applications/${spare.id}/reject`, CLIENT)).status, 409, 'already decided');
+assert.equal((await ok('GET', `/api/jobs/${job.id}`, CLIENT)).job.status, 'open', 'removing an applicant leaves the job open');
 assert.equal((await call('POST', `/api/jobs/${job.id}/applications`, FREE, { pitch: 'again', proposedPrice: 1 })).status, 409, 'cannot apply twice');
 assert.equal((await call('POST', `/api/applications/${app.id}/accept`, FREE)).status, 403, 'freelancer cannot accept');
 // milestones split the agreed price (14000) and must add up exactly; a bad split changes nothing

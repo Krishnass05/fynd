@@ -62,6 +62,8 @@ export const getJob = (id: string) => call<JobDetail>(`/api/jobs/${id}`);
 export const applyToJob = (jobId: string, b: { pitch: string; proposedPrice: number }) => post<Application>(`/api/jobs/${jobId}/applications`, b);
 export const acceptApplication = (applicationId: string, milestones?: Array<{ title: string; amount: number }>) =>
   post<{ projectId: string }>(`/api/applications/${applicationId}/accept`, milestones ? { milestones } : {});
+export const rejectApplication = (applicationId: string) =>
+  post<{ id: string; status: 'rejected' }>(`/api/applications/${applicationId}/reject`, {});
 
 // projects and workspace
 export const listProjects = () => call<Project[]>('/api/projects');

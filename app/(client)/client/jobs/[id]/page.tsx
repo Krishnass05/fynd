@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { acceptApplication, getJob } from '@/lib/api';
+import { acceptApplication, getJob, rejectApplication } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
 import MilestoneSplit from '@/components/milestones/MilestoneSplit';
 import { Badge, Button, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
@@ -29,6 +29,20 @@ export default function JobDetail() {
       setActionError(e instanceof Error ? e.message : 'Could not accept');
       setAccepting(null);
       await reload();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(applicationId: string, name: string) {
+    if (!window.confirm(`Remove ${name} from this job? They will see their application as rejected.`)) return;
+    setBusy(true);
+    setActionError(null);
+    try {
+      await rejectApplication(applicationId);
+      await reload();
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : 'Could not remove the applicant');
     } finally {
       setBusy(false);
     }
@@ -81,7 +95,7 @@ export default function JobDetail() {
                         {data.typicalTotal ? <td>{vs(pct(a.proposedPrice, data.typicalTotal))}</td> : null}
                         <td>{(a.freelancerSkills ?? []).join(', ') || 'Not listed'}</td>
                         <td className={s.pitch}>{a.pitch}</td>
-                        <td className={s.nowrap}>{canAccept && a.status === 'pending' ? <Button onClick={() => setAccepting({ id: a.id, name: a.freelancerName, price: a.proposedPrice })}>Accept</Button> : <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>}</td>
+                        <td className={s.nowrap}>{canAccept && a.status === 'pending' ? <><Button onClick={() => setAccepting({ id: a.id, name: a.freelancerName, price: a.proposedPrice })}>Accept</Button> <Button variant="secondary" disabled={busy} onClick={() => void remove(a.id, a.freelancerName)}>Remove</Button></> : <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -95,7 +109,12 @@ export default function JobDetail() {
               <strong><Link href={`/client/freelancers/${a.freelancerId}`}>{a.freelancerName}</Link></strong> <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>
               <p>{a.pitch}</p>
               <p className="muted">Proposed price {money(a.proposedPrice)} ({vs(pct(a.proposedPrice, data.job.budget))} your budget){a.freelancerSkills?.length ? ` · ${a.freelancerSkills.join(', ')}` : ''}</p>
-              {canAccept && a.status === 'pending' ? <Button onClick={() => setAccepting({ id: a.id, name: a.freelancerName, price: a.proposedPrice })}>Accept</Button> : null}
+              {canAccept && a.status === 'pending' ? (
+                <div className="row">
+                  <Button onClick={() => setAccepting({ id: a.id, name: a.freelancerName, price: a.proposedPrice })}>Accept</Button>
+                  <Button variant="secondary" disabled={busy} onClick={() => void remove(a.id, a.freelancerName)}>Remove</Button>
+                </div>
+              ) : null}
             </Card>
           ))}
         </>

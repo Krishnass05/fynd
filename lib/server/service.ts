@@ -197,6 +197,17 @@ export function applyToJob(u: User, jobId: string, b: Record<string, unknown>): 
   return app;
 }
 
+// The client removes an applicant they do not want. The application becomes 'rejected'; the job stays open.
+export function rejectApplication(u: User, applicationId: string): { id: string; status: 'rejected' } {
+  const app = db().applications.find((a) => a.id === applicationId);
+  if (!app) throw notFound('Application not found');
+  const job = db().jobs.find((j) => j.id === app.jobId)!;
+  if (u.role !== 'client' || job.clientId !== u.id) throw forbidden('Only the client who posted the job can remove an applicant');
+  if (app.status !== 'pending') throw conflict('This application was already decided');
+  app.status = 'rejected';
+  return { id: app.id, status: 'rejected' };
+}
+
 export function acceptApplication(u: User, applicationId: string, body: Record<string, unknown> = {}): { projectId: string } {
   const app = db().applications.find((a) => a.id === applicationId);
   if (!app) throw notFound('Application not found');
