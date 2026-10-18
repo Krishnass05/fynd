@@ -264,7 +264,9 @@ export interface Message {
   senderName: string;
   body: string;
   sentAt: string;
-  redacted?: boolean; // true when the server hid an email address or phone number in the body
+  redacted?: boolean; // true when the server hid contact details in the body
+  hiddenKinds?: string[]; // what was hidden, for example 'phone number (said in words)'
+  warning?: string; // set when the text asks to move off the platform (the text is kept)
 }
 
 export interface CompareItem {
@@ -371,6 +373,25 @@ export interface DemoResult {
   allPassed: boolean;
   steps: DemoStep[];
 }
+
+// ---- calls inside a project (voice or video). The signalling is in-app and the room is the project. ----
+// A call is watched live: each person's browser turns their speech into text, the server checks every line
+// with the contact guard, and the call is ended if a phone number, email address, link or handle is said.
+export type CallMode = 'voice' | 'video';
+export type CallSignalType = 'ring' | 'offer' | 'answer' | 'ice' | 'hangup' | 'reject' | 'caption';
+
+export interface CallSignal {
+  id: string;
+  seq: number; // grows with every signal; the poller asks for signals newer than the last one it saw
+  projectId: string;
+  fromUserId: string;
+  toUserId: string; // only the other project member receives this signal
+  type: CallSignalType;
+  payload: string; // JSON for ring (mode), offer/answer (SDP), ice (candidate), hangup (reason); text for caption
+  at: string;
+}
+
+export interface CaptionResult { blocked: boolean; reasons: string[] }
 
 export interface ApiErrorBody {
   error: string;

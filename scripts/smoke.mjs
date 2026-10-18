@@ -156,6 +156,42 @@ assert.ok(thread.every((m) => !m.body.includes('owner@shop.in')), 'hidden text i
 assert.equal((await call('POST', `/api/projects/${projectId}/messages`, CLIENT, { body: '   ' })).status, 400, 'empty message refused');
 assert.equal((await call('GET', `/api/projects/${projectId}/messages`, 'u_freelancer3')).status, 403, 'outsiders cannot read the chat');
 
+// the guard also catches numbers and emails written out in words
+const spelled = await ok('POST', `/api/projects/${projectId}/messages`, FREE, { body: 'sure, my number is eight one two two nine five five zero one two' });
+assert.equal(spelled.redacted, true, 'a number said in words is hidden');
+assert.ok(!/eight|nine|zero/.test(spelled.body), 'spelled digits are gone: ' + spelled.body);
+assert.ok(spelled.hiddenKinds.includes('phone number (said in words)'));
+const spokenMail = await ok('POST', `/api/projects/${projectId}/messages`, CLIENT, { body: 'write to priya at gmail dot com' });
+assert.equal(spokenMail.redacted, true, 'a spoken email address is hidden');
+assert.ok((await ok('POST', `/api/projects/${projectId}/messages`, CLIENT, { body: 'ping me on whatsapp' })).warning, 'asking to move off the platform is flagged');
+
+// calls: ringing, signalling, live captions, and the call ending when contact details are said
+const ring = await ok('POST', `/api/projects/${projectId}/call`, CLIENT, { mode: 'video' });
+assert.equal(JSON.parse(ring.payload).mode, 'video');
+const rung = await ok('GET', `/api/projects/${projectId}/call/signals?since=0`, FREE);
+assert.ok(rung.some((x) => x.type === 'ring' && x.fromUserId === CLIENT), 'the other person is rung');
+assert.equal((await ok('GET', `/api/projects/${projectId}/call/signals?since=0`, CLIENT)).filter((x) => x.type === 'ring').length, 0, 'the caller does not get their own ring');
+assert.equal((await call('GET', `/api/projects/${projectId}/call/signals?since=0`, 'u_freelancer3')).status, 403, 'outsiders cannot listen');
+assert.equal((await call('POST', `/api/projects/${projectId}/call/signal`, 'u_freelancer3', { type: 'offer' })).status, 403, 'outsiders cannot signal');
+assert.equal((await call('POST', `/api/projects/${projectId}/call/signal`, FREE, { type: 'caption' })).status, 400, 'captions only go through the guard');
+await ok('POST', `/api/projects/${projectId}/call/signal`, FREE, { type: 'answer', payload: '{"sdp":"x"}' });
+const lastSeq = Math.max(...(await ok('GET', `/api/projects/${projectId}/call/signals?since=0`, CLIENT)).map((x) => x.seq));
+const clean = await ok('POST', `/api/projects/${projectId}/call/caption`, FREE, { text: 'The extra work is six hours at one thousand rupees.' });
+assert.equal(clean.blocked, false);
+const cap = await ok('GET', `/api/projects/${projectId}/call/signals?since=${lastSeq}`, CLIENT);
+assert.ok(cap.some((x) => x.type === 'caption' && x.payload.includes('six hours')), 'a clean line shows up as a caption for the other person');
+const cut = await ok('POST', `/api/projects/${projectId}/call/caption`, FREE, { text: 'okay, my number is nine eight seven six five four three two one zero' });
+assert.equal(cut.blocked, true, 'a spoken phone number ends the call');
+assert.ok(cut.reasons.includes('phone number (said in words)'));
+const after = await ok('GET', `/api/projects/${projectId}/call/signals?since=${lastSeq}`, CLIENT);
+const hang = after.find((x) => x.type === 'hangup');
+assert.equal(JSON.parse(hang.payload).reason, 'guard', 'the other person is hung up on, with the reason');
+assert.ok(!after.some((x) => /nine|zero/.test(x.payload) && x.type === 'caption'), 'the spoken number is never sent on as a caption');
+const log = await ok('GET', `/api/projects/${projectId}/messages`, CLIENT);
+assert.ok(log.some((m) => m.senderId === 'platform' && /call was ended/.test(m.body) && !/nine|zero/.test(m.body)), 'the chat records that the call was ended, without the details');
+assert.equal((await ok('POST', `/api/projects/${projectId}/call/caption`, CLIENT, { text: 'mail me at owner at shop dot in' })).blocked, true, 'a spoken email ends the call too');
+assert.equal((await call('POST', `/api/projects/${projectId}/call/caption`, FREE, { text: '   ' })).status, 400, 'empty caption refused');
+
 // signed SOW then amendment
 const baseline = ['Rate: Rs 1000/hr', '', 'Deliverables', '- One landing page', '- Contact form', '', 'Excluded', '- Payment checkout', '- Blog'].join('\n');
 const up1 = await ok('POST', `/api/projects/${projectId}/sow`, FREE, { kind: 'baseline', filename: 'signed.txt', text: baseline });

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { getProject } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
 import Chat from '@/components/chat/Chat';
+import Call from '@/components/call/Call';
 import ChangeList from '@/components/changes/ChangeList';
 import SowUpload from '@/components/sow/SowUpload';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
@@ -33,6 +34,8 @@ export default function ClientProject() {
           ) : null}
           <h2>Change orders</h2>
           <ChangeList projectId={id} changes={data.changeRequests} canDecide onChanged={setData} />
+          <h2>Call</h2>
+          <Card plain><Call projectId={id} peerName={data.freelancer.name} /></Card>
           <h2>Chat</h2>
           <Card plain><Chat projectId={id} role="client" /></Card>
         </>

@@ -72,7 +72,7 @@ export default function Chat({ projectId, role }: ChatProps) {
     try {
       const saved = await sendMessage(projectId, trimmed);
       setText('');
-      setNotice(saved.redacted ? 'Contact details were hidden. Keep the conversation and payments on the platform.' : null);
+      setNotice(saved.redacted ? `Hidden before sending: ${(saved.hiddenKinds ?? ['contact details']).join(', ')}. Keep the conversation and payments on the platform.` : saved.warning ?? null);
       await reload();
       setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
     } catch (err) {
@@ -138,7 +138,7 @@ export default function Chat({ projectId, role }: ChatProps) {
               <div className={`${styles.messageBubble} ${isMe ? styles.bubbleMe : styles.bubbleOther}`}>
                 {m.body}
               </div>
-              {m.redacted ? <span className={styles.redactedNote}>Contact details hidden</span> : null}
+              {m.redacted ? <span className={styles.redactedNote}>Contact details hidden{m.hiddenKinds?.length ? ` (${m.hiddenKinds.join(', ')})` : ''}</span> : null}
             </div>
           );
         })}

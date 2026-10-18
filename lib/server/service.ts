@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
-  ActivityItem, Application, AttentionItem, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
+  ActivityItem, Application, AttentionItem, CallMode, CallSignal, CallSignalType, CaptionResult, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
   JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
@@ -12,11 +12,12 @@ import { bad, conflict, forbidden, notFound } from './errors';
 import { matchesAllWords } from '@/lib/search';
 import { COMPANIES, PORTFOLIO, REVIEWS } from '@/lib/data/sampleProfiles';
 import { requestRole } from './context';
+import { inspectSpeech, scrub } from '@/lib/engine/guard';
 import { parseSow, compareSow } from '@/lib/engine/sow';
 import { checkSplit, defaultSplit } from '@/lib/milestones';
 import type { MilestoneDraft } from '@/lib/milestones';
 import { findProfile, library } from './library';
-import { db, nextId } from './store';
+import { db, nextId, nextSeq } from './store';
 
 const nowIso = () => new Date().toISOString();
 const str = (v: unknown, name: string, max: number): string => {
@@ -364,23 +365,15 @@ export function listMessages(u: User, projectId: string): Message[] {
   return db().messages.filter((m) => m.projectId === projectId);
 }
 
-// Keep the work on the platform: email addresses and phone numbers in chat are replaced before saving.
-// Phone numbers need 10 or more digits, so prices, hours and dates (2026-11-10) are left alone.
-export const HIDDEN = '***REDACTED***';
-const EMAIL = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
-const PHONE = /\+?\d[\d\s().-]{8,}\d/g;
-export function hideContacts(text: string): { body: string; redacted: boolean } {
-  let redacted = false;
-  const body = text
-    .replace(EMAIL, () => { redacted = true; return HIDDEN; })
-    .replace(PHONE, (match) => (match.replace(/\D/g, '').length >= 10 ? ((redacted = true), HIDDEN) : match));
-  return { body, redacted };
-}
-
 export function sendMessage(u: User, projectId: string, b: Record<string, unknown>): Message {
   projectFor(u, projectId);
-  const { body, redacted } = hideContacts(str(b.body, 'message', 2000));
-  const m: Message = { id: nextId('M'), projectId, senderId: u.id, senderName: u.name, body, sentAt: nowIso(), ...(redacted ? { redacted: true } : {}) };
+  // The contact guard hides phone numbers (also said in words), email addresses, links and handles before saving.
+  const g = scrub(str(b.body, 'message', 2000));
+  const m: Message = {
+    id: nextId('M'), projectId, senderId: u.id, senderName: u.name, body: g.body, sentAt: nowIso(),
+    ...(g.redacted ? { redacted: true, hiddenKinds: g.kinds } : {}),
+    ...(g.asksOffPlatform ? { warning: 'Please keep the conversation and payments on the platform.' } : {}),
+  };
   db().messages.push(m);
   return m;
 }
@@ -589,4 +582,58 @@ export function siteStats(): SiteStats {
     checksPassed: checks.steps.filter((s) => s.pass).length,
     checksTotal: checks.steps.length,
   };
+}
+
+// ---- calls in a project: voice or video, watched live by the contact guard ----
+const peerOf = (project: Project, u: User): string => (project.clientId === u.id ? project.freelancerId : project.clientId);
+
+function pushSignal(project: Project, u: User, type: CallSignalType, payload: string): CallSignal {
+  const seq = nextSeq();
+  const sig: CallSignal = { id: `SIG${seq}`, seq, projectId: project.id, fromUserId: u.id, toUserId: peerOf(project, u), type, payload, at: nowIso() };
+  db().signals.push(sig);
+  if (db().signals.length > 2000) db().signals.splice(0, db().signals.length - 1000); // keep memory small
+  return sig;
+}
+
+// Rings the other person in the project. mode is 'voice' or 'video'.
+export function startCall(u: User, projectId: string, b: Record<string, unknown> = {}): CallSignal {
+  const project = projectFor(u, projectId);
+  const mode: CallMode = b.mode === 'video' ? 'video' : 'voice';
+  return pushSignal(project, u, 'ring', JSON.stringify({ mode }));
+}
+
+// The signals addressed to this person since the given number.
+export function listCallSignals(u: User, projectId: string, since: number): CallSignal[] {
+  projectFor(u, projectId);
+  return db().signals.filter((s) => s.projectId === projectId && s.toUserId === u.id && s.seq > since);
+}
+
+// Offer, answer, ICE candidate, hang up or reject. Only the two people in the project can send.
+export function sendCallSignal(u: User, projectId: string, b: Record<string, unknown>): CallSignal {
+  const project = projectFor(u, projectId);
+  const type = b.type as CallSignalType;
+  if (!['offer', 'answer', 'ice', 'hangup', 'reject'].includes(type)) throw bad('Unknown call signal type');
+  const payload = typeof b.payload === 'string' ? b.payload : b.payload === undefined ? '' : JSON.stringify(b.payload);
+  if (payload.length > 20000) throw bad('Call signal is too large');
+  return pushSignal(project, u, type, payload);
+}
+
+// One line of live captions from this person's microphone. The guard checks it: a clean line goes to the
+// other person as a caption; a line with a phone number, email, link or handle (also said in words) ends the call.
+export function reportCaption(u: User, projectId: string, b: Record<string, unknown>): CaptionResult {
+  const project = projectFor(u, projectId);
+  const text = str(b.text, 'caption', 600);
+  const r = inspectSpeech(text);
+  if (!r.block) {
+    pushSignal(project, u, 'caption', text);
+    return { blocked: false, reasons: [] };
+  }
+  // End the call for both people, and leave a note in the project chat. The spoken details are not saved anywhere.
+  pushSignal(project, u, 'hangup', JSON.stringify({ reason: 'guard', reasons: r.reasons }));
+  db().messages.push({
+    id: nextId('M'), projectId, senderId: 'platform', senderName: 'CraftHire guard',
+    body: `The call was ended because personal contact details were said (${r.reasons.join(', ')}). They were not saved. Please keep the conversation and payments on the platform.`,
+    sentAt: nowIso(),
+  });
+  return { blocked: true, reasons: r.reasons };
 }

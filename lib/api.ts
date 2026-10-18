@@ -1,7 +1,7 @@
 // The ONLY way pages talk to the server. OWNER: Krishna. Do not call fetch in pages.
 // Every function throws an Error whose message is safe to show to the user.
 import type {
-  Application, ClientDashboard, ClientProfile, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
+  Application, CallMode, CallSignal, CaptionResult, ClientDashboard, ClientProfile, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
 } from './types';
 import { getRole, getUserId } from './session';
 
@@ -93,6 +93,12 @@ export const getClientDashboard = () => call<ClientDashboard>('/api/client-dashb
 
 // public numbers for the landing page
 export const getSiteStats = () => call<SiteStats>('/api/stats');
+
+// calls inside a project (voice or video), watched live by the contact guard
+export const startCall = (projectId: string, mode: CallMode) => post<CallSignal>(`/api/projects/${projectId}/call`, { mode });
+export const pollCallSignals = (projectId: string, since: number) => call<CallSignal[]>(`/api/projects/${projectId}/call/signals?since=${since}`);
+export const sendCallSignal = (projectId: string, body: { type: string; payload?: string }) => post<CallSignal>(`/api/projects/${projectId}/call/signal`, body);
+export const sendCaption = (projectId: string, text: string) => post<CaptionResult>(`/api/projects/${projectId}/call/caption`, { text });
 
 // demo and reset
 export const runCaseChecks = () => call<DemoResult>('/api/demo');

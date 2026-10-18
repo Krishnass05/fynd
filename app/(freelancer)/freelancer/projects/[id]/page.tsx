@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { getProject } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
 import Chat from '@/components/chat/Chat';
+import Call from '@/components/call/Call';
 import ChangeList from '@/components/changes/ChangeList';
 import SowUpload from '@/components/sow/SowUpload';
 import MilestoneList from '@/components/milestones/MilestoneList';
@@ -34,6 +35,8 @@ export default function FreelancerProject() {
           <MilestoneList projectId={id} milestones={data.milestones} summary={data.milestoneSummary} role="freelancer" onChanged={setData} />
           <h2>Change orders</h2>
           <ChangeList projectId={id} changes={data.changeRequests} canDecide={false} onChanged={setData} />
+          <h2>Call</h2>
+          <Card plain><Call projectId={id} peerName={data.client.name} /></Card>
           <h2>Chat</h2>
           <Card plain><Chat projectId={id} role="freelancer" /></Card>
         </>

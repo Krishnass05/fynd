@@ -506,3 +506,19 @@ th .plink-go { display: none; }
 
 .usermenu-panel .usermenu-switch { border-top: 1px solid var(--line); border-radius: 0; margin-top: 4px; font-weight: 600; }
 .usermenu-panel .usermenu-switch + button { border-top: 0; margin-top: 0; }
+
+/* Calls inside a project */
+.callbox { display: grid; gap: 10px; }
+.callbox-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.callbox-note { margin: 0; font-size: 13px; }
+.callbox-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.callbox-ended { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--warnbg); color: var(--warn); font-size: 14px; }
+.callbox-stage { position: relative; border-radius: 14px; background: var(--ink); min-height: 80px; overflow: hidden; display: grid; place-items: center; }
+.callbox-stage--video { aspect-ratio: 16 / 9; }
+.callbox-remote { width: 100%; height: 100%; object-fit: cover; display: none; }
+.callbox-stage--video .callbox-remote { display: block; }
+.callbox-local { position: absolute; right: 10px; bottom: 10px; width: 28%; max-width: 160px; border-radius: 10px; border: 2px solid #fff; background: var(--charcoal); display: none; }
+.callbox-stage--video .callbox-local { display: block; }
+.callbox-voice { color: #fff; margin: 0; padding: 24px; }
+.callbox-captions { list-style: none; margin: 0; padding: 10px 12px; max-height: 180px; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 4px; font-size: 14px; }
+.callbox-captions li[data-who="you"] { color: var(--muted); }
