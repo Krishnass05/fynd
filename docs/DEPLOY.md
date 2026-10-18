@@ -54,6 +54,15 @@ This is a deliberate hackathon shortcut. It is not a normalised schema, and one 
 5. `/api/reset` must answer "Reset is switched off on this site".
 6. If a page shows an error, **Vercel, Deployments, Functions (Logs)** shows what happened. The usual causes: a missing environment variable, the SQL not run, or a wrong key.
 
+## Is my change live?
+
+Open `https://your-live-address/api/version`. It shows the commit the live site was built from (for example `{"commit":"3fd1717","branch":"krishna","env":"production"}`). If it is not your latest commit:
+
+- In **Deployments**, a build labelled **Preview** is not live. Use **⋯ → Promote to Production**.
+- A grey **Production** label (with a clock) means built but waiting: **⋯ → Promote**. Only the build with the **blue** Production label is what the live address serves.
+- "Redeploy" rebuilds the same commit; it does not pick up newer commits. If the dialog warns "auto-assignment is disabled" (this happens after a rollback), new builds will not go live by themselves until one is promoted.
+- So that every push to `krishna` goes live: **Settings → Environments → Production → Branch Tracking** = `krishna`.
+
 ## Things to know
 
 - **Free plans:** Supabase free projects pause after about a week without use (open the dashboard and press Restore). Vercel Hobby is for non-commercial use and has function time limits; the routes that call the AI model ask for up to 30 seconds.
