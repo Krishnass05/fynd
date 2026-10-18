@@ -74,7 +74,7 @@ Before the judges arrive: stop and restart `npm run dev` so the data is clean. U
 
 ## 7. Known gaps (say them before they are found)
 
-1. **Live deploy:** the Supabase storage and the Vercel guide are built and tested against a pretend Supabase, but they need your own Supabase and Vercel accounts (docs/DEPLOY.md). Until then, run it locally for the viva.
+1. **Live deploy:** the Supabase storage and the Vercel guide are built and tested against our real Supabase project (data survives a restart). The Vercel deploy itself is the last step (docs/DEPLOY.md). Honest limit: all data is one JSON row, so many people writing at the same moment queue up (6 at once took about 9 seconds).
 2. **`main` is behind `krishna`.** Pull requests #3 and #4 are not merged. Merge them before the viva or demo from the `krishna` branch.
 3. **v1/v2 tags missing** (`v1-before-feedback`, `v2-after-feedback`). Without them the "improvement after feedback" mark is hard to show. Make them or explain the change from the commit history.
 4. No PDF reading, no rush multiplier, no JSON/CSV export button, no language-model reader.
