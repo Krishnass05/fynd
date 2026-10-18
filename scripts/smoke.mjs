@@ -703,10 +703,11 @@ assert.match(blocked.data.error, /Buy credits/);
 assert.match((await call('POST', C, FREE, { mode: 'voice' })).data.error, /no call credits left/, 'the freelancer is told why');
 assert.equal((await call('POST', '/api/credits/buy', CLIENT, { pack: 'nope' })).status, 400);
 assert.equal((await call('POST', '/api/credits/buy', FREE, { pack: 'c1' })).status, 403);
-cr = await ok('POST', '/api/credits/buy', CLIENT, { pack: 'c5' });
-assert.equal(cr.balance, 5);
+cr = await ok('POST', '/api/credits/buy', CLIENT, { pack: 'c1' });
+assert.equal(cr.balance, 1);
 assert.equal(cr.history[0].reason, 'purchase');
-assert.equal(cr.history[0].price, 100, '5 credits at Rs 20');
+assert.equal(cr.history[0].price, 20, '1 credit at Rs 20');
+assert.equal(cr.packs.length, 1, 'only the 1-credit option is offered');
 await ok('POST', C, CLIENT, { mode: 'voice' }); // calls work again
 }
 
