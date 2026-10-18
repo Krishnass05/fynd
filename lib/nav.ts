@@ -33,7 +33,6 @@ export const TOP_LINKS: Record<Role, NavItem[]> = {
     { href: '/client/freelancers', label: 'Find freelancers', icon: 'search' },
     { href: '/client/saved', label: 'Saved', icon: 'heart' },
     { href: '/client/pricing', label: 'Pricing', icon: 'rupee' },
-    { href: '/client/credits', label: 'Credits', icon: 'rupee' },
   ],
   freelancer: [],
 };
