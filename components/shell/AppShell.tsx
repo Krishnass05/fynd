@@ -16,6 +16,7 @@ import { ChevronRight, Search } from '@/components/ui/icons';
 import HelpBot from '@/components/help/HelpBot';
 import AppNav from './AppNav';
 import CreditWallet from '@/components/credits/CreditWallet';
+import IncomingCallWatcher from '@/components/call/IncomingCallWatcher';
 
 const initials = (name: string) => name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
@@ -214,6 +215,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
       {makeError ? <p className="toast-error" role="alert">{makeError} <button type="button" onClick={() => setMakeError(null)}>Close</button></p> : null}
       <main id="main-content" className="page">{children}</main>
       <HelpBot role={role} />
+      <IncomingCallWatcher />
     </div>
   );
 }

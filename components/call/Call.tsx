@@ -8,7 +8,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAiStatus, pollCallSignals, sendCallSignal, sendCaption, startCall } from '@/lib/api';
 import Link from 'next/link';
-import type { CallMode, CallSignal, ProjectDetail } from '@/lib/types';
+import type { CallMode, CallSignal, IncomingCall, ProjectDetail } from '@/lib/types';
+import { startRingtone } from './ringtone';
 import { Badge, Button, ErrorMessage } from '@/components/ui';
 
 const ICE = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
@@ -30,7 +31,9 @@ interface Line { id: number; who: 'you' | 'them'; text: string }
 
 // credits: who pays for calls (the client: 1 credit per answered call; freelancers never pay). onLive lets the page
 // refresh the balance once a call connects.
-export default function Call({ projectId, peerName, credits, onLive }: { projectId: string; peerName: string; credits?: ProjectDetail['callCredits']; onLive?: () => void }) {
+// incoming: a call already ringing when the page opened (so it is not missed); with ?answer=1 in the address
+// (from the pop-up's Answer button) it is answered straight away.
+export default function Call({ projectId, peerName, credits, onLive, incoming }: { projectId: string; peerName: string; credits?: ProjectDetail['callCredits']; onLive?: () => void; incoming?: IncomingCall | null }) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [mode, setMode] = useState<CallMode>('voice');
   const [lines, setLines] = useState<Line[]>([]);
@@ -211,6 +214,21 @@ export default function Call({ projectId, peerName, credits, onLive }: { project
     return () => { stop = true; window.clearInterval(t); };
   }, [projectId, handle]);
   useEffect(() => () => cleanup(), [cleanup]);
+
+  // A call that was already ringing when this page opened: show it, and answer it if we came from the pop-up.
+  const pickedUp = useRef(false);
+  useEffect(() => {
+    if (!incoming || pickedUp.current || phaseRef.current !== 'idle') return;
+    pickedUp.current = true;
+    modeRef.current = incoming.mode; setMode(incoming.mode); setEnded(null); setPhaseBoth('incoming');
+    if (new URLSearchParams(window.location.search).get('answer') === '1') {
+      window.history.replaceState(null, '', window.location.pathname);
+      void accept();
+    }
+  }, [incoming]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Ring while a call is coming in.
+  useEffect(() => (phase === 'incoming' ? startRingtone() : undefined), [phase]);
 
   const toggleMute = () => { local.current?.getAudioTracks().forEach((t) => { t.enabled = muted; }); setMuted((m) => !m); };
   const busy = phase !== 'idle';

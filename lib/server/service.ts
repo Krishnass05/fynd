@@ -9,7 +9,7 @@ import { CALL_COST, CreditError, PACKS, START_CREDITS, balanceOf, buyPack, canCa
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
   ActivityItem, Application, AttentionItem, CallMode, CallSignal, CallSignalType, CaptionResult, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
-  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, TaskRequest, UploadSowResult, User, WorkItem, WorkStatus, CheckIn, CreditEntry, CreditsInfo,
+  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, TaskRequest, UploadSowResult, User, WorkItem, WorkStatus, CheckIn, CreditEntry, CreditsInfo, IncomingCall,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
@@ -343,6 +343,7 @@ export function getProject(u: User, id: string): ProjectDetail {
     ...workParts(id),
     feedback: feedbackFor(u, project),
     callCredits: callCreditsFor(u, project),
+    incomingCall: ringingFor(u, project),
   };
 }
 
@@ -1119,7 +1120,7 @@ export async function startCall(u: User, projectId: string, b: Record<string, un
   }
   const sig = await pushSignal(project, u, 'ring', JSON.stringify({ mode }));
   const prev = db().calls.findIndex((c) => c.projectId === projectId);
-  const entry = { projectId, startedAt: nowIso(), charged: false };
+  const entry = { projectId, startedAt: nowIso(), charged: false, fromUserId: u.id, mode, ended: false };
   if (prev >= 0) db().calls[prev] = entry; else db().calls.push(entry);
   return sig;
 }
@@ -1142,6 +1143,21 @@ function chargeAnsweredCall(project: Project) {
   entry.charged = true;
   logCredit({ userId: payer.id, delta: -CALL_COST, balanceAfter: payer.credits, reason: 'call', projectId: project.id, projectTitle: project.jobTitle });
 }
+
+// A call is ringing for this person if the other side started it under a minute ago and it was not answered,
+// declined or ended. Used for the pop-up and ringtone on every page, and so the project page can pick it up.
+const RING_MS = 60_000;
+function ringingFor(u: User, project: Project): IncomingCall | null {
+  const c = db().calls.find((x) => x.projectId === project.id);
+  if (!c || !c.fromUserId || c.fromUserId === u.id || c.charged || c.ended) return null;
+  if (Date.now() - Date.parse(c.startedAt) > RING_MS) return null;
+  const from = db().users.find((x) => x.id === c.fromUserId);
+  const side = u.id === project.clientId ? 'client' : 'freelancer';
+  return { projectId: project.id, projectTitle: project.jobTitle, fromName: from?.name ?? 'Someone', mode: c.mode ?? 'voice', startedAt: c.startedAt, href: `/${side}/projects/${project.id}` };
+}
+
+// Every call ringing for this person, across all their projects.
+export const incomingCalls = (u: User): IncomingCall[] => listProjects(u).map((p) => ringingFor(u, p)).filter((x): x is IncomingCall => x !== null);
 
 function callCreditsFor(u: User, project: Project) {
   const payer = clientOf(project);
@@ -1189,6 +1205,7 @@ export async function sendCallSignal(u: User, projectId: string, b: Record<strin
   const payload = typeof b.payload === 'string' ? b.payload : b.payload === undefined ? '' : JSON.stringify(b.payload);
   if (payload.length > 20000) throw bad('Call signal is too large');
   if (type === 'offer') chargeAnsweredCall(project); // the call was answered: 1 credit from the client, once per call
+  if (type === 'hangup' || type === 'reject') { const c = db().calls.find((x) => x.projectId === projectId); if (c) c.ended = true; }
   return pushSignal(project, u, type, payload);
 }
 

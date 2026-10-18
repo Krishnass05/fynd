@@ -310,7 +310,11 @@ export interface ProjectDetail {
   feedback: { complete: boolean; mine: ReviewItem | null; theirs: ReviewItem | null };
   // Calls cost the client 1 credit when answered; freelancers never pay. The balance is shown only to the client.
   callCredits: { payer: 'you' | 'client'; canCall: boolean; balance: number | null; cost: number };
+  incomingCall: IncomingCall | null; // the other person is ringing you right now in this project
 }
+
+// A call ringing for you (not yet answered, declined or ended, and less than a minute old)
+export interface IncomingCall { projectId: string; projectTitle: string; fromName: string; mode: CallMode; startedAt: string; href: string }
 
 // One change to a client's call credits
 export interface CreditEntry {

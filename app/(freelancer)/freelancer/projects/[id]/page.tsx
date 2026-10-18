@@ -43,7 +43,7 @@ export default function FreelancerProject() {
           <h2>Feedback</h2>
           <Card plain><ProjectFeedback projectId={id} otherName={data.client.name} data={data.feedback} onChanged={setData} /></Card>
           <h2>Call</h2>
-          <Card plain><Call projectId={id} peerName={data.client.name} credits={data.callCredits} onLive={() => void reload()} /></Card>
+          <Card plain><Call projectId={id} peerName={data.client.name} credits={data.callCredits} onLive={() => void reload()} incoming={data.incomingCall} /></Card>
           <h2>Chat</h2>
           <Card plain><Chat projectId={id} role="freelancer" /></Card>
         </>

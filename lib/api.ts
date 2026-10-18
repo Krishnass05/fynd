@@ -95,6 +95,8 @@ export const approveMilestone = (projectId: string, milestoneId: string) => post
 // SOW upload (txt or md text for now) and change orders
 export const uploadSow = (projectId: string, b: { kind: SowKind; filename: string; text: string }) =>
   post<UploadSowResult>(`/api/projects/${projectId}/sow`, b);
+// Calls ringing for me right now, on any of my projects (for the pop-up and ringtone)
+export const getIncomingCalls = () => call<import('./types').IncomingCall[]>('/api/calls/incoming');
 // Call credits (clients): balance, history and packs; buying a pack (demo: no payment taken)
 export const getCredits = () => call<import('./types').CreditsInfo>('/api/credits');
 export const buyCredits = (pack: string) => post<import('./types').CreditsInfo>('/api/credits/buy', { pack });

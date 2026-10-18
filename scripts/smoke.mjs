@@ -711,4 +711,25 @@ assert.equal(cr.packs.length, 1, 'only the 1-credit option is offered');
 await ok('POST', C, CLIENT, { mode: 'voice' }); // calls work again
 }
 
+// ---- incoming-call pop-up: who is ringing me right now, on any page ----
+{
+const C = `/api/projects/${projectId}/call`;
+await ok('POST', `${C}/signal`, CLIENT, { type: 'hangup', payload: '{}' }); // end the previous call
+assert.deepEqual(await ok('GET', '/api/calls/incoming', FREE), [], 'nothing ringing');
+await ok('POST', C, CLIENT, { mode: 'video' });
+const ringing = await ok('GET', '/api/calls/incoming', FREE);
+assert.equal(ringing.length, 1, 'the freelancer sees the call ringing');
+assert.equal(ringing[0].fromName, 'Demo Client');
+assert.equal(ringing[0].mode, 'video');
+assert.equal(ringing[0].href, `/freelancer/projects/${projectId}`);
+assert.deepEqual(await ok('GET', '/api/calls/incoming', CLIENT), [], 'the caller does not get their own call');
+assert.equal((await ok('GET', `/api/projects/${projectId}`, FREE)).incomingCall.mode, 'video', 'the project page can pick the call up');
+await ok('POST', `${C}/signal`, FREE, { type: 'reject' });
+assert.deepEqual(await ok('GET', '/api/calls/incoming', FREE), [], 'declined: no longer ringing');
+await ok('POST', C, FREE, { mode: 'voice' });
+assert.equal((await ok('GET', '/api/calls/incoming', CLIENT)).length, 1, 'the client sees the freelancer calling');
+await ok('POST', `${C}/signal`, CLIENT, { type: 'offer', payload: '{}' });
+assert.deepEqual(await ok('GET', '/api/calls/incoming', CLIENT), [], 'answered: no longer ringing');
+}
+
 console.log('smoke test passed');

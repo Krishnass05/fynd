@@ -30,7 +30,7 @@ export interface Db {
   checkins: CheckIn[]; // daily check-ins
   reviews: ReviewItem[]; // real reviews left after completed projects (sample reviews live in lib/data)
   creditLog: CreditEntry[]; // every change to a client's call credits
-  calls: Array<{ projectId: string; startedAt: string; charged: boolean }>; // the latest call per project, so it is charged once
+  calls: Array<{ projectId: string; startedAt: string; charged: boolean; fromUserId?: string; mode?: 'voice' | 'video'; ended?: boolean }>; // the latest call per project: charged once, and shown as ringing until answered or ended
   seq: number;
 }
 
