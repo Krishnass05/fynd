@@ -229,11 +229,40 @@ export interface ChangeRequest {
 }
 
 export interface Totals {
-  committedHours: number;
+  committedHours: number; // approved change orders + agreed new tasks + own-defect fixes
   remainingHours: number;
-  committedValue: number;
+  committedValue: number; // approved change orders + agreed new tasks
   utilization: number | null;
   beforeTax: true;
+  tasks?: { agreed: number; agreedHours: number; agreedValue: number; defectHours: number }; // new tasks in plain English
+}
+
+// ---- a new task asked for in plain English (docs/SCOPE_FLOW.md step 3) ----
+export type TaskLabel = 'included' | 'excluded' | 'new' | 'defect' | 'unclear';
+export type TaskStatus =
+  | 'waiting_freelancer' // the freelancer has to answer
+  | 'needs_details' // the freelancer asked the client for details
+  | 'negotiating' // a quote is being agreed (see negotiation)
+  | 'agreed' // both sides agreed a price: committed work
+  | 'included' // the freelancer said it is already in the SOW: no charge
+  | 'defect_fix' // the freelancer's own defect: no charge, hours booked
+  | 'declined'; // closed, nothing committed
+
+export interface TaskEvent { at: string; by: 'client' | 'freelancer'; action: string; note: string }
+
+export interface TaskRequest {
+  id: string;
+  projectId: string;
+  text: string;
+  details: string[]; // the client's answers when asked for details
+  urgent: boolean;
+  askedAt: string;
+  suggestion: { label: TaskLabel; matched: string | null; reason: string; source: 'rules' };
+  status: TaskStatus;
+  negotiationId: string | null;
+  bookedHours: number | null; // hours booked for an own-defect fix (no charge)
+  events: TaskEvent[];
+  negotiation?: import('./engine/negotiation').NegotiationView | null; // filled in when read
 }
 
 export interface AuditEntry {
@@ -256,6 +285,7 @@ export interface ProjectDetail {
   milestoneSummary: MilestoneSummary;
   totals: Totals;
   audit: AuditEntry[];
+  taskRequests: TaskRequest[];
 }
 
 export interface Message {

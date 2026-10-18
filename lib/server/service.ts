@@ -2,10 +2,12 @@
 // Money rules live in lib/engine (plain JS, tested). This file wires people, jobs and projects to it.
 import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
+import { Negotiations, type OfferInput, type Party } from '@/lib/engine/negotiation';
+import { suggestTask } from '@/lib/engine/taskrules';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
   ActivityItem, Application, AttentionItem, CallMode, CallSignal, CallSignalType, CaptionResult, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
-  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
+  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, TaskRequest, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
@@ -297,11 +299,18 @@ export function getProject(u: User, id: string): ProjectDetail {
     changeRequests: desk.requests().map((v) => toChange(id, v)),
     milestones: db().milestones.filter((m) => m.projectId === id),
     milestoneSummary: milestoneSummary(id),
-    totals: {
-      committedHours: desk.committedHours(), remainingHours: desk.remainingHours(), committedValue: desk.committedValue(),
-      utilization: desk.utilization(), beforeTax: true,
-    },
+    totals: (() => {
+      // change orders (the scope desk) plus new tasks agreed in plain English and own-defect fixes
+      const t = taskTotals(id);
+      const committedHours = desk.committedHours() + t.agreedHours + t.defectHours;
+      return {
+        committedHours, remainingHours: desk.availableHours - committedHours, committedValue: desk.committedValue() + t.agreedValue,
+        utilization: desk.availableHours === 0 ? null : committedHours / desk.availableHours,
+        beforeTax: true as const, tasks: t,
+      };
+    })(),
     audit: desk.audit(),
+    taskRequests: listTaskViews(id),
   };
 }
 
@@ -482,11 +491,214 @@ function decide(u: User, projectId: string, changeId: string, who: 'client' | 'a
   return getProject(u, projectId);
 }
 
-export const approveChange = (u: User, pid: string, cid: string) => decide(u, pid, cid, 'client', (d) => d.approve(cid, u.name));
+export const approveChange = (u: User, pid: string, cid: string) => decide(u, pid, cid, 'client', (d) => {
+  // the desk checks its own hours; agreed new tasks and defect fixes use hours too
+  const r = d.requests().find((x) => x.id === cid);
+  const t = taskTotals(pid);
+  if (r?.hours != null && t.agreedHours + t.defectHours > 0) checkCapacity(pid, r.hours);
+  return d.approve(cid, u.name);
+});
 export const rejectChange = (u: User, pid: string, cid: string, reason: unknown) =>
   decide(u, pid, cid, 'client', (d) => d.reject(cid, u.name, typeof reason === 'string' ? reason : undefined));
 export const reopenChange = (u: User, pid: string, cid: string, reason: unknown) =>
   decide(u, pid, cid, 'any', (d) => d.reopen(cid, u.name, typeof reason === 'string' ? reason : ''));
+
+// ---- new tasks asked for in plain English (docs/SCOPE_FLOW.md step 3) ----
+// The client writes what they want; the rules suggest a label against the signed scope; the freelancer answers
+// (already included, own defect, quote, ask for details, decline); a quote is negotiated until one side accepts the
+// other's latest offer. Only then is it committed work. Nothing here moves money.
+
+const party = (u: User): Party => (u.role === 'client' ? 'client' : 'freelancer');
+const normText = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+function dealsFor(projectId: string): Negotiations {
+  let book = db().deals.get(projectId);
+  if (!book) {
+    book = new Negotiations({ now: nowIso });
+    db().deals.set(projectId, book);
+  }
+  return book;
+}
+
+function taskFor(projectId: string, taskId: string): TaskRequest {
+  const t = db().tasks.find((x) => x.id === taskId && x.projectId === projectId);
+  if (!t) throw notFound('Task request not found');
+  return t;
+}
+
+function taskTotals(projectId: string) {
+  const book = db().deals.get(projectId);
+  let agreed = 0; let agreedHours = 0; let agreedValue = 0; let defectHours = 0;
+  for (const t of db().tasks.filter((x) => x.projectId === projectId)) {
+    if (t.status === 'agreed' && t.negotiationId && book) {
+      const a = book.view(t.negotiationId).agreed!;
+      agreed += 1; agreedHours += a.hours ?? 0; agreedValue += a.price ?? 0;
+    }
+    if (t.status === 'defect_fix') defectHours += t.bookedHours ?? 0;
+  }
+  return { agreed, agreedHours, agreedValue, defectHours };
+}
+
+// Hours still free in the project: the scope desk's remaining hours (after approved change orders), minus agreed
+// tasks and defect fixes.
+function hoursLeft(projectId: string): number {
+  const t = taskTotals(projectId);
+  return db().desks.get(projectId)!.remainingHours() - t.agreedHours - t.defectHours;
+}
+
+function checkCapacity(projectId: string, hours: number | null) {
+  if (hours === null) return;
+  const left = hoursLeft(projectId);
+  if (hours > left) throw conflict(`This needs ${hours}h but only ${left}h are left in this project. Counter with fewer hours, or agree more capacity first.`);
+}
+
+function taskView(t: TaskRequest): TaskRequest {
+  const book = db().deals.get(t.projectId);
+  return { ...t, negotiation: t.negotiationId && book ? book.view(t.negotiationId) : null };
+}
+
+const listTaskViews = (projectId: string) => db().tasks.filter((t) => t.projectId === projectId).map(taskView);
+
+function logTask(t: TaskRequest, u: User, action: string, note = '') {
+  t.events.push({ at: nowIso(), by: party(u), action, note });
+}
+
+export function listTasks(u: User, projectId: string): TaskRequest[] {
+  projectFor(u, projectId);
+  return listTaskViews(projectId);
+}
+
+// The client asks for something new. The same text again (while the first is not declined) returns the first one,
+// so a repeat cannot double-book or double-charge.
+export function createTask(u: User, projectId: string, b: Record<string, unknown>): { task: TaskRequest; created: boolean; project: ProjectDetail } {
+  projectFor(u, projectId);
+  if (u.role !== 'client') throw forbidden('Only the client asks for new work');
+  const text = str(b.text, 'request', 1000);
+  if (text.length < 5) throw bad('Describe the request in a few words');
+  if (b.urgent !== undefined && typeof b.urgent !== 'boolean') throw bad('urgent must be true or false');
+  const key = normText(text);
+  const same = db().tasks.find((t) => t.projectId === projectId && t.status !== 'declined' && normText(t.text) === key);
+  if (same) {
+    logTask(same, u, 'repeat_ignored', 'The same request was sent again and ignored');
+    return { task: taskView(same), created: false, project: getProject(u, projectId) };
+  }
+  const t: TaskRequest = {
+    id: nextId('T'), projectId, text, details: [], urgent: b.urgent === true, askedAt: nowIso(),
+    suggestion: suggestTask(text, db().desks.get(projectId)!.scope),
+    status: 'waiting_freelancer', negotiationId: null, bookedHours: null, events: [],
+  };
+  logTask(t, u, 'asked', text);
+  db().tasks.push(t);
+  return { task: taskView(t), created: true, project: getProject(u, projectId) };
+}
+
+// What the browser sent as an offer. The negotiation engine checks every field, so it is passed on as it is, with the
+// project rate filled in when neither a rate nor a fixed price was given.
+function offerFrom(o: unknown, rate: number, rushDefault = false): OfferInput {
+  const raw = (o && typeof o === 'object' && !Array.isArray(o) ? o : {}) as OfferInput;
+  const fixed = raw.price !== undefined && raw.price !== null;
+  return { ...raw, ratePerHour: fixed ? raw.ratePerHour : (raw.ratePerHour ?? rate), rush: raw.rush ?? (rushDefault && !fixed) };
+}
+
+// Everything that can happen to a task request after it is asked, one action at a time.
+export function actOnTask(u: User, projectId: string, taskId: string, b: Record<string, unknown>): ProjectDetail {
+  const project = projectFor(u, projectId);
+  const t = taskFor(projectId, taskId);
+  const action = b.action;
+  const note = typeof b.note === 'string' ? b.note.trim().slice(0, 1000) : '';
+  const isFreelancer = u.role === 'freelancer';
+  const answerable = t.status === 'waiting_freelancer' || t.status === 'needs_details';
+  const book = dealsFor(projectId);
+  const wrap = <T,>(fn: () => T): T => {
+    try { return fn(); } catch (e) {
+      if (e instanceof ConflictError) throw conflict(e.message);
+      if (e instanceof ValidationError) throw bad(e.message);
+      throw e;
+    }
+  };
+
+  switch (action) {
+    // ---- the freelancer's first answer ----
+    case 'included': {
+      if (!isFreelancer) throw forbidden('Only the freelancer answers a request');
+      if (!answerable) throw conflict(`This request is already ${t.status.replace('_', ' ')}`);
+      t.status = 'included';
+      logTask(t, u, 'accepted_as_included', note || 'Already part of the signed SOW: no extra charge');
+      break;
+    }
+    case 'defect': {
+      if (!isFreelancer) throw forbidden('Only the freelancer answers a request');
+      if (!answerable) throw conflict(`This request is already ${t.status.replace('_', ' ')}`);
+      const hours = b.hours;
+      if (typeof hours !== 'number' || !Number.isFinite(hours) || hours < 0 || hours > 1000) throw bad('Give the hours the fix will take (0 to 1000). They are booked, but not charged');
+      checkCapacity(projectId, hours);
+      t.status = 'defect_fix';
+      t.bookedHours = hours;
+      logTask(t, u, 'fix_own_defect', note || `Our own defect: fixed at no charge, ${hours}h booked`);
+      break;
+    }
+    case 'quote': {
+      if (!isFreelancer) throw forbidden('Only the freelancer quotes');
+      if (!answerable) throw conflict(`This request is already ${t.status.replace('_', ' ')}`);
+      // default: the project rate, and the rush fee when the client marked it urgent
+      const offer = offerFrom(b.offer, project.ratePerHour, t.urgent);
+      const { negotiation } = wrap(() => book.open({ kind: 'task', ref: `${projectId}:${t.id}` }, 'freelancer', offer));
+      t.negotiationId = negotiation.id;
+      t.status = 'negotiating';
+      logTask(t, u, 'quoted', negotiation.latest.price === null ? 'Quote without a price yet' : `Quoted ${negotiation.latest.price} before tax`);
+      break;
+    }
+    case 'ask': {
+      if (!isFreelancer) throw forbidden('Only the freelancer asks for details');
+      if (!answerable) throw conflict(`This request is already ${t.status.replace('_', ' ')}`);
+      if (!note) throw bad('Write the question for the client');
+      t.status = 'needs_details';
+      logTask(t, u, 'asked_for_details', note);
+      break;
+    }
+    case 'details': {
+      if (isFreelancer) throw forbidden('Only the client adds details');
+      if (t.status !== 'needs_details') throw conflict('The freelancer has not asked for details');
+      const more = str(b.text, 'details', 1000);
+      t.details.push(more);
+      t.status = 'waiting_freelancer';
+      logTask(t, u, 'added_details', more);
+      break;
+    }
+    case 'decline': {
+      // before a quote: the freelancer turns it down, or the client withdraws it; during a quote: either side
+      if (!note) throw bad('Say why');
+      if (t.status === 'negotiating') {
+        wrap(() => book.decline(t.negotiationId!, party(u), note));
+      } else if (!answerable) {
+        throw conflict(`This request is already ${t.status.replace('_', ' ')}`);
+      }
+      t.status = 'declined';
+      logTask(t, u, isFreelancer ? 'declined' : 'withdrawn', note);
+      break;
+    }
+    // ---- the negotiation on a quote ----
+    case 'counter': {
+      if (t.status !== 'negotiating') throw conflict('There is no quote to answer');
+      const offer = offerFrom(b.offer, project.ratePerHour);
+      const v = wrap(() => book.counter(t.negotiationId!, party(u), offer));
+      logTask(t, u, 'countered', v.latest.price === null ? 'Counter without a price' : `Countered with ${v.latest.price} before tax`);
+      break;
+    }
+    case 'accept': {
+      if (t.status !== 'negotiating') throw conflict(t.status === 'agreed' ? 'Already agreed' : 'There is no quote to accept');
+      const latest = book.view(t.negotiationId!).latest;
+      if (latest.by !== party(u)) checkCapacity(projectId, latest.hours); // own-offer accept is refused by the engine below
+      const v = wrap(() => book.accept(t.negotiationId!, party(u)));
+      t.status = 'agreed';
+      logTask(t, u, 'agreed', `Agreed ${v.agreed!.price} before tax${v.agreed!.hours !== null ? ` for ${v.agreed!.hours}h` : ''}`);
+      break;
+    }
+    default:
+      throw bad('action must be one of: included, defect, quote, ask, details, decline, counter, accept');
+  }
+  return getProject(u, projectId);
+}
 
 // ---- freelancer dashboard ----
 export function freelancerDashboard(u: User): FreelancerDashboard {

@@ -8,6 +8,7 @@ import Call from '@/components/call/Call';
 import ChangeList from '@/components/changes/ChangeList';
 import SowUpload from '@/components/sow/SowUpload';
 import MilestoneList from '@/components/milestones/MilestoneList';
+import TaskRequests from '@/components/tasks/TaskRequests';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
 
 export default function FreelancerProject() {
@@ -22,7 +23,7 @@ export default function FreelancerProject() {
           <h1>{data.project.jobTitle}</h1>
           <p className="muted">For {data.client.name} · rate {money(data.project.ratePerHour)}/hr · amounts before tax</p>
           <Card title="Capacity">
-            <p>{data.totals.committedHours}h of {data.project.availableHours}h committed · {data.totals.remainingHours}h remaining · approved changes {money(data.totals.committedValue)}</p>
+            <p>{data.totals.committedHours}h of {data.project.availableHours}h committed · {data.totals.remainingHours}h remaining · agreed extra work {money(data.totals.committedValue)}</p>
           </Card>
           <Card title="SOW versions">
             {data.sowDocuments.length ? data.sowDocuments.map((s) => <p key={s.id}>v{s.version} {s.kind}: {s.filename} ({s.items.length} items)</p>) : <p className="muted">No signed SOW yet.</p>}
@@ -33,6 +34,8 @@ export default function FreelancerProject() {
             </Card>
           ) : null}
           <MilestoneList projectId={id} milestones={data.milestones} summary={data.milestoneSummary} role="freelancer" onChanged={setData} />
+          <h2>New tasks from the client</h2>
+          <TaskRequests projectId={id} role="freelancer" tasks={data.taskRequests} ratePerHour={data.project.ratePerHour} onChanged={setData} />
           <h2>Change orders</h2>
           <ChangeList projectId={id} changes={data.changeRequests} canDecide={false} onChanged={setData} />
           <h2>Call</h2>

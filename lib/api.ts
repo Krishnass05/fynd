@@ -1,8 +1,9 @@
 // The ONLY way pages talk to the server. OWNER: Krishna. Do not call fetch in pages.
 // Every function throws an Error whose message is safe to show to the user.
 import type {
-  Application, CallMode, CallSignal, CaptionResult, ClientDashboard, ClientProfile, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
+  Application, CallMode, CallSignal, CaptionResult, ClientDashboard, ClientProfile, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, TaskRequest, UploadSowResult, User,
 } from './types';
+import type { OfferInput } from './engine/negotiation';
 import { getRole, getUserId } from './session';
 
 // An error from the server. `fields` holds the message for each form field when the problem is in the form.
@@ -99,6 +100,21 @@ export const rejectChange = (projectId: string, changeId: string, reason: string
   post<ProjectDetail>(`/api/projects/${projectId}/changes/${changeId}/reject`, { reason });
 export const reopenChange = (projectId: string, changeId: string, reason: string) =>
   post<ProjectDetail>(`/api/projects/${projectId}/changes/${changeId}/reopen`, { reason });
+
+// ---- new tasks in plain English, and the negotiation on their price ----
+export type TaskAction =
+  | { action: 'included'; note?: string }
+  | { action: 'defect'; hours: number; note?: string }
+  | { action: 'quote'; offer: OfferInput }
+  | { action: 'ask'; note: string }
+  | { action: 'details'; text: string }
+  | { action: 'decline'; note: string }
+  | { action: 'counter'; offer: OfferInput }
+  | { action: 'accept' };
+export const listTasks = (projectId: string) => call<TaskRequest[]>(`/api/projects/${projectId}/tasks`);
+export const askForTask = (projectId: string, b: { text: string; urgent?: boolean }) =>
+  post<{ task: TaskRequest; created: boolean; project: ProjectDetail }>(`/api/projects/${projectId}/tasks`, b);
+export const actOnTask = (projectId: string, taskId: string, b: TaskAction) => post<ProjectDetail>(`/api/projects/${projectId}/tasks/${taskId}`, b);
 
 // freelancer dashboard (one call for everything on the page)
 export const getFreelancerDashboard = () => call<FreelancerDashboard>('/api/dashboard');

@@ -10,6 +10,7 @@
 //  - Talks to Supabase's REST interface with fetch, so no extra package is needed. The service key stays on the server.
 import { createLimiter } from '@/lib/engine/authcore';
 import { ScopeDesk } from '@/lib/engine/scopeDesk';
+import { Negotiations } from '@/lib/engine/negotiation';
 import type { CallSignal, CallSignalType } from '@/lib/types';
 import type { RequestContext } from './context';
 import { HttpError } from './errors';
@@ -58,6 +59,7 @@ export function serializeDb(d: Db): unknown {
     saved: [...d.saved].map(([k, v]) => [k, [...v]]),
     desks: [...d.desks].map(([k, v]) => [k, v.toState()]),
     labels: [...d.labels], hashes: [...d.hashes],
+    tasks: d.tasks, deals: [...d.deals].map(([k, v]) => [k, v.toState()]),
   };
 }
 
@@ -73,6 +75,9 @@ export function deserializeDb(o: Record<string, unknown>): Db {
     desks: new Map(arr<[string, unknown]>(o.desks).map(([k, v]) => [k, ScopeDesk.fromState(v)] as [string, ScopeDesk])),
     labels: new Map(arr(o.labels)),
     hashes: new Map(arr(o.hashes)),
+    // added with the new-task flow: older saved data has none, which reads as empty
+    tasks: arr(o.tasks),
+    deals: new Map(arr<[string, unknown]>(o.deals).map(([k, v]) => [k, Negotiations.fromState(v)] as [string, Negotiations])),
     seq: typeof o.seq === 'number' ? o.seq : 100,
   };
 }

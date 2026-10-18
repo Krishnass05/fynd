@@ -446,4 +446,99 @@ assert.equal(asClient.status, 200, 'and the client side still works');
 assert.equal((await raw('POST', '/api/auth/add-role', { cookie: solo.cookie, user: solo.data.id, body: { role: 'freelancer' } })).status, 409, 'it cannot be added twice');
 assert.equal((await raw('POST', '/api/auth/add-role', { user: 'u_client1', body: { role: 'freelancer' } })).status, 403, 'demo accounts cannot add a side');
 void sideHeaders;
+
+// ---- new tasks in plain English, negotiated (docs/SCOPE_FLOW.md step 3), on the seeded project P1 ----
+{
+// P1 scope (fixture): included "one landing page", "contact form"; excluded "payment checkout"; 10h; 2h already booked.
+const TC = 'u_client1';
+const TF = 'u_freelancer1';
+const tasks = (p) => `/api/projects/P1/tasks${p ?? ''}`;
+const before = await ok('GET', '/api/projects/P1', TC);
+assert.deepEqual(before.taskRequests, [], 'no task requests yet');
+assert.equal((await call('POST', tasks(), TF, { text: 'Add a blog page' })).status, 403, 'only the client asks for new work');
+assert.equal((await call('POST', tasks(), TC, { text: 'hi' })).status, 400, 'too short');
+assert.equal((await call('GET', tasks(), 'u_freelancer2')).status, 403, 'outsiders cannot see them');
+
+// check 1: six extra hours at Rs 1000 = Rs 6000 before tax, once both sides agree
+const pay = await ok('POST', tasks(), TC, { text: 'Add payment checkout' });
+assert.equal(pay.created, true);
+assert.equal(pay.task.suggestion.label, 'excluded', 'the rules see it was excluded in the SOW');
+assert.equal(pay.task.status, 'waiting_freelancer');
+const T1 = pay.task.id;
+assert.equal((await call('POST', tasks(`/${T1}`), TC, { action: 'quote', offer: { hours: 6 } })).status, 403, 'the client does not quote');
+let pd = await ok('POST', tasks(`/${T1}`), TF, { action: 'quote', offer: { hours: 6, note: 'Razorpay test mode' } });
+let tk = pd.taskRequests.find((t) => t.id === T1);
+assert.equal(tk.status, 'negotiating');
+assert.equal(tk.negotiation.latest.price, 6000, 'project rate 1000 x 6h');
+assert.equal(tk.negotiation.waitingFor, 'client');
+assert.equal(pd.totals.committedValue, before.totals.committedValue, 'a quote alone commits nothing');
+assert.equal((await call('POST', tasks(`/${T1}`), TF, { action: 'accept' })).status, 409, 'the freelancer cannot accept their own quote');
+pd = await ok('POST', tasks(`/${T1}`), TC, { action: 'counter', offer: { hours: 5 } });
+assert.equal(pd.taskRequests.find((t) => t.id === T1).negotiation.latest.price, 5000);
+assert.equal((await call('POST', tasks(`/${T1}`), TC, { action: 'accept' })).status, 409, 'nor the client their own counter');
+pd = await ok('POST', tasks(`/${T1}`), TF, { action: 'counter', offer: { hours: 6, note: 'Testing needs the sixth hour' } });
+pd = await ok('POST', tasks(`/${T1}`), TC, { action: 'accept' });
+tk = pd.taskRequests.find((t) => t.id === T1);
+assert.equal(tk.status, 'agreed');
+assert.equal(tk.negotiation.agreed.price, 6000, 'check 1: Rs 6000 before tax');
+assert.equal(pd.totals.committedValue, before.totals.committedValue + 6000);
+assert.equal(pd.totals.committedHours, before.totals.committedHours + 6);
+assert.equal(pd.totals.tasks.agreedValue, 6000);
+assert.equal((await call('POST', tasks(`/${T1}`), TC, { action: 'accept' })).status, 409, 'accepting twice is refused');
+
+// check 3: the same request again does not double-book or double-charge
+const again = await ok('POST', tasks(), TC, { text: '  add PAYMENT checkout!' });
+assert.equal(again.created, false);
+assert.equal(again.task.id, T1);
+assert.equal(again.project.totals.committedValue, pd.totals.committedValue, 'check 3: no double charge');
+assert.equal(again.project.taskRequests.length, 1);
+
+// check 2: a declined request never becomes committed work
+const seo = await ok('POST', tasks(), TC, { text: 'Can you also set up SEO for all pages?' });
+assert.equal(seo.task.suggestion.label, 'new');
+await ok('POST', tasks(`/${seo.task.id}`), TF, { action: 'quote', offer: { hours: 1 } });
+assert.equal((await call('POST', tasks(`/${seo.task.id}`), TC, { action: 'decline' })).status, 400, 'a reason is required');
+pd = await ok('POST', tasks(`/${seo.task.id}`), TC, { action: 'decline', note: 'Not this month' });
+assert.equal(pd.taskRequests.find((t) => t.id === seo.task.id).status, 'declined');
+assert.equal(pd.totals.committedValue, before.totals.committedValue + 6000, 'check 2: the declined one adds nothing');
+assert.equal((await call('POST', tasks(`/${seo.task.id}`), TF, { action: 'accept' })).status, 409, 'and it cannot be accepted later');
+
+// capacity: only 2h are left (10 - 2 booked - 6 agreed), so a 3h deal cannot be agreed
+const big = await ok('POST', tasks(), TC, { text: 'Add a newsletter signup to the footer', urgent: true });
+pd = await ok('POST', tasks(`/${big.task.id}`), TF, { action: 'quote', offer: { hours: 3 } });
+assert.equal(pd.taskRequests.find((t) => t.id === big.task.id).negotiation.latest.price, 4500, 'urgent: rush fee x1.5 by default');
+const over = await call('POST', tasks(`/${big.task.id}`), TC, { action: 'accept' });
+assert.equal(over.status, 409);
+assert.match(over.data.error, /only 2h are left/);
+pd = await ok('POST', tasks(`/${big.task.id}`), TC, { action: 'counter', offer: { hours: 2, rush: true } });
+pd = await ok('POST', tasks(`/${big.task.id}`), TF, { action: 'accept' });
+assert.equal(pd.totals.remainingHours, 0);
+assert.equal(pd.totals.committedValue, before.totals.committedValue + 6000 + 3000);
+
+// the other answers: ask for details, then included; own defect; fixed price; bad input
+const vague = await ok('POST', tasks(), TC, { text: 'Make it look better' });
+assert.equal(vague.task.suggestion.label, 'unclear');
+await ok('POST', tasks(`/${vague.task.id}`), TF, { action: 'ask', note: 'Which page, and what should change?' });
+assert.equal((await call('POST', tasks(`/${vague.task.id}`), TF, { action: 'details', text: 'x' })).status, 403, 'only the client adds details');
+pd = await ok('POST', tasks(`/${vague.task.id}`), TC, { action: 'details', text: 'Bigger buttons on the landing page' });
+assert.equal(pd.taskRequests.find((t) => t.id === vague.task.id).status, 'waiting_freelancer');
+pd = await ok('POST', tasks(`/${vague.task.id}`), TF, { action: 'included' });
+assert.equal(pd.taskRequests.find((t) => t.id === vague.task.id).status, 'included');
+assert.equal(pd.totals.committedValue, before.totals.committedValue + 9000, 'included work adds no charge');
+const bug = await ok('POST', tasks(), TC, { text: 'The contact form is broken on mobile' });
+assert.equal(bug.task.suggestion.label, 'defect');
+assert.equal((await call('POST', tasks(`/${bug.task.id}`), TF, { action: 'defect', hours: 1 })).status, 409, 'no hours left, even for a free fix');
+pd = await ok('POST', tasks(`/${bug.task.id}`), TF, { action: 'defect', hours: 0 });
+assert.equal(pd.taskRequests.find((t) => t.id === bug.task.id).status, 'defect_fix');
+const logo = await ok('POST', tasks(), TC, { text: 'Design a favicon' });
+assert.equal((await call('POST', tasks(`/${logo.task.id}`), TF, { action: 'quote', offer: { hours: -1 } })).status, 400, 'negative hours refused');
+assert.equal((await call('POST', tasks(`/${logo.task.id}`), TF, { action: 'quote', offer: { price: 99.5 } })).status, 400, 'whole rupees only');
+assert.equal((await call('POST', tasks(`/${logo.task.id}`), TF, { action: 'fly' })).status, 400, 'unknown action');
+pd = await ok('POST', tasks(`/${logo.task.id}`), TF, { action: 'quote', offer: { price: 0, note: 'On the house' } });
+pd = await ok('POST', tasks(`/${logo.task.id}`), TC, { action: 'accept' });
+assert.equal(pd.taskRequests.find((t) => t.id === logo.task.id).negotiation.agreed.basis, 'fixed');
+const sum = pd.taskRequests.map((t) => t.status).sort();
+assert.deepEqual(sum, ['agreed', 'agreed', 'agreed', 'declined', 'defect_fix', 'included']);
+}
+
 console.log('smoke test passed');

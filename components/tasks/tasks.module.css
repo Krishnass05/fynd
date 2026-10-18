@@ -1,0 +1,23 @@
+/* New tasks in plain English and their negotiation. OWNER: Krishna. Uses the shared colour tokens from globals.css. */
+.ask textarea { resize: vertical; }
+.task { display: grid; gap: 10px; }
+.head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.title { font-size: 16px; color: var(--ink-strong); margin-right: auto; overflow-wrap: anywhere; }
+.suggest { margin: 0; font-size: 14px; }
+.detail { margin: 0; font-size: 14px; }
+.question { margin: 0; padding: 8px 12px; border-left: 3px solid var(--line-strong); background: var(--card); font-size: 14px; }
+.agreed { margin: 0; font-size: 14px; }
+.info { margin: 8px 0 0; font-size: 14px; }
+.scroll { overflow-x: auto; }
+.offers { width: 100%; border-collapse: collapse; font-size: 14px; }
+.offers th, .offers td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.offers th { font-weight: 600; color: var(--muted); font-size: 13px; }
+.agreedRow td { font-weight: 600; }
+.form { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); }
+.grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.radio { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; cursor: pointer; }
+.radio input { width: auto; min-height: 0; }
+.preview { margin: 0; font-size: 14px; }
+.history summary, .closed summary { cursor: pointer; font-size: 14px; color: var(--muted); }
+.history ul { margin: 8px 0 0; padding-left: 18px; font-size: 13px; display: grid; gap: 4px; }
+.closed { margin-top: 8px; }

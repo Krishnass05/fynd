@@ -87,3 +87,5 @@ Only the side that did **not** make the latest offer can accept it, so nobody ag
 3. Tasks, progress bar, daily check-ins.
 4. SOW intake table with freelancer sign-off.
 5. Negotiation at hiring.
+
+Step 2 **done** (D-78): plain-English requests end to end on both project pages (`components/tasks/TaskRequests.tsx`), rules suggestion (`lib/engine/taskrules.js`), API `/api/projects/:id/tasks`. The AI suggestion is not added yet: the rules label is shown as "suggested by rules".
