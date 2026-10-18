@@ -38,7 +38,7 @@ export function ComparisonMatrix() {
       <h2>Compare plans</h2>
       <div className={s.scroll} tabIndex={0} role="region" aria-label="Feature comparison">
         <table className={s.matrix}>
-          <thead><tr><th scope="col">Key features</th><th scope="col">Basic<br /><small>Free</small></th><th scope="col" className={s.hl}>Business Plus<br /><small>₹399/mo</small></th><th scope="col">Agency Pro<br /><small>₹699/mo</small></th></tr></thead>
+          <thead><tr><th scope="col">Key features</th><th scope="col">Basic<br /><small>Free</small></th><th scope="col" className={s.hl}>Business Plus<br /><small>₹399/seat/mo</small></th><th scope="col">Agency Pro<br /><small>₹699/seat/mo</small></th></tr></thead>
           {MATRIX.map((g) => (
             <tbody key={g.group}>
               <tr className={s.group}><th scope="rowgroup" colSpan={4}>{g.group}</th></tr>
