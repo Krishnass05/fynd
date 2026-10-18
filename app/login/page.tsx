@@ -1,5 +1,5 @@
 'use client';
-// Log in for clients and freelancers: email and password with validation, Google sign-in, and the demo accounts box.
+// Log in for clients and freelancers: email and password with validation, and Google sign-in.
 // Wrong passwords are counted on the server and lock the email for a few minutes. OWNER: Krishna.
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -13,13 +13,6 @@ import AppNav from '@/components/shell/AppNav';
 import { GOOGLE_MESSAGES, GoogleButton, PasswordField, TextField } from '@/components/auth/Parts';
 import { Button, ErrorMessage } from '@/components/ui';
 
-const DEMOS: Array<{ role: Role; name: string; email: string; both?: boolean }> = [
-  { role: 'client', name: 'Demo Client', email: 'client@demo.test' },
-  { role: 'freelancer', name: 'Demo Freelancer', email: 'freelancer@demo.test' },
-  { role: 'freelancer', name: 'Second Freelancer', email: 'freelancer2@demo.test' },
-  { role: 'client', name: 'Demo Both', email: 'both@demo.test', both: true },
-];
-const DEMO_PASSWORD = 'demo1234';
 
 function LoginForm() {
   const router = useRouter();
@@ -87,18 +80,6 @@ function LoginForm() {
         <p className="muted" style={{ marginBottom: 0 }}>New here? <Link href="/register">Create an account</Link></p>
       </form>
 
-      <aside className="authcard demo-box" aria-labelledby="demo-title">
-        <h2 id="demo-title">Demo accounts</h2>
-        <p className="muted">All data is synthetic. The shared password is <code>{DEMO_PASSWORD}</code>.</p>
-        <ul>
-          {DEMOS.map((d) => (
-            <li key={d.email}>
-              <span><strong>{d.name}</strong><small>{d.both ? 'client and freelancer' : d.role} · {d.email}</small></span>
-              <Button type="button" variant="secondary" onClick={() => { setRoleChoice(d.role); setEmail(d.email); setPassword(DEMO_PASSWORD); setError(null); setServerErrors({}); }}>Fill in</Button>
-            </li>
-          ))}
-        </ul>
-      </aside>
     </div>
   );
 }
