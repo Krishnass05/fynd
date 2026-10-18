@@ -88,6 +88,8 @@ Only the side that did **not** make the latest offer can accept it, so nobody ag
 4. SOW intake table with freelancer sign-off.
 5. Negotiation at hiring.
 
+Step 3 **done** (D-80): the task list from the signed SOW and agreed requests, the progress bar by approved hours, milestones that become ready when their tasks are approved, and daily check-ins with a warning after 2 days.
+
 Step 4 core **done** (D-79), built before step 3 at Krishna's request: the client uploads the first SOW, it shows as a table (item, in scope, hours, price), the freelancer approves it (filling in or changing hours per row) or sends it back, and changed hours go to the client to confirm. Not yet: per-row queries, due dates and "done when" columns (the reader does not find them in files yet), AI reading of messy SOWs, PDF.
 
 Step 2 **done** (D-78): plain-English requests end to end on both project pages (`components/tasks/TaskRequests.tsx`), rules suggestion (`lib/engine/taskrules.js`), API `/api/projects/:id/tasks`. The AI suggestion is not added yet: the rules label is shown as "suggested by rules".

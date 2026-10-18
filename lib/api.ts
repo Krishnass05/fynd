@@ -1,7 +1,7 @@
 // The ONLY way pages talk to the server. OWNER: Krishna. Do not call fetch in pages.
 // Every function throws an Error whose message is safe to show to the user.
 import type {
-  Application, CallMode, CallSignal, CaptionResult, ClientDashboard, ClientProfile, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, TaskRequest, UploadSowResult, User,
+  Application, CallMode, CallSignal, CaptionResult, ClientDashboard, ClientProfile, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, TaskRequest, UploadSowResult, User, WorkStatus,
 } from './types';
 import type { OfferInput } from './engine/negotiation';
 import { getRole, getUserId } from './session';
@@ -95,6 +95,13 @@ export const approveMilestone = (projectId: string, milestoneId: string) => post
 // SOW upload (txt or md text for now) and change orders
 export const uploadSow = (projectId: string, b: { kind: SowKind; filename: string; text: string }) =>
   post<UploadSowResult>(`/api/projects/${projectId}/sow`, b);
+// The task list and daily check-ins
+export const moveWork = (projectId: string, key: string, to: WorkStatus, note?: string) =>
+  post<ProjectDetail>(`/api/projects/${projectId}/work/${encodeURIComponent(key)}`, { action: 'move', to, note });
+export const setWorkMilestone = (projectId: string, key: string, milestoneId: string | null) =>
+  post<ProjectDetail>(`/api/projects/${projectId}/work/${encodeURIComponent(key)}`, { action: 'milestone', milestoneId });
+export const addCheckin = (projectId: string, b: { did: string; hours: number; blockers?: string; moved?: Array<{ key: string; to: WorkStatus }> }) =>
+  post<ProjectDetail>(`/api/projects/${projectId}/checkins`, b);
 // Sign-off of the first SOW (rows: the freelancer's hours per item, in order; null = unknown)
 export type SowReview =
   | { action: 'approve'; rows?: Array<{ hours: number | null; note?: string }>; note?: string }

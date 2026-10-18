@@ -4,10 +4,11 @@ import crypto from 'node:crypto';
 import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDesk';
 import { Negotiations, type OfferInput, type Party } from '@/lib/engine/negotiation';
 import { suggestTask } from '@/lib/engine/taskrules';
+import { checkMove, checkinStatus as checkinClock, computeProgress, istDay, MoveError } from '@/lib/engine/progress';
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
   ActivityItem, Application, AttentionItem, CallMode, CallSignal, CallSignalType, CaptionResult, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
-  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, TaskRequest, UploadSowResult, User,
+  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, TaskRequest, UploadSowResult, User, WorkItem, WorkStatus, CheckIn,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
@@ -311,6 +312,7 @@ export function getProject(u: User, id: string): ProjectDetail {
     })(),
     audit: desk.audit(),
     taskRequests: listTaskViews(id),
+    ...workParts(id),
   };
 }
 
@@ -574,6 +576,129 @@ export const rejectChange = (u: User, pid: string, cid: string, reason: unknown)
 export const reopenChange = (u: User, pid: string, cid: string, reason: unknown) =>
   decide(u, pid, cid, 'any', (d) => d.reopen(cid, u.name, typeof reason === 'string' ? reason : ''));
 
+// ---- the task list, progress and daily check-ins (docs/SCOPE_FLOW.md section 2) ----
+// A task comes from a row of the signed first SOW (included rows only) or from a request both sides agreed on (or the
+// freelancer fixes as their own defect, or says is already included). Only its status and milestone are stored.
+
+function workItems(projectId: string): WorkItem[] {
+  const items: Array<Omit<WorkItem, 'status' | 'milestoneId' | 'events'>> = [];
+  const base = signedBaseline(projectId);
+  if (base) {
+    base.items.forEach((it, n) => {
+      if (it.section !== 'excluded') items.push({ key: `sow:${base.id}:${n}`, title: it.text, hours: it.hours, source: 'sow', price: null });
+    });
+  }
+  const book = db().deals.get(projectId);
+  for (const t of db().tasks.filter((x) => x.projectId === projectId)) {
+    if (t.status === 'agreed' && t.negotiationId && book) {
+      const a = book.view(t.negotiationId).agreed!;
+      items.push({ key: `task:${t.id}`, title: t.text, hours: a.hours, source: 'request', price: a.price });
+    } else if (t.status === 'defect_fix') {
+      items.push({ key: `task:${t.id}`, title: `Fix: ${t.text}`, hours: t.bookedHours, source: 'defect', price: 0 });
+    } else if (t.status === 'included') {
+      items.push({ key: `task:${t.id}`, title: t.text, hours: null, source: 'included', price: 0 });
+    }
+  }
+  return items.map((it) => {
+    const st = db().work.find((w) => w.projectId === projectId && w.key === it.key);
+    return { ...it, status: st?.status ?? 'todo', milestoneId: st?.milestoneId ?? null, events: st?.events ?? [] };
+  });
+}
+
+function workParts(projectId: string) {
+  const project = db().projects.find((p) => p.id === projectId)!;
+  const work = workItems(projectId);
+  const checkins = db().checkins.filter((c) => c.projectId === projectId).sort((a, b) => b.at.localeCompare(a.at));
+  // the clock starts when the SOW was signed (or the project began, for older data)
+  const since = signedBaseline(projectId)?.signedAt ?? project.createdAt;
+  const active = work.some((w) => w.status !== 'approved');
+  return { work, progress: computeProgress(work), checkins, checkinStatus: checkinClock(checkins.map((c) => c.day), since, new Date(), active) };
+}
+
+function workState(projectId: string, key: string) {
+  let st = db().work.find((w) => w.projectId === projectId && w.key === key);
+  if (!st) {
+    st = { key, projectId, status: 'todo', milestoneId: null, events: [] };
+    db().work.push(st);
+  }
+  return st;
+}
+
+// Moves one task (and, when the last task of a milestone is approved, marks that milestone ready for the client).
+function moveWork(u: User, projectId: string, key: string, to: unknown, note: string) {
+  const item = workItems(projectId).find((w) => w.key === key);
+  if (!item) throw notFound('Task not found');
+  let action: string;
+  try {
+    action = checkMove(item.status, String(to), party(u), note);
+  } catch (e) {
+    if (e instanceof MoveError) throw e.message.startsWith('Only') ? forbidden(e.message) : e.message.startsWith('Say') || e.message.startsWith('Unknown') ? bad(e.message) : conflict(e.message);
+    throw e;
+  }
+  const st = workState(projectId, key);
+  st.status = to as WorkStatus;
+  st.events.push({ at: nowIso(), by: party(u), action, note });
+  if (st.status === 'approved' && st.milestoneId) {
+    const ms = db().milestones.find((m) => m.id === st.milestoneId);
+    const all = workItems(projectId).filter((w) => w.milestoneId === st.milestoneId);
+    if (ms && ms.status === 'pending' && all.every((w) => w.status === 'approved')) {
+      ms.status = 'ready';
+      ms.readyAt = nowIso();
+    }
+  }
+  return item;
+}
+
+// { action: 'move', to, note? } or { action: 'milestone', milestoneId } (the freelancer puts a task in a milestone)
+export function actOnWork(u: User, projectId: string, key: string, b: Record<string, unknown>): ProjectDetail {
+  projectFor(u, projectId);
+  const note = typeof b.note === 'string' ? b.note.trim().slice(0, 500) : '';
+  if (b.action === 'move') {
+    moveWork(u, projectId, key, b.to, note);
+  } else if (b.action === 'milestone') {
+    if (u.role !== 'freelancer') throw forbidden('The freelancer arranges tasks into milestones');
+    const item = workItems(projectId).find((w) => w.key === key);
+    if (!item) throw notFound('Task not found');
+    const mid = b.milestoneId === null || b.milestoneId === '' ? null : String(b.milestoneId);
+    if (mid !== null && !db().milestones.some((m) => m.id === mid && m.projectId === projectId)) throw bad('Unknown milestone');
+    const st = workState(projectId, key);
+    st.milestoneId = mid;
+    st.events.push({ at: nowIso(), by: 'freelancer', action: 'milestone', note: mid ? db().milestones.find((m) => m.id === mid)!.title : 'No milestone' });
+  } else {
+    throw bad('action must be move or milestone');
+  }
+  return getProject(u, projectId);
+}
+
+// The freelancer's daily check-in: what was done, hours spent, blockers, and tasks moved (started or done) in one go.
+export function addCheckin(u: User, projectId: string, b: Record<string, unknown>): ProjectDetail {
+  projectFor(u, projectId);
+  if (u.role !== 'freelancer') throw forbidden('The freelancer posts the daily check-in');
+  const did = str(b.did, 'what you did', 2000);
+  if (did.length < 3) throw bad('Say what you did today');
+  const hours = b.hours;
+  if (typeof hours !== 'number' || !Number.isFinite(hours) || hours < 0 || hours > 24) throw bad('Hours spent today must be from 0 to 24');
+  const blockers = typeof b.blockers === 'string' ? b.blockers.trim().slice(0, 1000) : '';
+  const day = istDay(new Date());
+  if (db().checkins.some((c) => c.projectId === projectId && c.day === day)) throw conflict("You already checked in today. Tomorrow's check-in opens at midnight (India time)");
+  const moves = Array.isArray(b.moved) ? (b.moved as Array<{ key?: unknown; to?: unknown }>) : [];
+  if (moves.length > 50) throw bad('Too many tasks in one check-in');
+  // check every move first, so a bad one changes nothing
+  const items = workItems(projectId);
+  for (const m of moves) {
+    const it = items.find((w) => w.key === m.key);
+    if (!it) throw bad('A task in the check-in was not found');
+    try { checkMove(it.status, String(m.to), 'freelancer'); } catch (e) { if (e instanceof MoveError) throw bad(`${it.title}: ${e.message}`); throw e; }
+  }
+  const moved = moves.map((m) => {
+    const it = moveWork(u, projectId, String(m.key), m.to, 'In the daily check-in');
+    return { key: it.key, title: it.title, to: m.to as WorkStatus };
+  });
+  const c: CheckIn = { id: nextId('C'), projectId, day, at: nowIso(), did, hours, blockers, moved };
+  db().checkins.push(c);
+  return getProject(u, projectId);
+}
+
 // ---- new tasks asked for in plain English (docs/SCOPE_FLOW.md step 3) ----
 // The client writes what they want; the rules suggest a label against the signed scope; the freelancer answers
 // (already included, own defect, quote, ask for details, decline); a quote is negotiated until one side accepts the
@@ -788,6 +913,7 @@ export function freelancerDashboard(u: User): FreelancerDashboard {
     const note = (kind: AttentionItem['kind'], text: string) => attention.push({ kind, projectId: p.id, projectTitle: p.jobTitle, text });
     if (toReview) note('review_sow', 'The client uploaded the SOW. Review it, fill in the hours and approve it, or send it back.');
     else if (!hasBaseline) note('upload_sow', 'Waiting for the client to upload the SOW, or to confirm your hours.');
+    if (d.work.length && !d.checkinStatus.checkedInToday && d.work.some((w) => w.status !== 'approved')) note('checkin', d.checkinStatus.warn ? `No check-in for ${d.checkinStatus.daysSince} days: the client can see this. Post today's check-in.` : "Post today's check-in.");
     for (const c of d.changeRequests) {
       if (c.state === 'needs_clarification') note('clarify_hours', `${c.text}: hours are unknown, so it cannot be priced yet.`);
       if (c.state === 'rejected') note('rejected_change', `${c.text} was rejected${c.decisionReason ? ` (${c.decisionReason})` : ''}. You can reopen it with a reason.`);
@@ -858,6 +984,9 @@ export function clientDashboard(u: User): ClientDashboard {
     if (counts.awaitingDecision) {
       attention.push({ kind: 'change_orders', title: p.jobTitle, text: `${counts.awaitingDecision} change ${counts.awaitingDecision === 1 ? 'order needs' : 'orders need'} your decision.`, href });
     }
+    const toApprove = d.work.filter((w) => w.status === 'done').length;
+    if (toApprove) attention.push({ kind: 'approve_work', title: p.jobTitle, text: `${toApprove} ${toApprove === 1 ? 'task is' : 'tasks are'} done and waiting for your approval.`, href });
+    if (d.checkinStatus.warn) attention.push({ kind: 'no_checkin', title: p.jobTitle, text: `No check-in from ${d.freelancer.name} for ${d.checkinStatus.daysSince} days.`, href });
     if (counts.needsClarification) {
       attention.push({ kind: 'clarify', title: p.jobTitle, text: `${counts.needsClarification} requested ${counts.needsClarification === 1 ? 'item has' : 'items have'} no hours yet, so it cannot be priced.`, href });
     }

@@ -60,6 +60,7 @@ export function serializeDb(d: Db): unknown {
     desks: [...d.desks].map(([k, v]) => [k, v.toState()]),
     labels: [...d.labels], hashes: [...d.hashes],
     tasks: d.tasks, deals: [...d.deals].map(([k, v]) => [k, v.toState()]),
+    work: d.work, checkins: d.checkins,
   };
 }
 
@@ -78,6 +79,9 @@ export function deserializeDb(o: Record<string, unknown>): Db {
     // added with the new-task flow: older saved data has none, which reads as empty
     tasks: arr(o.tasks),
     deals: new Map(arr<[string, unknown]>(o.deals).map(([k, v]) => [k, Negotiations.fromState(v)] as [string, Negotiations])),
+    // added with the task list and check-ins
+    work: arr(o.work),
+    checkins: arr(o.checkins),
     seq: typeof o.seq === 'number' ? o.seq : 100,
   };
 }

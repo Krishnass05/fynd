@@ -568,6 +568,71 @@ pd = await ok('POST', tasks(`/${logo.task.id}`), TC, { action: 'accept' });
 assert.equal(pd.taskRequests.find((t) => t.id === logo.task.id).negotiation.agreed.basis, 'fixed');
 const sum = pd.taskRequests.map((t) => t.status).sort();
 assert.deepEqual(sum, ['agreed', 'agreed', 'agreed', 'declined', 'defect_fix', 'included']);
+// agreed requests, own-defect fixes and included asks join P1's task list
+const p1work = (await ok('GET', '/api/projects/P1', TF)).work;
+const agreedTask = p1work.find((w) => w.key === `task:${T1}`);
+assert.equal(agreedTask.source, 'request');
+assert.equal(agreedTask.hours, 6);
+assert.equal(agreedTask.price, 6000);
+assert.ok(p1work.some((w) => w.source === 'defect') && p1work.some((w) => w.source === 'included'));
+assert.ok(!p1work.some((w) => w.key === `task:${seo.task.id}`), 'a declined request never becomes a task');
+assert.equal(p1work.filter((w) => w.source === 'sow').length, 2, 'the two included rows of the signed SOW (not the excluded one)');
+}
+
+// ---- the task list, progress by approved hours, and daily check-ins (docs/SCOPE_FLOW.md section 2) ----
+{
+const W = (key) => `/api/projects/${projectId}/work/${encodeURIComponent(key)}`;
+let pj = await ok('GET', `/api/projects/${projectId}`, CLIENT);
+// the signed SOW of this project has two included rows: One landing page (4h) and Contact form (2h)
+assert.deepEqual(pj.work.map((w) => [w.title, w.hours, w.source, w.status]), [['One landing page', 4, 'sow', 'todo'], ['Contact form', 2, 'sow', 'todo']]);
+assert.equal(pj.progress.totalHours, 6);
+assert.equal(pj.progress.percent, 0);
+const [land, form] = pj.work.map((w) => w.key);
+assert.equal((await call('POST', W(land), CLIENT, { action: 'move', to: 'in_progress' })).status, 403, 'only the freelancer starts a task');
+await ok('POST', W(land), FREE, { action: 'move', to: 'in_progress' });
+assert.equal((await call('POST', W(land), FREE, { action: 'move', to: 'approved' })).status, 409, 'it cannot jump to approved');
+pj = await ok('POST', W(land), FREE, { action: 'move', to: 'done' });
+assert.equal(pj.progress.percent, 0, 'done is not progress until the client approves');
+assert.equal(pj.progress.doneHours, 4);
+assert.ok((await ok('GET', '/api/client-dashboard', CLIENT)).attention.some((a) => a.kind === 'approve_work'), 'the client is asked to approve');
+assert.equal((await call('POST', W(land), FREE, { action: 'move', to: 'approved' })).status, 403, 'the freelancer cannot approve');
+assert.equal((await call('POST', W(land), CLIENT, { action: 'move', to: 'in_progress' })).status, 400, 'sending back needs a reason');
+pj = await ok('POST', W(land), CLIENT, { action: 'move', to: 'in_progress', note: 'Logo is missing in the header' });
+assert.equal(pj.work.find((w) => w.key === land).status, 'in_progress');
+await ok('POST', W(land), FREE, { action: 'move', to: 'done' });
+pj = await ok('POST', W(land), CLIENT, { action: 'move', to: 'approved' });
+assert.equal(pj.progress.approvedHours, 4);
+assert.equal(pj.progress.percent, 66.7, '4 of 6 hours approved');
+assert.equal((await call('POST', W(land), CLIENT, { action: 'move', to: 'approved' })).status, 409, 'already approved');
+assert.equal((await call('POST', W('sow:nope:0'), FREE, { action: 'move', to: 'done' })).status, 404);
+
+// milestones: tasks sit inside one; when its last task is approved, the milestone is ready for the client
+const pending = pj.milestones.find((m) => m.status === 'pending');
+assert.equal((await call('POST', W(form), CLIENT, { action: 'milestone', milestoneId: pending.id })).status, 403, 'the freelancer arranges milestones');
+assert.equal((await call('POST', W(form), FREE, { action: 'milestone', milestoneId: 'MS-nope' })).status, 400);
+pj = await ok('POST', W(form), FREE, { action: 'milestone', milestoneId: pending.id });
+assert.equal(pj.work.find((w) => w.key === form).milestoneId, pending.id);
+
+// daily check-in: once a day, with tasks moved in the same step; a bad move changes nothing
+const CI = `/api/projects/${projectId}/checkins`;
+assert.ok((await ok('GET', '/api/dashboard', FREE)).attention.some((a) => a.kind === 'checkin'), 'the freelancer is reminded to check in');
+assert.equal((await call('POST', CI, CLIENT, { did: 'x', hours: 1 })).status, 403, 'only the freelancer checks in');
+assert.equal((await call('POST', CI, FREE, { did: '', hours: 2 })).status, 400);
+assert.equal((await call('POST', CI, FREE, { did: 'Worked on the form', hours: 30 })).status, 400, 'at most 24 hours');
+assert.equal((await call('POST', CI, FREE, { did: 'Worked on the form', hours: 2, moved: [{ key: form, to: 'done' }, { key: land, to: 'done' }] })).status, 400, 'an approved task cannot move');
+assert.equal((await ok('GET', `/api/projects/${projectId}`, FREE)).work.find((w) => w.key === form).status, 'todo', 'and nothing changed');
+pj = await ok('POST', CI, FREE, { did: 'Finished the contact form validation', hours: 2.5, blockers: 'Need the SMTP details', moved: [{ key: form, to: 'done' }] });
+assert.equal(pj.checkins.length, 1);
+assert.equal(pj.checkins[0].moved[0].to, 'done');
+assert.equal(pj.checkinStatus.checkedInToday, true);
+assert.equal(pj.checkinStatus.warn, false);
+assert.equal((await call('POST', CI, FREE, { did: 'Again', hours: 1 })).status, 409, 'one check-in a day');
+assert.ok(!(await ok('GET', '/api/dashboard', FREE)).attention.some((a) => a.kind === 'checkin' && a.projectId === projectId), 'no reminder once checked in');
+pj = await ok('POST', W(form), CLIENT, { action: 'move', to: 'approved' });
+assert.equal(pj.progress.percent, 100);
+assert.equal(pj.milestones.find((m) => m.id === pending.id).status, 'ready', 'its only task approved: the milestone is ready');
+const seen = await ok('GET', `/api/projects/${projectId}`, CLIENT);
+assert.equal(seen.checkins[0].blockers, 'Need the SMTP details', 'the client reads the check-in');
 }
 
 console.log('smoke test passed');

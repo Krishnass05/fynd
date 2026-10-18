@@ -9,6 +9,8 @@ import ChangeList from '@/components/changes/ChangeList';
 import SowReview from '@/components/sow/SowReview';
 import MilestoneList from '@/components/milestones/MilestoneList';
 import TaskRequests from '@/components/tasks/TaskRequests';
+import WorkBoard from '@/components/work/WorkBoard';
+import CheckIns from '@/components/work/CheckIns';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
 
 export default function FreelancerProject() {
@@ -28,6 +30,10 @@ export default function FreelancerProject() {
           <Card title="SOW">
             <SowReview projectId={id} role="freelancer" docs={data.sowDocuments} ratePerHour={data.project.ratePerHour} onChanged={setData} onUploaded={() => void reload()} />
           </Card>
+          <h2>Tasks and progress</h2>
+          <WorkBoard projectId={id} role="freelancer" work={data.work} progress={data.progress} milestones={data.milestones} onChanged={setData} />
+          <h2>Daily check-in</h2>
+          <CheckIns projectId={id} role="freelancer" checkins={data.checkins} status={data.checkinStatus} work={data.work} freelancerName={data.freelancer.name} onChanged={setData} />
           <MilestoneList projectId={id} milestones={data.milestones} summary={data.milestoneSummary} role="freelancer" onChanged={setData} />
           <h2>New tasks from the client</h2>
           <TaskRequests projectId={id} role="freelancer" tasks={data.taskRequests} ratePerHour={data.project.ratePerHour} onChanged={setData} />

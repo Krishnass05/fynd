@@ -10,6 +10,8 @@ import ChangeList from '@/components/changes/ChangeList';
 import SowUpload from '@/components/sow/SowUpload';
 import SowReview from '@/components/sow/SowReview';
 import TaskRequests from '@/components/tasks/TaskRequests';
+import WorkBoard from '@/components/work/WorkBoard';
+import CheckIns from '@/components/work/CheckIns';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
 
 export default function ClientProject() {
@@ -34,6 +36,10 @@ export default function ClientProject() {
               <SowUpload projectId={id} kind="amendment" onDone={() => void reload()} />
             </Card>
           ) : null}
+          <h2>Tasks and progress</h2>
+          <WorkBoard projectId={id} role="client" work={data.work} progress={data.progress} milestones={data.milestones} onChanged={setData} />
+          <h2>Daily check-ins</h2>
+          <CheckIns projectId={id} role="client" checkins={data.checkins} status={data.checkinStatus} work={data.work} freelancerName={data.freelancer.name} onChanged={setData} />
           <h2>Ask for a new task</h2>
           <TaskRequests projectId={id} role="client" tasks={data.taskRequests} ratePerHour={data.project.ratePerHour} onChanged={setData} />
           <h2>Change orders</h2>

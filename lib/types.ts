@@ -296,6 +296,41 @@ export interface ProjectDetail {
   totals: Totals;
   audit: AuditEntry[];
   taskRequests: TaskRequest[];
+  work: WorkItem[]; // the task list: signed SOW rows and agreed requests
+  progress: import('./engine/progress').Progress;
+  checkins: CheckIn[]; // newest first
+  checkinStatus: import('./engine/progress').CheckinStatus;
+}
+
+// ---- the task list, progress and daily check-ins (docs/SCOPE_FLOW.md section 2) ----
+export type WorkStatus = 'todo' | 'in_progress' | 'done' | 'approved';
+export interface WorkItem {
+  key: string; // stable id: sow:<doc id>:<row>, or task:<request id>
+  title: string;
+  hours: number | null; // agreed hours; null = unknown (listed, not counted in progress)
+  source: 'sow' | 'request' | 'defect' | 'included'; // a signed SOW row, an agreed request, an own-defect fix, already included
+  price: number | null; // for an agreed request (before tax); null otherwise
+  milestoneId: string | null;
+  status: WorkStatus;
+  events: Array<{ at: string; by: 'client' | 'freelancer'; action: string; note: string }>;
+}
+// What is stored for a task (the rest comes from the SOW or the request)
+export interface WorkState {
+  key: string;
+  projectId: string;
+  status: WorkStatus;
+  milestoneId: string | null;
+  events: WorkItem['events'];
+}
+export interface CheckIn {
+  id: string;
+  projectId: string;
+  day: string; // YYYY-MM-DD, India time
+  at: string;
+  did: string;
+  hours: number;
+  blockers: string;
+  moved: Array<{ key: string; title: string; to: WorkStatus }>;
 }
 
 export interface Message {
@@ -340,7 +375,7 @@ export interface DashboardProject {
 }
 
 export interface AttentionItem {
-  kind: 'upload_sow' | 'review_sow' | 'clarify_hours' | 'rejected_change' | 'awaiting_client';
+  kind: 'upload_sow' | 'review_sow' | 'checkin' | 'clarify_hours' | 'rejected_change' | 'awaiting_client';
   projectId: string;
   projectTitle: string;
   text: string;
@@ -370,7 +405,7 @@ export interface ClientDashboardJob {
 }
 
 export interface ClientAttentionItem {
-  kind: 'applicants' | 'change_orders' | 'no_sow' | 'confirm_sow' | 'clarify';
+  kind: 'applicants' | 'change_orders' | 'no_sow' | 'confirm_sow' | 'approve_work' | 'no_checkin' | 'clarify';
   title: string;
   text: string;
   href: string;
