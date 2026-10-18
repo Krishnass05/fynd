@@ -11,13 +11,3 @@ export function LogoMark({ size = 28, title }: { size?: number; title?: string }
     </svg>
   );
 }
-
-// Logo and wordmark together, for headers.
-export function Logo({ size = 28 }: { size?: number }) {
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: Math.round(size / 4) }}>
-      <LogoMark size={size} />
-      <span>Crewmate</span>
-    </span>
-  );
-}

@@ -9,7 +9,7 @@ import { CALL_COST, CreditError, PACKS, START_CREDITS, balanceOf, buyPack, canCa
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
   ActivityItem, Application, AttentionItem, CallMode, CallSignal, CallSignalType, CaptionResult, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
-  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, TaskRequest, UploadSowResult, User, WorkItem, WorkStatus, CheckIn, CreditEntry, CreditsInfo, IncomingCall,
+  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, TaskRequest, UploadSowResult, User, WorkItem, WorkStatus, CheckIn, CreditEntry, CreditsInfo, IncomingCall,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
