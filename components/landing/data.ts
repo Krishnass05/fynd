@@ -35,7 +35,7 @@ export const CATEGORIES: Category[] = [
   { slug: 'finance-accounting', name: 'Finance & Accounting', description: 'Bookkeeping, financial analysis, and accounting.', image: '/img/categories/finance-accounting.png', alt: 'A calculator lying on printed charts and graphs', tone: '#ccc5b9', to: { q: 'data analysis' } },
   { slug: 'legal', name: 'Legal', description: 'Legal research, documentation, and professional legal services.', image: '/img/categories/legal.png', alt: 'A bronze statue of Lady Justice holding scales and a sword', tone: '#403d39', to: { category: B } },
   { slug: 'hr-training', name: 'HR & Training', description: 'Recruitment, training, talent development, and HR support.', image: '/img/categories/hr-training.png', alt: 'Three women in a meeting around a white table in a bright office', tone: '#eb5e28', to: { q: 'project management' } },
-  { slug: 'engineering-architecture', name: 'Engineering & Architecture', description: 'Architecture, CAD, engineering, and technical design.', image: '/img/categories/engineering-architecture.svg', alt: 'A blueprint of a building with a set square', tone: '#ccc5b9', to: { category: E } },
+  { slug: 'engineering-architecture', name: 'Engineering & Architecture', description: 'Architecture, CAD, engineering, and technical design.', image: '/img/categories/engineering-architecture.png', alt: 'Engineers in hard hats and safety vests inspecting a building site from the roof', tone: '#ccc5b9', to: { category: E } },
 ];
 
 export const EXAMPLES: Record<Intent, string[]> = {
