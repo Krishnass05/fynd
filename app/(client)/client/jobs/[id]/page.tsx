@@ -1,5 +1,6 @@
 'use client';
 // Job detail: applicants as cards, a side-by-side comparison, and Accept. OWNER: Sanjana. Starter version.
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { acceptApplication, getJob } from '@/lib/api';
@@ -74,7 +75,7 @@ export default function JobDetail() {
                   <tbody>
                     {apps.map((a) => (
                       <tr key={a.id}>
-                        <th scope="row">{a.freelancerName}{a.proposedPrice === cheapest ? <> <Badge tone="good">Lowest</Badge></> : null}</th>
+                        <th scope="row"><Link href={`/client/freelancers/${a.freelancerId}`}>{a.freelancerName}</Link>{a.proposedPrice === cheapest ? <> <Badge tone="good">Lowest</Badge></> : null}</th>
                         <td className={s.nowrap}>{money(a.proposedPrice)}</td>
                         <td>{vs(pct(a.proposedPrice, data.job.budget))}</td>
                         {data.typicalTotal ? <td>{vs(pct(a.proposedPrice, data.typicalTotal))}</td> : null}
@@ -91,7 +92,7 @@ export default function JobDetail() {
 
           {apps.map((a) => (
             <Card key={a.id}>
-              <strong>{a.freelancerName}</strong> <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>
+              <strong><Link href={`/client/freelancers/${a.freelancerId}`}>{a.freelancerName}</Link></strong> <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>
               <p>{a.pitch}</p>
               <p className="muted">Proposed price {money(a.proposedPrice)} ({vs(pct(a.proposedPrice, data.job.budget))} your budget){a.freelancerSkills?.length ? ` · ${a.freelancerSkills.join(', ')}` : ''}</p>
               {canAccept && a.status === 'pending' ? <Button onClick={() => setAccepting({ id: a.id, name: a.freelancerName, price: a.proposedPrice })}>Accept</Button> : null}
