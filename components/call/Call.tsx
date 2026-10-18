@@ -47,7 +47,11 @@ export default function Call({ projectId, peerName }: { projectId: string; peerN
   const modeRef = useRef<CallMode>('voice');
 
   const setPhaseBoth = (p: Phase) => { phaseRef.current = p; setPhase(p); };
-  const addLine = (who: Line['who'], text: string) => setLines((l) => [...l.slice(-39), { id: (lineId.current += 1), who, text }]);
+  const addLine = (who: Line['who'], text: string): number => {
+    const id = (lineId.current += 1);
+    setLines((l) => [...l.slice(-39), { id, who, text }]);
+    return id;
+  };
 
   const cleanup = useCallback(() => {
     if (recog.current) { recog.current.onend = null; try { recog.current.stop(); } catch { /* already stopped */ } recog.current = null; }
@@ -81,9 +85,11 @@ export default function Call({ projectId, peerName }: { projectId: string; peerN
         if (!e.results[i].isFinal) continue;
         const text = e.results[i][0].transcript.trim();
         if (!text) continue;
-        addLine('you', text);
+        const mine = addLine('you', text);
         sendCaption(projectId, text)
           .then((res) => {
+            // a blocked line is not kept on screen either
+            if (res.blocked) setLines((l) => l.map((x) => (x.id === mine ? { ...x, text: '[hidden by the guard]' } : x)));
             if (res.blocked) finish(`The call was ended because personal contact details were said (${res.reasons.join(', ')}). They were not saved. Please keep the conversation and payments on the platform.`);
           })
           .catch((err) => setError(err instanceof Error ? err.message : 'Could not check the call'));
