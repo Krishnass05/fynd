@@ -82,7 +82,7 @@ Only the side that did **not** make the latest offer can accept it, so nobody ag
 
 ## Build order (proposed)
 
-1. Negotiation engine + tests (offers, accept, counter, decline, history, who may accept).
+1. Negotiation engine + tests (offers, accept, counter, decline, history, who may accept). **Done:** `lib/engine/negotiation.js`, 13 tests in `negotiation.test.js` (D-77). Not connected to the app yet.
 2. New task in plain English, end to end (classification, quote, negotiation, commit) — this is what the three judged checks run on.
 3. Tasks, progress bar, daily check-ins.
 4. SOW intake table with freelancer sign-off.
