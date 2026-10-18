@@ -9,6 +9,7 @@ export interface User {
   role: Role;
   skills: string[];
   email?: string; // what the person entered when they registered (demo accounts only for now)
+  roles?: Role[]; // an account that can use both sides lists both; `role` is the side it is acting as right now
   demo?: boolean; // shown on the start page as a one-click demo login
   // Freelancer profile fields. Seed values are sample data, not real people or real ratings.
   headline?: string;

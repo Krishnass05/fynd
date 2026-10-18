@@ -3,14 +3,14 @@
 import type {
   Application, ClientDashboard, ClientProfile, DemoResult, Freelancer, FreelancerDashboard, FreelancerProfile, FreelancerSearch, Job, JobDetail, SiteStats, LibraryResponse, Message, Project, ProjectDetail, SowKind, UploadSowResult, User,
 } from './types';
-import { getUserId } from './session';
+import { getRole, getUserId } from './session';
 
 async function call<T>(path: string, init?: { method?: string; body?: unknown }): Promise<T> {
   let res: Response;
   try {
     res = await fetch(path, {
       method: init?.method ?? 'GET',
-      headers: { 'Content-Type': 'application/json', 'x-demo-user': getUserId() ?? '' },
+      headers: { 'Content-Type': 'application/json', 'x-demo-user': getUserId() ?? '', 'x-demo-role': getRole() ?? '' },
       body: init?.body === undefined ? undefined : JSON.stringify(init.body),
       cache: 'no-store',
     });

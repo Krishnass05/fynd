@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { DASHBOARD, HOME, LEAD, MENUS, PROFILE, TOP_LINKS } from '@/lib/nav';
-import { clearUser } from '@/lib/session';
+import { clearUser, setRole } from '@/lib/session';
 import { SERVICES } from '@/lib/services';
 import type { Role } from '@/lib/types';
 import { useUser } from '@/lib/useUser';
@@ -174,6 +174,11 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
                 <div className="usermenu-panel" id="menu-user" role="menu" aria-label="Account">
                   <Link href={PROFILE[role]} role="menuitem" onClick={() => setOpen(null)}>Profile</Link>
                   <Link href={DASHBOARD[role]} role="menuitem" onClick={() => setOpen(null)}>Dashboard</Link>
+                  {user?.roles && user.roles.length > 1 ? (
+                    <button type="button" role="menuitem" className="usermenu-switch" onClick={() => { const other = role === 'client' ? 'freelancer' : 'client'; setRole(other); setOpen(null); router.push(HOME[other]); }}>
+                      Switch to {role === 'client' ? 'Freelancer' : 'Client'}
+                    </button>
+                  ) : null}
                   <button type="button" role="menuitem" onClick={() => { clearUser(); router.push('/login'); }}>Log out</button>
                 </div>
               ) : null}

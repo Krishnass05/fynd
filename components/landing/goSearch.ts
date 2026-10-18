@@ -3,6 +3,7 @@
 // it goes to the login page first and comes back afterwards (?next=). Search logic stays in the pages,
 // so this can later point at a public search API instead. OWNER: Krishna.
 import { getMe } from '@/lib/api';
+import { setRole } from '@/lib/session';
 import type { Destination, Intent } from './data';
 
 export function destinationPath(intent: Intent, to: Destination = {}): string {
@@ -23,6 +24,7 @@ export async function goTo(push: (href: string) => void, path: string): Promise<
   try {
     const me = await getMe();
     if (me.role === role) return push(path);
+    if (me.roles?.includes(role)) { setRole(role); return push(path); } // one account, both sides: switch for them
   } catch {
     /* not signed in */
   }

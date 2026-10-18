@@ -5,12 +5,13 @@ import { ConflictError, ScopeDesk, ValidationError } from '@/lib/engine/scopeDes
 import type { EngineView } from '@/lib/engine/scopeDesk';
 import type {
   ActivityItem, Application, AttentionItem, Freelancer, FreelancerProfile, FreelancerSearch, ChangeRequest, ClientAttentionItem, ClientDashboard, ClientProfile, ClientDashboardProject, DashboardProject, DemoResult, Flag, FreelancerDashboard, Job, JobDetail,
-  JobStatus, Message, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
+  JobStatus, Message, Role, MilestoneSummary, SiteStats, Project, ProjectDetail, SowDocument, SowKind, UploadSowResult, User,
 } from '@/lib/types';
 import { runDemo } from '@/lib/engine/demo';
 import { bad, conflict, forbidden, notFound } from './errors';
 import { matchesAllWords } from '@/lib/search';
 import { COMPANIES, PORTFOLIO, REVIEWS } from '@/lib/data/sampleProfiles';
+import { requestRole } from './context';
 import { parseSow, compareSow } from '@/lib/engine/sow';
 import { checkSplit, defaultSplit } from '@/lib/milestones';
 import type { MilestoneDraft } from '@/lib/milestones';
@@ -37,8 +38,14 @@ const wholeRupees = (v: unknown, name: string): number => {
 export function actor(userId: string | null): User {
   const u = db().users.find((x) => x.id === userId);
   if (!u) throw forbidden('Choose a role first (Continue as Client or Freelancer)');
+  // One account with both roles acts as the side named in the request (x-demo-role).
+  const want = requestRole.getStore()?.role;
+  if (want && want !== u.role && u.roles?.includes(want as Role)) return { ...u, role: want as Role };
   return u;
 }
+
+const isFreelancer = (x: User) => x.role === 'freelancer' || Boolean(x.roles?.includes('freelancer'));
+const isClient = (x: User) => x.role === 'client' || Boolean(x.roles?.includes('client'));
 
 // The start page offers only the demo users; the other freelancers exist to be browsed.
 export const listUsers = (): User[] => db().users.filter((u) => u.demo);
@@ -50,6 +57,7 @@ export const DEMO_LOGINS: Record<string, string> = {
   'client@demo.test': 'u_client1',
   'freelancer@demo.test': 'u_freelancer1',
   'freelancer2@demo.test': 'u_freelancer2',
+  'both@demo.test': 'u_both1', // one account, both sides
 };
 
 export function login(body: Record<string, unknown>): User {
@@ -63,40 +71,43 @@ export function login(body: Record<string, unknown>): User {
   const id = DEMO_LOGINS[email];
   const user = id ? db().users.find((u) => u.id === id) : undefined;
   if (!user || password !== DEMO_PASSWORD) throw forbidden('Email or password is wrong');
-  if (user.role !== role) throw forbidden(`This is a ${user.role} account. Choose ${user.role === 'client' ? 'Client' : 'Freelancer'} above.`);
-  return user;
+  const sides: Role[] = user.roles ?? [user.role];
+  if (!sides.includes(role)) throw forbidden(`This is a ${user.role} account. Choose ${user.role === 'client' ? 'Client' : 'Freelancer'} above.`);
+  return { ...user, role };
 }
 
-export function updateMe(u: User, body: Record<string, unknown>): User {
+export function updateMe(acting: User, body: Record<string, unknown>): User {
+  const u = db().users.find((x) => x.id === acting.id) ?? acting; // the stored account, so changes are kept
+  const side = acting.role;
   if (body.name !== undefined) u.name = str(body.name, 'name', 80);
   if (body.skills !== undefined) {
     if (!Array.isArray(body.skills) || body.skills.some((s) => typeof s !== 'string' || !s.trim())) throw bad('skills must be a list of words');
     if (body.skills.length > 10) throw bad('At most 10 skills');
     u.skills = (body.skills as string[]).map((s) => s.trim());
   }
-  if (u.role === 'freelancer') {
+  if (side === 'freelancer') {
     if (body.headline !== undefined) u.headline = str(body.headline, 'headline', 120);
     if (body.overview !== undefined) u.overview = str(body.overview, 'overview', 1000);
     if (body.location !== undefined) u.location = str(body.location, 'location', 60);
     if (body.ratePerHour !== undefined && body.ratePerHour !== null && body.ratePerHour !== '') u.ratePerHour = wholeRupees(body.ratePerHour, 'ratePerHour');
   }
-  return u;
+  return { ...u, role: side };
 }
 
 // ---- browsing freelancers (client side) ----
 // Ratings come from the (sample) reviews when there are any.
-const reviewsFor = (id: string) => REVIEWS.filter((r) => r.toId === id).sort((a, b) => b.date.localeCompare(a.date));
+const reviewsFor = (id: string, from: Role) => REVIEWS.filter((r) => r.toId === id && r.fromRole === from).sort((a, b) => b.date.localeCompare(a.date));
 const averageOf = (list: Array<{ rating: number }>): number | null => (list.length ? Math.round((list.reduce((t, r) => t + r.rating, 0) / list.length) * 10) / 10 : null);
 
 const toFreelancer = (u: User, viewer?: User): Freelancer => ({
   id: u.id, name: u.name, headline: u.headline ?? '', location: u.location ?? '', ratePerHour: u.ratePerHour ?? null,
-  category: u.category ?? 'Other', availability: u.availability ?? 'available', rating: averageOf(reviewsFor(u.id)) ?? u.rating ?? null, reviewCount: reviewsFor(u.id).length, jobsDone: u.jobsDone ?? 0, skills: u.skills,
+  category: u.category ?? 'Other', availability: u.availability ?? 'available', rating: averageOf(reviewsFor(u.id, 'client')) ?? u.rating ?? null, reviewCount: reviewsFor(u.id, 'client').length, jobsDone: u.jobsDone ?? 0, skills: u.skills,
   saved: viewer ? (db().saved.get(viewer.id)?.has(u.id) ?? false) : undefined,
 });
 
 export function searchFreelancers(u: User, params: URLSearchParams): FreelancerSearch {
   if (u.role !== 'client') throw forbidden('Only clients browse freelancers');
-  const all = db().users.filter((x) => x.role === 'freelancer').map((x) => toFreelancer(x, u));
+  const all = db().users.filter(isFreelancer).map((x) => toFreelancer(x, u));
   const q = (params.get('q') ?? '').trim().toLowerCase();
   const category = params.get('category') ?? '';
   const skill = (params.get('skill') ?? '').toLowerCase();
@@ -119,21 +130,21 @@ export function searchFreelancers(u: User, params: URLSearchParams): FreelancerS
 }
 
 export function getFreelancerProfile(u: User, id: string): FreelancerProfile {
-  const f = db().users.find((x) => x.id === id && x.role === 'freelancer');
+  const f = db().users.find((x) => x.id === id && isFreelancer(x));
   if (!f) throw notFound('Freelancer not found');
   const projects = db().projects.filter((p) => p.freelancerId === id).map((p) => ({ title: p.jobTitle, status: (db().jobs.find((j) => j.id === p.jobId)?.status ?? 'in_progress') as JobStatus }));
   const portfolio = PORTFOLIO[id] ?? [];
-  const reviews = reviewsFor(id);
+  const reviews = reviewsFor(id, 'client');
   const workedWith = [...new Set([...portfolio.map((p) => p.clientName), ...reviews.map((r) => r.fromCompany).filter((c): c is string => Boolean(c))])];
   return { ...toFreelancer(f, u.role === 'client' ? u : undefined), overview: f.overview ?? '', projects, portfolio, workedWith, reviews, reviewCount: reviews.length };
 }
 
 // A client's profile: company details, rating and reviews, and what they have posted. Any signed-in user can view it.
 export function getClientProfile(u: User, id: string): ClientProfile {
-  const c = db().users.find((x) => x.id === id && x.role === 'client');
+  const c = db().users.find((x) => x.id === id && isClient(x));
   if (!c) throw notFound('Client not found');
   const jobs = db().jobs.filter((j) => j.clientId === id);
-  const reviews = reviewsFor(id);
+  const reviews = reviewsFor(id, 'freelancer');
   const open = jobs.filter((j) => j.status === 'open');
   return {
     id: c.id, name: c.name, email: u.id === c.id ? c.email : undefined, company: COMPANIES[id] ?? null,
@@ -147,13 +158,13 @@ export function getClientProfile(u: User, id: string): ClientProfile {
 export function listSaved(u: User): Freelancer[] {
   if (u.role !== 'client') throw forbidden('Only clients save freelancers');
   const ids = db().saved.get(u.id) ?? new Set<string>();
-  return db().users.filter((x) => x.role === 'freelancer' && ids.has(x.id)).map((x) => toFreelancer(x, u));
+  return db().users.filter((x) => isFreelancer(x) && ids.has(x.id)).map((x) => toFreelancer(x, u));
 }
 
 export function setSaved(u: User, freelancerId: string, saved: unknown): { saved: boolean } {
   if (u.role !== 'client') throw forbidden('Only clients save freelancers');
   if (typeof saved !== 'boolean') throw bad('saved must be true or false');
-  const f = db().users.find((x) => x.id === freelancerId && x.role === 'freelancer');
+  const f = db().users.find((x) => x.id === freelancerId && isFreelancer(x));
   if (!f) throw notFound('Freelancer not found');
   const set = db().saved.get(u.id) ?? new Set<string>();
   if (saved) set.add(freelancerId); else set.delete(freelancerId);
@@ -203,7 +214,7 @@ export function getJob(u: User, id: string): JobDetail {
   const typicalTotal = prof?.ratePerHour && prof.typicalHours ? prof.ratePerHour * prof.typicalHours : null;
   const withSkills = applications.map((a) => ({ ...a, freelancerSkills: db().users.find((x) => x.id === a.freelancerId)?.skills ?? [] }));
   const owner = db().users.find((x) => x.id === job.clientId);
-  const ownerReviews = reviewsFor(job.clientId);
+  const ownerReviews = reviewsFor(job.clientId, 'freelancer');
   const client = { id: job.clientId, name: owner?.name ?? 'Client', company: COMPANIES[job.clientId]?.name ?? null, rating: averageOf(ownerReviews), reviewCount: ownerReviews.length };
   return { job, client, typicalTotal, applications: withSkills };
 }
@@ -212,6 +223,7 @@ export function applyToJob(u: User, jobId: string, b: Record<string, unknown>): 
   if (u.role !== 'freelancer') throw forbidden('Only a freelancer can apply');
   const job = db().jobs.find((j) => j.id === jobId);
   if (!job) throw notFound('Job not found');
+  if (job.clientId === u.id) throw forbidden('You cannot apply to your own job');
   if (job.status !== 'open') throw conflict('This job is no longer open');
   if (hasApplied(u, jobId)) throw conflict('You already applied to this job');
   const app: Application = {
@@ -573,7 +585,7 @@ export function siteStats(): SiteStats {
   const checks = runDemo();
   return {
     jobProfiles: library().profiles.length,
-    sampleFreelancers: db().users.filter((x) => x.role === 'freelancer').length,
+    sampleFreelancers: db().users.filter(isFreelancer).length,
     checksPassed: checks.steps.filter((s) => s.pass).length,
     checksTotal: checks.steps.length,
   };

@@ -5,22 +5,23 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import { login } from '@/lib/api';
 import { HOME } from '@/lib/nav';
-import { setUserId } from '@/lib/session';
+import { setRole, setUserId } from '@/lib/session';
 import type { Role } from '@/lib/types';
 import AppNav from '@/components/shell/AppNav';
 import { Button, ErrorMessage } from '@/components/ui';
 
-const DEMOS: Array<{ role: Role; name: string; email: string }> = [
+const DEMOS: Array<{ role: Role; name: string; email: string; both?: boolean }> = [
   { role: 'client', name: 'Demo Client', email: 'client@demo.test' },
   { role: 'freelancer', name: 'Demo Freelancer', email: 'freelancer@demo.test' },
   { role: 'freelancer', name: 'Second Freelancer', email: 'freelancer2@demo.test' },
+  { role: 'client', name: 'Demo Both', email: 'both@demo.test', both: true },
 ];
 const DEMO_PASSWORD = 'demo1234';
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const [role, setRole] = useState<Role>(params.get('role') === 'freelancer' ? 'freelancer' : 'client');
+  const [role, setRoleChoice] = useState<Role>(params.get('role') === 'freelancer' ? 'freelancer' : 'client');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +34,7 @@ function LoginForm() {
     try {
       const user = await login({ email, password, role });
       setUserId(user.id);
+      setRole(user.role);
       // Come back to the page that sent you here (for example a search from the home page), if it is on your side.
       const next = params.get('next');
       router.push(next && next.startsWith(`/${user.role}`) && !next.startsWith('//') ? next : HOME[user.role]);
@@ -49,7 +51,7 @@ function LoginForm() {
         <p className="muted">Welcome back. Choose how you use Scope Change Desk.</p>
         <div className="seg" role="group" aria-label="Account type">
           {(['client', 'freelancer'] as Role[]).map((r) => (
-            <button key={r} type="button" aria-pressed={role === r} onClick={() => { setRole(r); setError(null); }}>
+            <button key={r} type="button" aria-pressed={role === r} onClick={() => { setRoleChoice(r); setError(null); }}>
               {r === 'client' ? 'Client' : 'Freelancer'}
             </button>
           ))}
@@ -71,8 +73,8 @@ function LoginForm() {
         <ul>
           {DEMOS.map((d) => (
             <li key={d.email}>
-              <span><strong>{d.name}</strong><small>{d.role} · {d.email}</small></span>
-              <Button type="button" variant="secondary" onClick={() => { setRole(d.role); setEmail(d.email); setPassword(DEMO_PASSWORD); setError(null); }}>Fill in</Button>
+              <span><strong>{d.name}</strong><small>{d.both ? 'client and freelancer' : d.role} · {d.email}</small></span>
+              <Button type="button" variant="secondary" onClick={() => { setRoleChoice(d.role); setEmail(d.email); setPassword(DEMO_PASSWORD); setError(null); }}>Fill in</Button>
             </li>
           ))}
         </ul>

@@ -503,3 +503,6 @@ th .plink-go { display: none; }
 .openjobs { display: flex; flex-wrap: wrap; gap: 8px; }
 .openjobs li a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--ink); }
 .openjobs li a:hover { background: var(--brand-soft); }
+
+.usermenu-panel .usermenu-switch { border-top: 1px solid var(--line); border-radius: 0; margin-top: 4px; font-weight: 600; }
+.usermenu-panel .usermenu-switch + button { border-top: 0; margin-top: 0; }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { HttpError, bad } from './errors';
+import { requestRole } from './context';
 
 const MAX_BODY = 2_000_000;
 
@@ -28,7 +29,8 @@ export async function run(req: Request, fn: (ctx: Ctx) => unknown | Promise<unkn
         }
       }
     }
-    return NextResponse.json(await fn({ userId: req.headers.get('x-demo-user'), body, url }));
+    const role = req.headers.get('x-demo-role');
+    return NextResponse.json(await requestRole.run({ role }, async () => fn({ userId: req.headers.get('x-demo-user'), body, url })));
   } catch (e) {
     if (e instanceof HttpError) return NextResponse.json({ error: e.message, type: e.type }, { status: e.status });
     console.error(e);

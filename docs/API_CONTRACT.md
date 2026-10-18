@@ -6,6 +6,7 @@
 
 - All bodies and replies are JSON.
 - Every request sends the header `x-demo-user: <user id>` (set for you by `lib/api.ts` after "Continue as ..." on the start page).
+- An account that has both sides (`roles` on the user, for example both@demo.test) also sends `x-demo-role: client` or `freelancer`. The server treats the account as that role for the request; an account without that side keeps its own role. `/api/me` returns the role it is acting as, plus `roles`.
 - Money is whole rupees, always before tax. **Unknown hours are `null`, never `0`.**
 - Errors: HTTP status 400, 403, 404, 409 or 500 with `{ "error": "message safe to show", "type": "validation | forbidden | not_found | conflict | server" }`. Show `error` to the user as it is.
 - Data is in server memory for now and resets on restart (`POST /api/reset` resets it on purpose). It moves to Supabase later. The endpoints and types do not change.
@@ -30,7 +31,7 @@ Seed project `P1` (client1 and freelancer1) already has a signed SOW and the two
 | `listSaved` | `GET /api/saved` | client | `Freelancer[]` (the client's saved freelancers) |
 | `setSaved` | `PUT /api/saved/:id` `{saved: true or false}` | client | `{ saved }` (404 if the id is not a freelancer). Freelancers in search results and profiles carry `saved` for the viewing client |
 | `getSiteStats` | `GET /api/stats` | anyone, no sign-in | `SiteStats`: real counts for the landing page (job profiles, sample freelancers, case checks passing) |
-| `login` | `POST /api/login` `{email, password, role}` | anyone, no sign-in | `User`. 400 for a missing or malformed field, 403 for a wrong password or the wrong account type. Demo accounts only: client@demo.test, freelancer@demo.test, freelancer2@demo.test, shared password in the login page |
+| `login` |  `POST /api/login` `{email, password, role}` | anyone, no sign-in | `User`. 400 for a missing or malformed field, 403 for a wrong password or the wrong account type. Demo accounts only: client@demo.test, freelancer@demo.test, freelancer2@demo.test, shared password in the login page |
 | `getClient` | `GET /api/clients/:id` | any signed-in user | `ClientProfile`: company details, rating and reviews (sample), counts from real data (jobs posted, hires, open jobs) and the open jobs. Only the client themself gets their email. 404 if the id is not a client |
 | `getMe` | `GET /api/me` | any user | `User` |
 | `updateMe` | `PUT /api/me` `{name?, skills?, headline?, overview?, location?, ratePerHour?}` | any user (the profile fields are for freelancers) | `User`. `ratePerHour` is whole rupees above 0 |

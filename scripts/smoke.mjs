@@ -3,10 +3,12 @@
 import assert from 'node:assert/strict';
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:3000';
+// user is an id, or 'id:role' for an account that has both sides (sent as x-demo-user and x-demo-role)
 const call = async (method, path, user, body) => {
+  const [uid, role] = String(user ?? '').split(':');
   const res = await fetch(BASE + path, {
     method,
-    headers: { 'Content-Type': 'application/json', 'x-demo-user': user ?? '' },
+    headers: { 'Content-Type': 'application/json', 'x-demo-user': uid, 'x-demo-role': role ?? '' },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   return { status: res.status, data: await res.json() };
@@ -222,7 +224,7 @@ assert.equal((await ok('GET', `/api/jobs/${pjob.id}`, CLIENT)).typicalTotal, 120
 
 // browsing freelancers (client side): list, search, filters, profile, role limits
 const users = await ok('GET', '/api/users');
-assert.deepEqual(users.map((u) => u.id).sort(), ['u_client1', 'u_freelancer1', 'u_freelancer2'], 'start page offers only the demo users');
+assert.deepEqual(users.map((u) => u.id).sort(), ['u_both1', 'u_client1', 'u_freelancer1', 'u_freelancer2'], 'login page offers only the demo users');
 const all = await ok('GET', '/api/freelancers', CLIENT);
 assert.ok(all.freelancers.length >= 8, 'sample freelancers are listed');
 assert.ok(all.categories.length >= 2 && all.skills.length >= 10, 'filter options are returned');
@@ -279,5 +281,20 @@ assert.equal(upd.ratePerHour, 1100);
 assert.equal((await ok('GET', '/api/freelancers/u_freelancer2', CLIENT)).headline, 'Brand marks that work on a cafe sign');
 assert.equal((await call('PUT', '/api/me', FREE, { ratePerHour: 0 })).status, 400, 'rate must be above 0');
 assert.equal((await call('PUT', '/api/me', FREE, { headline: '' })).status, 400, 'headline cannot be empty');
+
+// one account, both sides: log in as either, act as each, but never hire or apply to yourself
+const both = (r) => L({ email: 'both@demo.test', password: 'demo1234', role: r });
+assert.equal((await both('client')).data.role, 'client');
+assert.equal((await both('freelancer')).data.role, 'freelancer');
+assert.equal((await ok('GET', '/api/me', 'u_both1:freelancer')).role, 'freelancer', 'acts as the freelancer');
+assert.equal((await ok('GET', '/api/me', 'u_both1:client')).role, 'client', 'acts as the client');
+assert.deepEqual((await ok('GET', '/api/me', 'u_both1')).roles, ['client', 'freelancer']);
+assert.equal((await call('GET', '/api/me', 'u_client1:freelancer')).data.role, 'client', 'a one-side account cannot take the other side');
+const bothJob = await ok('POST', '/api/jobs', 'u_both1:client', { title: 'Brand sheet', description: 'One page brand sheet.', budget: 5000, deadline: '2026-12-01' });
+assert.equal((await call('POST', '/api/jobs', 'u_both1:freelancer', { title: 'x', description: 'y', budget: 1, deadline: '2026-12-01' })).status, 403, 'as a freelancer it cannot post a job');
+assert.equal((await call('POST', `/api/jobs/${bothJob.id}/applications`, 'u_both1:freelancer', { pitch: 'Me', proposedPrice: 4000 })).status, 403, 'cannot apply to its own job');
+assert.ok((await ok('GET', '/api/jobs', 'u_both1:freelancer')).some((j) => j.id === 'J3'), 'as a freelancer it sees open jobs');
+assert.ok((await ok('GET', '/api/freelancers?q=copywriting', CLIENT)).freelancers.some((f) => f.id === 'u_both1'), 'its freelancer side can be found');
+assert.equal((await ok('GET', '/api/clients/u_both1', FREE)).company.name, 'Quill & Co Studio', 'its client side has company details');
 
 console.log('smoke test passed');
