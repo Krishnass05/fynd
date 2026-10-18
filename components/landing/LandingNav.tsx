@@ -3,6 +3,7 @@
 // (drop-down), How It Works, and on the right Log in and Sign up, which open /login and /register.
 // Sticky; on phones the links move into a drawer. OWNER: Krishna.
 import Link from 'next/link';
+import { LogoMark } from '@/components/brand/Logo';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { CATEGORIES } from './data';
@@ -58,7 +59,7 @@ export default function LandingNav() {
   return (
     <header className="lnav" data-scrolled={scrolled || undefined} ref={wrap}>
       <div className="lnav-row">
-        <Link href="/" className="lnav-brand" aria-label="Crewmate, home">Crew<span>mate</span><i aria-hidden="true" /></Link>
+        <Link href="/" className="lnav-brand" aria-label="Crewmate, home"><LogoMark size={28} />Crew<span>mate</span><i aria-hidden="true" /></Link>
         <nav className="lnav-links" aria-label="Main">{links}</nav>
         <div className="lnav-cta">
           <Link href="/login" className="lnav-link lnav-signin">Log in</Link>

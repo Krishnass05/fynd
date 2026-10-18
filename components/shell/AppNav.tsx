@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import PillNav from '@/components/fx/PillNav';
+import { LogoMark } from '@/components/brand/Logo';
 import { HOME, NAV } from '@/lib/nav';
 import type { Role } from '@/lib/types';
 
@@ -17,11 +18,9 @@ const PUBLIC_ITEMS = [
 const BRAND = '#403d39'; // Charcoal Brown
 const INK = '#252422'; // Carbon Black
 
+// the Crewmate logo (components/brand/Logo.tsx)
 const Mark = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <rect x="3" y="3" width="18" height="18" rx="5" />
-    <path d="m8 12.5 3 3 5-6" />
-  </svg>
+  <LogoMark size={26} />
 );
 
 export default function AppNav({ role }: { role?: Role }) {

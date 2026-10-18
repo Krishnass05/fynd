@@ -3,6 +3,7 @@
 // a search box and the user, plus the PillNav menu on phones. OWNER: Sanjana (look).
 // Links come from lib/nav.ts; the Services menu comes from lib/services.ts.
 import Link from 'next/link';
+import { LogoMark } from '@/components/brand/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { DASHBOARD, HOME, LEAD, MENUS, PROFILE, TOP_LINKS } from '@/lib/nav';
@@ -96,7 +97,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
     <div className="shell">
       <header className="topnav" ref={navRef}>
         <div className="topnav-row">
-          <Link href={HOME[role]} className="brand topnav-brand">Crewmate</Link>
+          <Link href={HOME[role]} className="brand topnav-brand" aria-label="Crewmate, home"><LogoMark size={26} /> Crewmate</Link>
 
           <form role="search" className="searchbox" onSubmit={search}>
             <Search size={18} />

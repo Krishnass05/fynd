@@ -9,7 +9,8 @@
 .lnav { position: sticky; top: 0; z-index: 60; background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid transparent; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
 .lnav[data-scrolled] { border-bottom-color: var(--line); box-shadow: 0 6px 20px -18px rgba(37, 36, 34, 0.5); }
 .lnav-row { max-width: 1200px; margin: 0 auto; padding: 10px 24px; display: flex; align-items: center; gap: 28px; }
-.lnav-brand { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: var(--charcoal); text-decoration: none; display: inline-flex; align-items: baseline; }
+.lnav-brand { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: var(--charcoal); text-decoration: none; display: inline-flex; align-items: center; }
+.lnav-brand svg { margin-right: 8px; }
 .lnav-brand span { color: var(--ink); font-weight: 600; }
 .lnav-brand i { width: 7px; height: 7px; border-radius: 50%; background: var(--paprika); margin-left: 3px; display: inline-block; }
 .lnav-links { display: flex; align-items: center; gap: 4px; flex: 1; }
