@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { DASHBOARD, HOME, LEAD, MENUS, PROFILE, TOP_LINKS } from '@/lib/nav';
-import { logout } from '@/lib/api';
+import { addRole, logout } from '@/lib/api';
 import { clearUser, setRole } from '@/lib/session';
 import { SERVICES } from '@/lib/services';
 import type { Role } from '@/lib/types';
@@ -77,6 +77,20 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
   }
 
   const toggle = (id: MenuId) => setOpen(id);
+  const [makeError, setMakeError] = useState<string | null>(null);
+  // Adds the other side to this account (same login), then opens it.
+  async function createOther() {
+    const other = role === 'client' ? 'freelancer' : 'client';
+    if (!window.confirm(`Add a ${other} side to your account? You keep the same login and can switch between both sides from this menu.`)) return;
+    try {
+      await addRole(other);
+      setRole(other);
+      setOpen(null);
+      router.push(other === 'freelancer' ? '/freelancer/profile' : HOME.client);
+    } catch (e) {
+      setMakeError(e instanceof Error ? e.message : 'Could not add that side');
+    }
+  }
 
   return (
     <div className="shell">
@@ -176,6 +190,11 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
                 <div className="usermenu-panel" id="menu-user" role="menu" aria-label="Account">
                   <Link href={PROFILE[role]} role="menuitem" onClick={() => setOpen(null)}>Profile</Link>
                   <Link href={DASHBOARD[role]} role="menuitem" onClick={() => setOpen(null)}>Dashboard</Link>
+                  {user && !user.demo && !(user.roles && user.roles.length > 1) ? (
+                    <button type="button" role="menuitem" className="usermenu-switch" onClick={() => void createOther()}>
+                      Create {role === 'client' ? 'freelancer' : 'client'} account
+                    </button>
+                  ) : null}
                   {user?.roles && user.roles.length > 1 ? (
                     <button type="button" role="menuitem" className="usermenu-switch" onClick={() => { const other = role === 'client' ? 'freelancer' : 'client'; setRole(other); setOpen(null); router.push(HOME[other]); }}>
                       Switch to {role === 'client' ? 'Freelancer' : 'Client'}
@@ -189,6 +208,7 @@ export default function AppShell({ role, children }: { role: Role; children: Rea
         </div>
         <div className="mobilebar"><AppNav role={role} /></div>
       </header>
+      {makeError ? <p className="toast-error" role="alert">{makeError} <button type="button" onClick={() => setMakeError(null)}>Close</button></p> : null}
       <main id="main-content" className="page">{children}</main>
       <HelpBot role={role} />
     </div>

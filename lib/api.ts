@@ -47,6 +47,7 @@ const post = <T>(path: string, body?: unknown) => call<T>(path, { method: 'POST'
 export const listDemoUsers = () => call<User[]>('/api/users');
 export const getMe = () => call<User>('/api/me');
 export const register = (b: { name: string; email: string; password: string; confirmPassword: string; accountType: 'client' | 'freelancer' | 'both'; acceptedTerms: boolean }) => post<User>('/api/auth/register', b);
+export const addRole = (role: 'client' | 'freelancer') => post<User>('/api/auth/add-role', { role });
 export const logout = () => post<{ ok: true }>('/api/auth/logout');
 export const getAuthConfig = () => call<{ google: boolean }>('/api/auth/config');
 export const login = (b: { email: string; password: string; role: 'client' | 'freelancer' }) => post<User>('/api/login', b);

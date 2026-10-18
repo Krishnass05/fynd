@@ -582,3 +582,6 @@ th .plink-go { display: none; }
 .typepick-opt[data-on] { border-color: var(--charcoal); box-shadow: inset 0 0 0 1px var(--charcoal); background: var(--brand-soft); }
 .typepick-opt:focus-within { outline: 2px solid var(--paprika); outline-offset: 2px; }
 @media (max-width: 560px) { .typepick [role="radiogroup"] { grid-template-columns: minmax(0, 1fr); } }
+
+.toast-error { position: fixed; top: 70px; right: 16px; z-index: 90; margin: 0; max-width: min(380px, calc(100vw - 32px)); padding: 10px 14px; border-radius: 12px; background: var(--badbg); color: var(--bad); box-shadow: 0 12px 30px -16px rgba(37, 36, 34, 0.5); font-size: 14px; }
+.toast-error button { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; margin-left: 8px; }

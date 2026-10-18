@@ -5,7 +5,7 @@ import { DUMMY_HASH, hashPassword, randomToken, verifyPassword } from '@/lib/eng
 import { normalizeEmail, validateLogin, validateRegister } from '@/lib/engine/validate';
 import type { Role, User } from '@/lib/types';
 import { requestRole } from './context';
-import { bad, forbidden, tooMany } from './errors';
+import { bad, conflict, forbidden, tooMany } from './errors';
 import { sessionCookie } from './session';
 import { db } from './store';
 
@@ -81,6 +81,27 @@ export function googleSignIn(p: { sub: string; email: string; name: string }, ac
   db().googleIds.set(p.sub, user.id);
   if (!user.demo) startSession(user.id);
   return { user, created };
+}
+
+// A person who signed up for one side adds the other to the SAME account: one login, one email, both sides.
+// Demo accounts are shared and synthetic, so they cannot change.
+export function addRole(acting: User, role: unknown): User {
+  if (role !== 'client' && role !== 'freelancer') throw bad('Choose client or freelancer');
+  const u = db().users.find((x) => x.id === acting.id);
+  if (!u) throw forbidden('Please log in again');
+  if (u.demo) throw forbidden('The demo accounts cannot add a side. Create your own account, or use the Demo Both account.');
+  const sides: Role[] = u.roles ?? [u.role];
+  if (sides.includes(role)) throw conflict(`This account already has a ${role} side`);
+  u.roles = [...sides, role];
+  if (role === 'freelancer') {
+    u.headline ??= '';
+    u.overview ??= '';
+    u.location ??= '';
+    u.category ??= 'Other';
+    u.availability ??= 'available';
+    u.jobsDone ??= 0;
+  }
+  return { ...u, role };
 }
 
 export function logoutAccount(): { ok: true } {

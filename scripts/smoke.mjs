@@ -407,4 +407,25 @@ const fl = await raw('POST', '/api/auth/register', { body: reg({ name: 'Anil Kum
 assert.equal(fl.data.role, 'freelancer');
 assert.ok((await raw('GET', '/api/freelancers?q=anil', { cookie: (await raw('POST', '/api/login', { body: { email: 'client@demo.test', password: 'demo1234', role: 'client' } })).cookie, user: 'u_client1' })).data.freelancers.some((f) => f.name === 'Anil Kumar'), 'a new freelancer can be found');
 
+
+// one login, both sides: a one-side account adds the other side
+const solo = await raw('POST', '/api/auth/register', { body: reg({ name: 'Solo Client', email: 'solo.client@example.com', accountType: 'client' }) });
+assert.equal(solo.data.roles, undefined);
+assert.equal((await raw('GET', '/api/dashboard', { cookie: solo.cookie, user: solo.data.id })).status, 403, 'a client account has no freelancer side yet');
+assert.equal((await raw('POST', '/api/auth/add-role', { body: { role: 'freelancer' } })).status, 403, 'you must be signed in to add a side');
+assert.equal((await raw('POST', '/api/auth/add-role', { cookie: solo.cookie, user: solo.data.id, body: { role: 'admin' } })).status, 400, 'only client or freelancer');
+assert.equal((await raw('POST', '/api/auth/add-role', { cookie: solo.cookie, user: solo.data.id, body: { role: 'client' } })).status, 409, 'it already has a client side');
+const added = await raw('POST', '/api/auth/add-role', { cookie: solo.cookie, user: solo.data.id, body: { role: 'freelancer' } });
+assert.equal(added.status, 200);
+assert.deepEqual(added.data.roles, ['client', 'freelancer']);
+assert.equal(added.data.id, solo.data.id, 'the same account');
+assert.equal(added.data.role, 'freelancer');
+const sideHeaders = (side) => ({ cookie: solo.cookie, user: solo.data.id, side });
+const asFreelancer = await fetch(BASE + '/api/dashboard', { headers: { cookie: solo.cookie, 'x-demo-user': solo.data.id, 'x-demo-role': 'freelancer' } });
+assert.equal(asFreelancer.status, 200, 'the freelancer side works after adding it');
+const asClient = await fetch(BASE + '/api/client-dashboard', { headers: { cookie: solo.cookie, 'x-demo-user': solo.data.id, 'x-demo-role': 'client' } });
+assert.equal(asClient.status, 200, 'and the client side still works');
+assert.equal((await raw('POST', '/api/auth/add-role', { cookie: solo.cookie, user: solo.data.id, body: { role: 'freelancer' } })).status, 409, 'it cannot be added twice');
+assert.equal((await raw('POST', '/api/auth/add-role', { user: 'u_client1', body: { role: 'freelancer' } })).status, 403, 'demo accounts cannot add a side');
+void sideHeaders;
 console.log('smoke test passed');
