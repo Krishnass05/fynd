@@ -1,7 +1,6 @@
 'use client';
-// The rest of the home page: How it works (two journeys), sample talent, the final call to action and
-// the footer. All people and text are sample content for the demo. OWNER: Krishna.
-import Link from 'next/link';
+// The rest of the home page: How it works (two journeys), sample talent and the final call to action
+// (the footer is the site-wide one in components/footer). All people and text are sample content for the demo. OWNER: Krishna.
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { initials } from '@/lib/format';
@@ -86,25 +85,5 @@ export function FinalCta() {
         </div>
       </div>
     </section>
-  );
-}
-
-export function Footer() {
-  return (
-    <footer className="lfoot">
-      <div className="lwrap lfoot-row">
-        <div>
-          <p className="lfoot-brand">Crew<span>mate</span></p>
-          <p>Crewmate demo (hackathon case C35, Scope Change Desk). All data is synthetic. A workflow aid, not legal advice.</p>
-        </div>
-        <nav aria-label="Footer">
-          <Link href="/login">Log in</Link>
-          <Link href="/register">Sign up</Link>
-          <a href="#how-it-works">How it works</a>
-          <Link href="/pricing">Pricing</Link>
-          <Link href="/demo">Case checks</Link>
-        </nav>
-      </div>
-    </footer>
   );
 }

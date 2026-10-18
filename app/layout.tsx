@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import SiteFooter from '@/components/footer/SiteFooter';
 
 // Inter everywhere: 600-700 for headings, 400 for text, 500 for buttons. --font-display points at it too.
 const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-body' });
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <a className="skip-link" href="#main-content">Skip to main content</a>
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

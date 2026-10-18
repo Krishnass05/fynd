@@ -150,14 +150,6 @@
 .fcta p { color: rgba(255, 255, 255, 0.82); margin: 12px 0 28px; font-size: 17px; }
 .fcta-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 .fcta .btn { min-height: 52px; padding: 0 28px; }
-.lfoot { background: var(--ink); color: rgba(255, 255, 255, 0.78); padding: 40px 0; font-size: 14px; }
-.lfoot-row { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.lfoot-brand { font-size: 20px; font-weight: 700; color: #fff; margin: 0 0 6px; letter-spacing: -0.03em; }
-.lfoot-brand span { color: var(--paprika); }
-.lfoot p { margin: 0; }
-.lfoot nav { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
-.lfoot a { color: #fff; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
-.lfoot a:hover { text-decoration: underline; }
 
 /* ---- Responsive ---- */
 @media (max-width: 1080px) { .talent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

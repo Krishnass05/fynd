@@ -5,7 +5,7 @@ import CategoryCarousel from '@/components/landing/CategoryCarousel';
 import Hero from '@/components/landing/Hero';
 import HelpBot from '@/components/help/HelpBot';
 import LandingNav from '@/components/landing/LandingNav';
-import { FeaturedTalent, FinalCta, Footer, HowItWorks } from '@/components/landing/Sections';
+import { FeaturedTalent, FinalCta, HowItWorks } from '@/components/landing/Sections';
 import PricingSection from '@/components/landing/PricingSection';
 
 export default function Home() {
@@ -20,7 +20,6 @@ export default function Home() {
         <PricingSection />
         <FinalCta />
       </main>
-      <Footer />
       <HelpBot />
     </div>
   );
