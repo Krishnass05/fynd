@@ -1,0 +1,13 @@
+/* About page: founding team cards. OWNER: Krishna. */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.center { text-align: center; color: var(--muted); max-width: 620px; margin: 0 auto 24px; }
+.team { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.card { border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #fff; display: grid; grid-template-rows: auto 1fr; }
+.photo { aspect-ratio: 4 / 3; background: linear-gradient(135deg, #fbeee4, #f4f1ee); display: grid; place-items: center; overflow: hidden; }
+.photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.photo span { width: 88px; height: 88px; border-radius: 50%; background: var(--charcoal); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 26px; letter-spacing: .02em; }
+.body { padding: 18px 20px 22px; display: grid; gap: 6px; }
+.body h3 { margin: 0; font-size: 19px; }
+.body p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.role { color: #c4561a !important; font-weight: 700; font-size: 13px !important; letter-spacing: .04em; text-transform: uppercase; }
+.pending { color: var(--muted); font-style: italic; font-weight: 600; }

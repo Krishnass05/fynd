@@ -1,0 +1,28 @@
+/* Task list, progress and daily check-ins. OWNER: Krishna. Uses the shared colour tokens from globals.css. */
+.board { display: grid; gap: 12px; }
+.summary { display: grid; gap: 6px; }
+.summary p { margin: 0; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.row { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
+.main { flex: 1 1 260px; min-width: 0; display: grid; gap: 6px; }
+.title { font-weight: 600; color: var(--ink-strong); overflow-wrap: anywhere; }
+.meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); }
+.select { width: auto; min-height: 32px; padding: 4px 8px; font-size: 13px; }
+.side { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.side :global(.badge) { white-space: nowrap; }
+.back { margin: 0; font-size: 13px; padding: 6px 10px; border-left: 3px solid var(--line-strong); }
+.backForm { display: flex; gap: 8px; flex-wrap: wrap; }
+.backForm input { flex: 1 1 200px; }
+.checkins { display: grid; gap: 12px; }
+.warn { margin: 0; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius); font-weight: 600; }
+.form { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); }
+.grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.moves { border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 12px; display: grid; gap: 6px; margin: 0; }
+.moves legend { font-size: 14px; padding: 0 4px; }
+.move { display: flex; gap: 10px; justify-content: space-between; align-items: center; font-size: 14px; flex-wrap: wrap; }
+.move select { width: auto; min-height: 32px; padding: 4px 8px; }
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.log li { padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); }
+.log p { margin: 4px 0 0; font-size: 14px; }
+.logHead { display: flex; gap: 8px; justify-content: space-between; }
+.blocker { font-weight: 600; }

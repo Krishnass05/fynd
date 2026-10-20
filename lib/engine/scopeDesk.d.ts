@@ -44,6 +44,8 @@ export class ScopeDesk {
     now?: () => string;
   });
   static fromFixture(fixture: unknown): ScopeDesk;
+  static fromState(state: unknown): ScopeDesk;
+  toState(): unknown;
   scope: { included: string[]; excluded: string[] };
   ratePerHour: number;
   availableHours: number;

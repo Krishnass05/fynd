@@ -36,6 +36,10 @@ export default function JobApply() {
           <h1>{data.job.title} <Badge>{data.job.status.replace('_', ' ')}</Badge></h1>
           <p>{data.job.description}</p>
           <p className="muted">Budget {money(data.job.budget)} · deadline {data.job.deadline}</p>
+          <p>
+            Posted by <Link href={`/freelancer/clients/${data.client.id}`}>{data.client.company ?? data.client.name}</Link>
+            {data.client.rating ? <span className="muted"> · {data.client.rating.toFixed(1)} rating from {data.client.reviewCount} reviews (sample)</span> : null}
+          </p>
           {mine ? (
             <Card title="Your application">
               <Badge tone={mine.status === 'accepted' ? 'good' : mine.status === 'rejected' ? 'bad' : 'neutral'}>{mine.status}</Badge>

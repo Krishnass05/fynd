@@ -1,105 +1,34 @@
 'use client';
-// Freelancer dashboard: what needs attention, projects with capacity, applications, jobs to apply to. OWNER: Krishna.
-import Link from 'next/link';
-import { getFreelancerDashboard } from '@/lib/api';
-import { useAsync } from '@/lib/useAsync';
-import { useUser } from '@/lib/useUser';
-import { Badge, Card, EmptyState, ErrorMessage, Spinner, money } from '@/components/ui';
-import s from './dashboard.module.css';
+// The freelancer's first page, laid out like the client home. The reviews are SAMPLE text written for
+// the demo, not real freelancers. OWNER: Krishna.
+import MarketHome from '@/components/home/MarketHome';
+import type { Review } from '@/components/reviews/ReviewCarousel';
 
-export default function FreelancerDashboard() {
-  const { user } = useUser('freelancer');
-  const { data, error, loading } = useAsync(getFreelancerDashboard, []);
+const CHIPS = ['Web Development', 'Logo Design', 'Video Editing', 'SEO', 'Data Entry', 'Graphic Design'];
+
+const REVIEWS: Review[] = [
+  { name: 'Karthik R.', role: 'Web developer, Hyderabad', text: 'Every extra ask arrives as a priced change order. I stopped doing free work and nobody argued.', rating: 5 },
+  { name: 'Sana P.', role: 'Logo designer, Pune', text: 'The signed scope is on record, so when a client wants more, the answer is already written down.', rating: 5 },
+  { name: 'Mohan L.', role: 'Video editor, Chennai', text: 'I see my capacity before I say yes. I do not overbook any more.', rating: 4 },
+  { name: 'Divya N.', role: 'CAD designer, Kochi', text: 'Milestones are approved one by one, so I know what the client has accepted.', rating: 5 },
+  { name: 'Faisal A.', role: 'Data entry specialist, Lucknow', text: 'A rejected change stays rejected, and it is not counted against my hours.', rating: 4 },
+  { name: 'Ritu G.', role: 'SEO consultant, Mumbai', text: 'Finding jobs is quick, and the messages stay with the project instead of getting lost in email.', rating: 5 },
+];
+
+export default function FreelancerHome() {
   return (
-    <>
-      <h1 className={s.greeting}>{user ? `Welcome back, ${user.name}` : 'Dashboard'}</h1>
-      <p className="muted">Your projects, what needs you, and jobs worth a look. Amounts are before tax.</p>
-      <ErrorMessage message={error} />
-      {loading && !data ? <Spinner /> : null}
-      {data ? (
-        <>
-          <section className={s.stats} aria-label="Summary">
-            <div className={s.stat}><div className={s.statValue}>{data.stats.activeProjects}</div><div className={s.statLabel}>Active projects</div></div>
-            <div className={s.stat}><div className={s.statValue}>{data.stats.pendingApplications}</div><div className={s.statLabel}>Applications waiting</div></div>
-            <div className={s.stat}><div className={s.statValue}>{data.stats.openJobs}</div><div className={s.statLabel}>Open jobs to apply to</div></div>
-            <div className={s.stat}><div className={s.statValue}>{money(data.stats.approvedValue)}</div><div className={s.statLabel}>Approved change value</div></div>
-          </section>
-
-          <h2>Needs your attention</h2>
-          {data.attention.length === 0 ? (
-            <EmptyState>Nothing is waiting on you.</EmptyState>
-          ) : (
-            <ul className={s.attention}>
-              {data.attention.map((a, i) => (
-                <li key={i}>
-                  <Badge tone={a.kind === 'rejected_change' ? 'bad' : a.kind === 'awaiting_client' ? 'neutral' : 'warn'}>{a.projectTitle}</Badge>
-                  <span>{a.text}</span>
-                  <Link href={`/freelancer/projects/${a.projectId}`}>Open</Link>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <h2>My projects</h2>
-          {data.projects.length === 0 ? (
-            <EmptyState>No projects yet. <Link href="/freelancer/jobs">Find a job</Link> and apply.</EmptyState>
-          ) : (
-            <div className={s.projectGrid}>
-              {data.projects.map((p) => {
-                const pct = Math.min(100, Math.round((p.totals.committedHours / (p.project.availableHours || 1)) * 100));
-                return (
-                  <article key={p.project.id} className={s.project}>
-                    <h3><Link href={`/freelancer/projects/${p.project.id}`}>{p.project.jobTitle}</Link></h3>
-                    <div className="muted">For {p.clientName} · {money(p.project.ratePerHour)}/hr</div>
-                    <div className={s.bar} role="img" aria-label={`${pct}% of capacity committed`}>
-                      <div className={`${s.barFill} ${pct >= 100 ? s.barFillFull : ''}`} style={{ width: `${pct}%` }} />
-                    </div>
-                    <div className="muted">{p.totals.committedHours}h of {p.project.availableHours}h committed · {p.totals.remainingHours}h left</div>
-                    <div className={s.chips}>
-                      {!p.hasBaseline ? <Badge tone="warn">Signed SOW missing</Badge> : null}
-                      {p.counts.awaitingClient ? <Badge>{p.counts.awaitingClient} awaiting client</Badge> : null}
-                      {p.counts.needsClarification ? <Badge tone="warn">{p.counts.needsClarification} need hours</Badge> : null}
-                      {p.counts.rejected ? <Badge tone="bad">{p.counts.rejected} rejected</Badge> : null}
-                      {p.counts.approved ? <Badge tone="good">{p.counts.approved} approved</Badge> : null}
-                    </div>
-                    <div><strong>{money(p.totals.committedValue)}</strong> <span className="muted">approved changes</span></div>
-                  </article>
-                );
-              })}
-            </div>
-          )}
-
-          <h2>My applications</h2>
-          {data.applications.length === 0 ? (
-            <EmptyState>You have not applied to any job yet.</EmptyState>
-          ) : (
-            <div className={s.list}>
-              {data.applications.map((a) => (
-                <div key={a.id} className={s.listItem}>
-                  <Link href={`/freelancer/jobs/${a.jobId}`}>{a.jobTitle ?? a.jobId}</Link>
-                  <span className="muted">Your price {money(a.proposedPrice)}</span>
-                  <Badge tone={a.status === 'accepted' ? 'good' : a.status === 'rejected' ? 'bad' : 'neutral'}>{a.status}</Badge>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <h2>Jobs you could apply to</h2>
-          {data.openJobs.length === 0 ? (
-            <EmptyState>No new open jobs right now.</EmptyState>
-          ) : (
-            <div className={s.list}>
-              {data.openJobs.map((j) => (
-                <Card key={j.id}>
-                  <Link href={`/freelancer/jobs/${j.id}`}><strong>{j.title}</strong></Link>
-                  <p className="muted" style={{ margin: '4px 0 0' }}>Budget {money(j.budget)} · deadline {j.deadline}</p>
-                </Card>
-              ))}
-              <Link href="/freelancer/jobs">See all open jobs</Link>
-            </div>
-          )}
-        </>
-      ) : null}
-    </>
+    <MarketHome
+      eyebrow="Get paid for every extra ask"
+      title="Find your next job."
+      lead="Search open jobs across design, development, writing, marketing and more. Every change a client asks for is priced and approved in writing before you start."
+      placeholder="Search for a job, like logo design or PHP"
+      searchLabel="Search jobs"
+      searchPath="/freelancer/jobs"
+      chips={CHIPS}
+      reviewsTitle="What freelancers say"
+      reviewsNote="Sample reviews written for this demo. They are not from real freelancers."
+      reviewsLabel="Freelancer reviews"
+      reviews={REVIEWS}
+    />
   );
 }

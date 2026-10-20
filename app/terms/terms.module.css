@@ -1,0 +1,11 @@
+/* Terms page. OWNER: Krishna. */
+.body { display: grid; gap: 32px; grid-template-columns: 220px minmax(0, 1fr); align-items: start; max-width: 940px; margin: 0 auto; }
+@media (max-width: 760px) { .body { grid-template-columns: 1fr; } .toc { position: static !important; } }
+.toc { position: sticky; top: 16px; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #fff; }
+.toc ol { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; }
+.toc a { color: var(--ink-strong); text-decoration: none; }
+.toc a:hover { text-decoration: underline; text-decoration-color: #F37021; }
+.section { scroll-margin-top: 16px; margin-bottom: 26px; }
+.section h2 { font-size: 20px; margin: 0 0 8px; }
+.section ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; line-height: 1.6; }
+.foot { color: var(--muted); font-size: 14px; }

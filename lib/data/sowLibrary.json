@@ -1,0 +1,419 @@
+{
+  "_note": "Snapshot of typical rates and hours, taken on 2026-10-18 from the team SOWs: Harini 15 markdown SOWs (branch harini) and the rate and budget lines in Sanjana PDF (branch sanjana). 28 of the 54 planned profiles so far. Illustrative synthetic data, not market prices. Sanjana profiles have no deliverable lists yet.",
+  "generatedAt": "2026-10-18",
+  "profiles": [
+    {
+      "id": "php-development",
+      "name": "PHP Development",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1200,
+      "typicalHours": 40,
+      "deliverables": [
+        "Object-oriented PHP backend modules and business logic",
+        "MySQL database schema design and optimized queries",
+        "RESTful API endpoints and webhook handlers"
+      ],
+      "excluded": [
+        "Third-party payment gateway integration",
+        "Legacy PHP 5.x to 8.x codebase migration",
+        "Frontend UI redesign and CSS styling"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "html-and-frontend-markup",
+      "name": "HTML and Frontend Markup",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 900,
+      "typicalHours": 30,
+      "deliverables": [
+        "Semantic HTML5 templates converted from Figma designs",
+        "Responsive CSS3 styling and grid/flexbox layouts",
+        "W3C validation and cross-browser testing"
+      ],
+      "excluded": [
+        "Backend template engine integration",
+        "Custom JavaScript interactive widgets and SPA logic",
+        "Responsive HTML email newsletter templates"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "full-stack-web-development",
+      "name": "Full-Stack Web Development",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1500,
+      "typicalHours": 50,
+      "deliverables": [
+        "Responsive frontend interface and user dashboard",
+        "Server-side REST API with authentication and session handling",
+        "Relational database setup and cloud deployment"
+      ],
+      "excluded": [
+        "Real-time WebSocket messaging or chat system",
+        "Multi-currency payment gateway and subscription billing",
+        "Mobile app build in React Native or Flutter"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "digital-marketing",
+      "name": "Digital Marketing",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1100,
+      "typicalHours": 25,
+      "deliverables": [
+        "Competitor analysis and digital marketing funnel strategy",
+        "Google Ads and Meta ad campaign setup and targeting structure",
+        "Conversion tracking pixel and Google Analytics 4 configuration"
+      ],
+      "excluded": [
+        "Ad creative graphic design and promotional video production",
+        "Ongoing weekly campaign management and bid optimization",
+        "Influencer outreach and affiliate partnership management"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "search-engine-optimization-seo",
+      "name": "Search Engine Optimization SEO",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1000,
+      "typicalHours": 30,
+      "deliverables": [
+        "Technical SEO crawl audit broken link cleanup and XML sitemap fixes",
+        "Keyword research and URL mapping document",
+        "On-page optimization for meta tags headings schema markup and image alt text"
+      ],
+      "excluded": [
+        "Off-page link building and digital PR backlink campaigns",
+        "Long-form blog content writing and copywriting",
+        "Core Web Vitals server optimization and code minification"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "adobe-premiere-pro-video-editing",
+      "name": "Adobe Premiere Pro Video Editing",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1000,
+      "typicalHours": 20,
+      "deliverables": [
+        "Rough cut assembly and footage pacing",
+        "Color grading audio cleanup and background music mixing",
+        "Motion titles lower thirds and animated captions"
+      ],
+      "excluded": [
+        "Advanced 3D visual effects and CGI animations",
+        "Custom sound design and original music composition",
+        "Multi-format re-edits for YouTube Shorts TikTok and Instagram Reels"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "data-management-and-database-management",
+      "name": "Data Management and Database Management",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1300,
+      "typicalHours": 35,
+      "deliverables": [
+        "Data profiling deduplication and anomaly cleanup",
+        "ETL data migration script development and test validation runs",
+        "Relational schema normalization and indexing optimization"
+      ],
+      "excluded": [
+        "Real-time streaming data pipeline setup using Kafka or Spark",
+        "Automated executive BI dashboard using Tableau or Power BI",
+        "Proprietary legacy database reverse engineering"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "javascript-development",
+      "name": "JavaScript Development",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1100,
+      "typicalHours": 30,
+      "deliverables": [
+        "Interactive client-side UI components and form validation logic",
+        "Asynchronous API integrations and data caching",
+        "Cross-browser bug fixing memory leak auditing and bundle optimization"
+      ],
+      "excluded": [
+        "Full framework migration from Vanilla JS to React or Next.js",
+        "Backend Node.js microservice architecture",
+        "Complex Canvas or WebGL 3D graphics development"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "adobe-illustrator-and-illustrator",
+      "name": "Adobe Illustrator and Illustrator",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 950,
+      "typicalHours": 20,
+      "deliverables": [
+        "Vector brand marks and custom logo concepts",
+        "Iconography set with consistent stroke weight and style",
+        "Final vector exports in AI EPS SVG and high-res PNG formats"
+      ],
+      "excluded": [
+        "Complete brand guidelines manual and stationery collateral",
+        "Complex 3D isometric vector illustration scene",
+        "Packaging dieline design and print proofing"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "software-architecture",
+      "name": "Software Architecture",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 2000,
+      "typicalHours": 35,
+      "deliverables": [
+        "High-level and low-level architectural design documents HLD and LLD",
+        "Entity Relationship Diagrams ERD and RESTful API contract specifications",
+        "Cloud infrastructure topology CI/CD pipeline and security specifications"
+      ],
+      "excluded": [
+        "Hands-on application code implementation and testing",
+        "Multi-region active-active disaster recovery configuration",
+        "Formal regulatory compliance certification audit"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "web-design-and-website-design",
+      "name": "Web Design and Website Design",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1200,
+      "typicalHours": 35,
+      "deliverables": [
+        "Sitemap information architecture and wireframes for up to 6 pages",
+        "High-fidelity responsive UI designs in Figma for desktop and mobile",
+        "Interactive clickable prototype and design system token library"
+      ],
+      "excluded": [
+        "Frontend HTML and CSS code development",
+        "Custom 3D renders or specialized motion design assets",
+        "Copywriting content creation and stock photo sourcing"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "social-media-management",
+      "name": "Social Media Management",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 900,
+      "typicalHours": 30,
+      "deliverables": [
+        "Monthly content calendar with scheduled posting dates and copy",
+        "Design of 15 branded static graphics and carousel slides",
+        "Community engagement monitoring and monthly performance analytics report"
+      ],
+      "excluded": [
+        "Paid social media advertising management and ad spend optimization",
+        "On-location photography or live video shoot production",
+        "Influencer collaboration outreach and contract negotiation"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "wordpress-development",
+      "name": "WordPress Development",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1100,
+      "typicalHours": 35,
+      "deliverables": [
+        "WordPress core installation security hardening and custom child theme setup",
+        "Custom post types ACF fields and contact form integration",
+        "Page speed optimization caching SEO plugin setup and launch migration"
+      ],
+      "excluded": [
+        "WooCommerce full e-commerce shop with payment gateways and tax calculation",
+        "Custom WordPress plugin development from scratch",
+        "Multilingual site configuration with WPML or Polylang"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "python-development",
+      "name": "Python Development",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1400,
+      "typicalHours": 40,
+      "deliverables": [
+        "Backend API service development using FastAPI or Flask",
+        "Automated data processing ETL pipeline with Pandas",
+        "Docker containerization unit tests and setup documentation"
+      ],
+      "excluded": [
+        "Custom machine learning model training and inference optimization",
+        "Frontend user interface or dashboard development",
+        "Continuous 24/7 server monitoring and production DevOps support"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "api-development",
+      "name": "API Development",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1500,
+      "typicalHours": 40,
+      "deliverables": [
+        "RESTful API resource architecture endpoint controllers and data models",
+        "JWT authentication role-based access control RBAC and rate limiting",
+        "OpenAPI Swagger documentation and automated integration test suite"
+      ],
+      "excluded": [
+        "GraphQL schema and resolver implementation",
+        "Frontend client SDK generation and UI integration",
+        "Third-party webhook aggregator and event streaming pipeline"
+      ],
+      "source": "harini"
+    },
+    {
+      "id": "graphic-design",
+      "name": "Graphic Design",
+      "category": "Design, Media and Architecture",
+      "ratePerHour": 1000,
+      "typicalHours": 40,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "festive campaign creative pack"
+    },
+    {
+      "id": "logo-design",
+      "name": "Logo Design",
+      "category": "Design, Media and Architecture",
+      "ratePerHour": 1200,
+      "typicalHours": 30,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "brand mark for a new café"
+    },
+    {
+      "id": "photoshop",
+      "name": "Photoshop",
+      "category": "Design, Media and Architecture",
+      "ratePerHour": 800,
+      "typicalHours": 30,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "product photo editing and retouching"
+    },
+    {
+      "id": "ecommerce",
+      "name": "eCommerce",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1000,
+      "typicalHours": 80,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "D2C online store setup"
+    },
+    {
+      "id": "api-integration",
+      "name": "API Integration",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1500,
+      "typicalHours": 40,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "store to shipping and WhatsApp notifications"
+    },
+    {
+      "id": "mysql",
+      "name": "MySQL",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 1400,
+      "typicalHours": 32,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "database optimisation and reporting views"
+    },
+    {
+      "id": "data-collection",
+      "name": "Data Collection",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 500,
+      "typicalHours": 60,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "B2B lead list research"
+    },
+    {
+      "id": "link-building",
+      "name": "Link Building",
+      "category": "Websites, IT and Software",
+      "ratePerHour": 900,
+      "typicalHours": 40,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "3-month outreach campaign"
+    },
+    {
+      "id": "video-production",
+      "name": "Video Production",
+      "category": "Design, Media and Architecture",
+      "ratePerHour": 900,
+      "typicalHours": 36,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "60-second brand film"
+    },
+    {
+      "id": "after-effects",
+      "name": "After Effects",
+      "category": "Design, Media and Architecture",
+      "ratePerHour": 1200,
+      "typicalHours": 40,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "motion graphics pack for a product launch"
+    },
+    {
+      "id": "animation",
+      "name": "Animation",
+      "category": "Design, Media and Architecture",
+      "ratePerHour": 1200,
+      "typicalHours": 70,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "90-second 2D explainer video"
+    },
+    {
+      "id": "3d-modelling",
+      "name": "3D Modelling",
+      "category": "Design, Media and Architecture",
+      "ratePerHour": 1300,
+      "typicalHours": 50,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "furniture product models for e-commerce"
+    },
+    {
+      "id": "3d-rendering",
+      "name": "3D Rendering",
+      "category": "Design, Media and Architecture",
+      "ratePerHour": 1300,
+      "typicalHours": 56,
+      "deliverables": [],
+      "excluded": [],
+      "source": "sanjana",
+      "example": "architectural interior visualisation"
+    }
+  ]
+}

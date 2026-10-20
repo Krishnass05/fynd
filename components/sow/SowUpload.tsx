@@ -1,5 +1,5 @@
 'use client';
-// Upload a SOW (.txt or .md) as the signed baseline or as an amendment. OWNER: Krishna.
+// Upload a SOW (.txt or .md): the first SOW (the client uploads it, the freelancer signs it off) or an amendment. OWNER: Krishna.
 // Props: projectId, kind, onDone(result). Reads the file in the browser and sends its text.
 import { useState } from 'react';
 import { uploadSow } from '@/lib/api';
@@ -36,7 +36,7 @@ export default function SowUpload({ projectId, kind, onDone }: { projectId: stri
   return (
     <div>
       <label className="field">
-        {kind === 'baseline' ? 'Signed SOW (.txt or .md)' : 'Amended SOW (.txt or .md)'}
+        {kind === 'baseline' ? 'SOW for the freelancer to review (.txt or .md)' : 'Amended SOW (.txt or .md)'}
         <input type="file" accept=".txt,.md" onChange={onFile} disabled={busy} />
       </label>
       {busy ? <p className="muted">Reading and comparing...</p> : null}

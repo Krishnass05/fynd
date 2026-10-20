@@ -1,0 +1,21 @@
+/* Call credits page. OWNER: Krishna. */
+.balance { border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px; background: #fff; margin: 12px 0 8px; }
+.balance p { margin: 0; }
+.big { font-size: 18px; }
+.big strong { font-size: 40px; font-weight: 800; color: var(--ink-strong); margin-right: 4px; }
+.notice { margin: 0 0 12px; padding: 10px 14px; border-left: 4px solid #F37021; background: #fff7f1; border-radius: 8px; font-size: 14px; }
+.packs { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); }
+.pack { position: relative; border: 1px solid var(--line); border-radius: 16px; padding: 22px 18px 18px; background: #fff; display: grid; gap: 8px; }
+.popular { border: 2px solid #F37021; }
+.ribbon { position: absolute; top: -12px; left: 18px; background: #F37021; color: #fff; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.label { margin: 0; font-weight: 700; }
+.credits { margin: 0; font-size: 15px; }
+.credits strong { font-size: 30px; font-weight: 800; color: var(--ink-strong); }
+.price { margin: 0 0 6px; font-weight: 600; }
+.price span { font-weight: 400; font-size: 13px; }
+.scroll { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 480px; }
+.table th, .table td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); }
+.table th { color: var(--muted); font-weight: 600; font-size: 13px; }
+.minus { color: var(--bad); font-weight: 600; }
+.plus { color: #1d7a46; font-weight: 600; }

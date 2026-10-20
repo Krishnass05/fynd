@@ -1,0 +1,12 @@
+/* Pricing page chrome (the plan cards and matrix are in components/pricing). OWNER: Krishna. */
+.page { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; }
+.brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 22px; color: var(--ink-strong); text-decoration: none; }
+.nav { display: flex; gap: 14px; align-items: center; }
+.nav a:first-child { color: var(--ink-strong); text-decoration: none; font-weight: 600; }
+.hero { text-align: center; padding: 32px 0 24px; }
+.eyebrow { color: #F37021; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; margin: 0; }
+.hero h1 { font-size: clamp(28px, 4vw, 44px); margin: 8px 0; }
+.sub { max-width: 620px; margin: 0 auto; color: var(--muted); font-size: 17px; }
+.token { margin: 14px auto 0; font-size: 13px; color: var(--muted); }
+.note { margin-top: 24px; text-align: center; font-size: 13px; color: var(--muted); }

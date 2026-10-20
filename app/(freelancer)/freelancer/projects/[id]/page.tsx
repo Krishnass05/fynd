@@ -4,8 +4,14 @@ import { useParams } from 'next/navigation';
 import { getProject } from '@/lib/api';
 import { useAsync } from '@/lib/useAsync';
 import Chat from '@/components/chat/Chat';
+import Call from '@/components/call/Call';
 import ChangeList from '@/components/changes/ChangeList';
-import SowUpload from '@/components/sow/SowUpload';
+import SowReview from '@/components/sow/SowReview';
+import MilestoneList from '@/components/milestones/MilestoneList';
+import TaskRequests from '@/components/tasks/TaskRequests';
+import ProjectFeedback from '@/components/profile/ProjectFeedback';
+import WorkBoard from '@/components/work/WorkBoard';
+import CheckIns from '@/components/work/CheckIns';
 import { Card, ErrorMessage, Spinner, money } from '@/components/ui';
 
 export default function FreelancerProject() {
@@ -20,20 +26,26 @@ export default function FreelancerProject() {
           <h1>{data.project.jobTitle}</h1>
           <p className="muted">For {data.client.name} · rate {money(data.project.ratePerHour)}/hr · amounts before tax</p>
           <Card title="Capacity">
-            <p>{data.totals.committedHours}h of {data.project.availableHours}h committed · {data.totals.remainingHours}h remaining · approved changes {money(data.totals.committedValue)}</p>
+            <p>{data.totals.committedHours}h of {data.project.availableHours}h committed · {data.totals.remainingHours}h remaining · agreed extra work {money(data.totals.committedValue)}</p>
           </Card>
-          <Card title="SOW versions">
-            {data.sowDocuments.length ? data.sowDocuments.map((s) => <p key={s.id}>v{s.version} {s.kind}: {s.filename} ({s.items.length} items)</p>) : <p className="muted">No signed SOW yet.</p>}
+          <Card title="SOW">
+            <SowReview projectId={id} role="freelancer" docs={data.sowDocuments} ratePerHour={data.project.ratePerHour} onChanged={setData} onUploaded={() => void reload()} />
           </Card>
-          {!data.sowDocuments.some((s) => s.kind === 'baseline') ? (
-            <Card title="Upload the signed SOW">
-              <SowUpload projectId={id} kind="baseline" onDone={() => void reload()} />
-            </Card>
-          ) : null}
+          <h2>Tasks and progress</h2>
+          <WorkBoard projectId={id} role="freelancer" work={data.work} progress={data.progress} milestones={data.milestones} onChanged={setData} />
+          <h2>Daily check-in</h2>
+          <CheckIns projectId={id} role="freelancer" checkins={data.checkins} status={data.checkinStatus} work={data.work} freelancerName={data.freelancer.name} onChanged={setData} />
+          <MilestoneList projectId={id} milestones={data.milestones} summary={data.milestoneSummary} role="freelancer" onChanged={setData} />
+          <h2>New tasks from the client</h2>
+          <TaskRequests projectId={id} role="freelancer" tasks={data.taskRequests} ratePerHour={data.project.ratePerHour} onChanged={setData} />
           <h2>Change orders</h2>
           <ChangeList projectId={id} changes={data.changeRequests} canDecide={false} onChanged={setData} />
+          <h2>Feedback</h2>
+          <Card plain><ProjectFeedback projectId={id} otherName={data.client.name} data={data.feedback} onChanged={setData} /></Card>
+          <h2>Call</h2>
+          <Card plain><Call projectId={id} peerName={data.client.name} credits={data.callCredits} onLive={() => void reload()} incoming={data.incomingCall} /></Card>
           <h2>Chat</h2>
-          <Card><Chat projectId={id} /></Card>
+          <Card plain><Chat projectId={id} role="freelancer" /></Card>
         </>
       ) : null}
     </>

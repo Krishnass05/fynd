@@ -1,11 +1,6 @@
-// Client side shell. OWNER: Sanjana.
-import TopBar from '@/components/shell/TopBar';
+// Client side frame: sidebar, search, user. OWNER: Sanjana.
+import AppShell from '@/components/shell/AppShell';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <TopBar role="client" />
-      <main className="page">{children}</main>
-    </>
-  );
+  return <AppShell role="client">{children}</AppShell>;
 }

@@ -1,0 +1,15 @@
+/* Contact form. OWNER: Krishna. */
+.layout { display: grid; gap: 24px; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+.form { border: 1px solid var(--line); border-radius: 18px; padding: 24px; background: #fff; display: grid; gap: 16px; }
+.row { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.field { display: grid; gap: 6px; font-weight: 600; font-size: 14px; }
+.field input, .field select, .field textarea { font-weight: 400; }
+.field [aria-invalid="true"] { border-color: var(--bad); }
+.err { color: var(--bad); font-weight: 500; font-size: 13px; }
+.form button { justify-self: start; }
+.notice { margin: 0; padding: 12px 14px; border-left: 4px solid #F37021; background: #fff7f1; border-radius: 8px; font-size: 14px; line-height: 1.55; }
+.side { display: grid; gap: 16px; }
+.card { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: #fff; }
+.card h2 { margin: 0 0 6px; font-size: 17px; }
+.card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
